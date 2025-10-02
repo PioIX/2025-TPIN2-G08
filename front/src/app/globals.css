@@ -1,42 +1,110 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+/* Asegura que el cuerpo y el html ocupen toda la altura de la ventana */
+html, body {
+  height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Fondo de pantalla */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: url('https://media.istockphoto.com/id/450725875/es/foto/escena-debajo-del-agua.jpg?s=612x612&w=0&k=20&c=6nZmLpNBgo6EW2G_Xi14WG6pMFIFKV1MUpkiB4h6HGg=') no-repeat center center fixed;
+  background-size: cover;
+  
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Estilos para el título */
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: #f3f186ce;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 25px;
+  font-weight: 500;
+  
+}
+
+/* Estilo del formulario */
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+  max-width: 360px;
+  width: 100%;
+  position: relative;
+  max-width: 400px;
+  z-index: 1;
+}
+
+/* Estilo de los campos de entrada */
+.input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 2px solid #ddd;
+  background-color: #f3f186ce;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+.input::placeholder {
+  color: black; 
+  opacity: 1;
+}
+
+.input:focus {
+  border-color: #c4c270;
+  box-shadow: 0 0 6px #c4c270(255, 102, 0, 0.6);
+}
+
+/* Estilos para los botones */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f3f186ce;
+  color: black;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 100;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.button:hover {
+  background-color: #c4c270;
+ 
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+.link{
+  color: rgba(0, 119, 255, 0.699);
+  text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link :hover{
+  color: rgba(4, 64, 133, 0.699);
+  text-align: center;
+  text-decoration: underline;
 }

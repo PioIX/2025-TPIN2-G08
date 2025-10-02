@@ -6,18 +6,35 @@ export default function logIn() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter();
+  function registrarse() {
 
-  function logIn(){
-    
   }
-  return (
-    <>
-      <div>
-        <input type="text" placeholder="Mail" onChange={e => setEmail(e.target.value)}></input>
-        <input type="password" placeholder="Contraseña" onChange={e => setPassword(e.target.value)}></input>
-        <button type="button" onClick={logIn}>Iniciar Sesion</button>
-        <button type="button" onClick={register}>Registrarse</button>
+  function iniciarSesion() {
+
+  }
+ return (
+    <div className={"container"}>
+      <div className={"form"}>
+        <h1 className={"title"}>BATALLA NAVAL</h1>
+        <input
+          type="email"
+          className={"input"}
+          placeholder="Usuario"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          className={"input"}
+          placeholder="Contraseña"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <div className={"buttons"}>
+          <button className={"button"} type="button" onClick={iniciarSesion}>Iniciar Sesión</button>
+          <a className ={"link"} type="button" onClick={registrarse}>Registrarse</a>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
