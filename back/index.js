@@ -114,3 +114,23 @@ io.on("connection", (socket) => {
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 */
+
+app.post('/verifyUser', async function(req, res){
+	let user
+	try {
+		console.log(req.body)
+		user = await realizarQuery(`SELECT * FROM Users WHERE email = '${req.body.email}'`)
+		if (user.length > 0){
+			let user = await realizarQuery(`SELECT * FROM Users WHERE email = '${req.body.email}' AND password = '${req.body.password}'`)
+			if (user.length > 0){
+				res.send({user, msg: 1, error: false})
+			} else {
+				res.send({msg: -2, error: false})
+			}
+		} else {
+			res.send({msg: -1, error: false})
+		}
+	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
