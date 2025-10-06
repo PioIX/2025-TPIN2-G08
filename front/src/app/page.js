@@ -33,8 +33,9 @@ export default function logIn() {
     let response = await login(obj)
     console.log(response)
     if (response.msg == 1){
-      //router.push(Poner la pagina del lobby)
-      alert("Login exitoso")
+      //falta un if para ver si es admin if(response.user.admin = true){}else...
+      router.push("/lobby")
+      console.log("Login exitoso")
     } else if(response.msg == -1){
       alert("El email ingresado no es valido")
     } else if(response.msg == -2){
