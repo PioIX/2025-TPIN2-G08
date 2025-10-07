@@ -90,23 +90,31 @@ io.on("connection", (socket) => {
 		req.session.room = data.room;
 		socket.join(req.session.room);
 
-		io.to(req.session.room).emit('chat-messages', { user: req.session.user, room: req.session.room });
+		io.to(req.session.room).emit('joinRoom', { user: req.session.user, room: req.session.room });
 	});
 
 	socket.on('pingAll', data => {
 		console.log("PING ALL: ", data);
-		io.emit('pingAll', { event: "Ping to all", message: data });
+		data.msj = "holaputo"
+		io.emit('ping', {msg: data.msj});
 	});
 
-	socket.on('sendMessage', async data => {
-		console.log("Usuario es:", data.obj.id_usuario, "Y room:", req.session.room, "msg:", data.obj.texto)
-		io.to(req.session.room).emit('newMessage', { room: req.session.room, message: data.obj });
-		await realizarQuery(`INSERT INTO Mensajes (fechayhora, texto, id_chat, id_usuario) VALUES
-			('${data.obj.fechayhora}','${data.obj.texto}', ${data.obj.id_chat}, ${data.obj.id_usuario})`)
+	socket.on('sendMessage', data => {
+		console.log("La room es: " + req.session.room + " el mensaje es: " + data.msg)
+		io.to(req.session.room).emit('newMessage',  data.msg );
 	});
 
 	socket.on('disconnect', () => {
 		console.log("🔌 Usuario desconectado");
+	})
+
+	socket.on('nameEvent', data =>{
+		if (data.msg == "hola"){
+			data.msg = "xd"
+		} else {
+			data.msg = "no xd"
+		}
+		io.to(req.session.room).emit('nameEvent', data.msg)
 	})
 });
 /*
@@ -130,6 +138,29 @@ app.post('/verifyUser', async function(req, res){
 		} else {
 			res.send({msg: -1, error: false})
 		}
+	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
+
+function esURLValida(str) {
+	try {
+    	new URL(str)
+    	return true
+	} catch (e) {
+		return false
+	}
+}
+
+app.post('/newUser', async function (req, res){
+	try{
+		console.log(req.body)
+		if (!req.body.photo && esURLValida(req.body.photo) == false){
+			req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
+		}
+		await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
+			('${req.body.photo}', '${req.body.name}', '${req.body.email}', '${req.body.password}')`)
+		res.send({msg: 1, error: false})
 	} catch(e){
 		res.send({msg: e.message, error: true})
 	}
