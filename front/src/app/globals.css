@@ -342,3 +342,87 @@ html, body {
 .play-btn:hover {
   transform: scale(1.05);
 }
+
+/* Fondo del modal */
+.modalAdmin {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1e293b;
+  color: white;
+  width: 220px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  z-index: 1000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Título */
+.modalAdmin h2 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  margin-top: -5px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* Botones genéricos */
+.btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.25s ease;
+}
+
+/* Botón "Jugar" */
+.btn.jugar {
+  background: #22c55e;
+  color: white;
+}
+
+.btn.jugar:hover {
+  background: #16a34a;
+  transform: scale(1.03);
+}
+
+/* Botón "Administrar" */
+.btn.admin {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn.admin:hover {
+  background: #2563eb;
+  transform: scale(1.03);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.modalAdministracion{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: url('https://img1.wallspic.com/crops/9/7/9/0/4/140979/140979-crucero_ligero-3840x2160.jpg') no-repeat center center fixed;
+  background-size: cover;
+  text-align: center;
+}
