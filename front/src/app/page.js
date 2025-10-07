@@ -32,6 +32,7 @@ export default function logIn() {
     }
     let response = await login(obj)
     console.log(response)
+    localStorage.setItem("idLoggued", response.user[0].id_user)
     if (response.msg == 1){
       //falta un if para ver si es admin if(response.user.admin = true){}else...
       router.push("/lobby")
