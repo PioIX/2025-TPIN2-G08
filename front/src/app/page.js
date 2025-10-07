@@ -31,12 +31,14 @@ export default function logIn() {
     }
     let response = await login(obj)
     console.log(response)
-    if (response.msg == 1) {
+    localStorage.setItem("idLoggued", response.user[0].id_user)
+      if (response.msg == 1) {
       //if(response.user.admin == true){
       setShowAdminOption(true)
       //}else{
       // router.push("/lobby")
       //}
+        
       console.log("Login exitoso")
     } else if (response.msg == -1) {
       alert("El email ingresado no es valido")
