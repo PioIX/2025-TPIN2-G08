@@ -165,3 +165,17 @@ app.post('/newUser', async function (req, res){
 		res.send({msg: e.message, error: true})
 	}
 })
+
+app.post('/users', async function (req, res){
+	try {
+		console.log(req.body)
+		let users = await realizarQuery(`SELECT * FROM Users WHERE id_user <> ${req.body.idLoggued}`)
+		if (users.length > 0){
+			res.send({users, msg: 1, error: false})
+		} else {
+			res.send({mag: 0, error: false})
+		}
+	} catch(e){
+		res.send({msg: -1, error: true})
+	}
+})
