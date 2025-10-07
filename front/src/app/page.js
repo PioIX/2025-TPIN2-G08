@@ -9,7 +9,23 @@ export default function logIn() {
   const [showPassword, setShowPassword] = useState(false)
   const [showAdminOption, setShowAdminOption] = useState(false)
   const [showAdministracion, setShowAdministracion] = useState(false)
+  const [allUsers, setUsers] = useState([])
 
+<<<<<<< Updated upstream
+  useEffect(() => {
+    if (showAdministracion) {
+      users()
+    }
+  }, [showAdministracion])
+=======
+  useEffect(() =>{
+
+  }, [])
+
+  function register() {
+    router.push("/register")
+  }
+>>>>>>> Stashed changes
 
   async function login(dataUser) {
     let result = await fetch('http://localhost:4000/verifyUser', {
@@ -30,15 +46,13 @@ export default function logIn() {
       password: password
     }
     let response = await login(obj)
-    console.log(response)
     localStorage.setItem("idLoggued", response.user[0].id_user)
-      if (response.msg == 1) {
-      //if(response.user.admin == true){
-      setShowAdminOption(true)
-      //}else{
-      // router.push("/lobby")
-      //}
-        
+    if (response.msg == 1) {
+      if (response.user[0].admin == 1) {
+        setShowAdminOption(true)
+      } else {
+        router.push("/lobby")
+      }
       console.log("Login exitoso")
     } else if (response.msg == -1) {
       alert("El email ingresado no es valido")
@@ -46,6 +60,36 @@ export default function logIn() {
       alert("La contraseña ingresada no es valida")
     }
   }
+
+<<<<<<< Updated upstream
+  async function users() {
+    const idLoggued = localStorage.getItem("idLoggued")
+    let result = await fetch('http://localhost:4000/users', {
+=======
+  async function users(){
+    const idLoggued = localStorage.getItem("idLoggued")
+    let result = await fetch('http://localhost:4000/users',{
+>>>>>>> Stashed changes
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+<<<<<<< Updated upstream
+      body: JSON.stringify({ idLoggued: idLoggued })
+    })
+    let response = await result.json()
+    let users = response.users
+    console.log(users)
+    setUsers(users)
+=======
+      body: JSON.stringify({idLoggued: idLoggued})
+    })
+    let response = await result.json()
+    let users = response.users
+    return users
+>>>>>>> Stashed changes
+  }
+
   return (
     <>
 
@@ -70,6 +114,12 @@ export default function logIn() {
       {showAdministracion && <div className="modalAdministracion">
         <div className="modalAdmin">
           <h2>Elige el usuario que quiera eliminar</h2>
+
+          {allUsers && allUsers.length > 0 ? allUsers.map((user, index) => {
+            return <input key={user.id_user} type="checkbox" value={"hola"} placeholder="hola"></input>
+          }
+          ) : <h3> No hay usuarios para elimianr </h3>}
+          
           <button className="btn jugar" onClick={() => (setShowAdministracion(false))}>
             Aceptar
           </button>
@@ -108,12 +158,12 @@ export default function logIn() {
               onChange={e => setPassword(e.target.value)}
             />
             <span onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? "💥" : "🛥️"}
+              {showPassword ? "💥" : "🚢"}
             </span>
           </div>
           <div className={"buttons"}>
             <button className={"button"} type="button" onClick={objLogin}>Iniciar Sesión</button>
-            <a className={"link"} type="button" onClick={() => router.push("/register")}>Registrarse</a>
+            <a className={"link"} type="button" onClick={() => router.push(`/register`)}>Registrarse</a>
           </div>
         </div>
       </div>
