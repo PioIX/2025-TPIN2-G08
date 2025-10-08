@@ -96,7 +96,7 @@ export default function logIn() {
           <h2>Elige el usuario que quiera eliminar</h2>
 
           {allUsers && allUsers.length > 0 ? allUsers.map(user => {
-            return <input key={user.id_user} type="checkbox" value={"hola"} placeholder="hola"></input>
+            <input key={user.id_user} type="checkbox" value={"hola"} placeholder="hola"></input>
           }) : <h3> No hay usuarios para elimianr </h3>}
           
           <button className="btn jugar" onClick={() => (setShowAdministracion(false))}>

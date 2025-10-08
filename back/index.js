@@ -179,3 +179,12 @@ app.post('/users', async function (req, res){
 		res.send({msg: -1, error: true})
 	}
 })
+
+app.get('/users', async function(req, res){
+	try {
+		let users = await realizarQuery(`SELECT * FROM Users`)
+		res.send({users, msg: 1, error: false})
+	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})

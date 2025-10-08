@@ -1,65 +1,50 @@
 "use client"
 
+//Importando lo necesario
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useSocket } from "@/hooks/useSocket"
-import Form from "@/components/Form"
+import UsersPanel from "@/components/UsersPanel"
 
 export default function Test(){
 
+    //Declarando las variables y hooks
     const router = useRouter()
-    const [users, setUsers] = useState()
-    const [checkLogin, setLogin] = useState(false)
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
-    const [name, setName] = useState()
-    const {socket, isConnected} = useSocket()
+    const searchParams = useSearchParams()
+    const [users, setUsers] = useState([])
+    const {socket, isConnected} = useSocket
 
     useEffect(()=>{
         if (!socket) return
+        // Aca entra cada vez que se recibe un evento del socket
+    })
 
-        socket.on('ping', data =>{
-            console.log(data.msg)
-        })
-    }, [socket])
+    //useEffect para que se ejecute apenas se renderice la pagina
+    useEffect(()=>{
+        get()
+    }, [])
 
-    async function login(){
-        let obj = {
-            email: email,
-            password: password
-        }
-        let result = await fetch('http://localhost:4000/verifyUser',{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(obj)
-        })
-        let response = await result.json()
-        if (response.msg == 1){
-            alert("Login exitoso")
-            router.push(`/prueba2?name=${response.user[0].name}`)
-            setUsers(response.user[0])
-            setLogin(true)
-        } else {
-            alert("Email o contraseña incorrectos")
-        }
+    //Cambia la pagina y pasa por la query el nombre del usuario
+    function newRout(name){
+        router.push(`/prueba2?name=${name}`)
     }
 
-    function pingAll(){
-        socket.emit('pingAll', {msg: "Hola"})
+    //Fetch que trae los usuarios
+    async function get(){
+        let result = await fetch('http://localhost:4000/users',{
+            method: "GET"
+        })
+        let response = await result.json()
+        setUsers(response.users)
     }
 
     return (
         <>
-            {checkLogin == false &&
-            <Form 
-            onClick={login} 
-            text={"Inicar Sesion"} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder={"Email"}
-            onChange2={e => setPassword(e.target.value)}
-            placeholder2={"Password"}></Form>}
+            {users.length == 0 ? <h1>Cargando datos...</h1>:
+            <div>
+                <h1> Panel de usuarios </h1>
+                <UsersPanel array={users} onClick={e => {newRout(e.target.textContent)}}></UsersPanel>
+            </div>}
         </>
     )
 }
