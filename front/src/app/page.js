@@ -11,21 +11,15 @@ export default function logIn() {
   const [showAdministracion, setShowAdministracion] = useState(false)
   const [allUsers, setUsers] = useState([])
 
-<<<<<<< Updated upstream
   useEffect(() => {
     if (showAdministracion) {
       users()
     }
   }, [showAdministracion])
-=======
-  useEffect(() =>{
-
-  }, [])
 
   function register() {
     router.push("/register")
   }
->>>>>>> Stashed changes
 
   async function login(dataUser) {
     let result = await fetch('http://localhost:4000/verifyUser', {
@@ -61,33 +55,19 @@ export default function logIn() {
     }
   }
 
-<<<<<<< Updated upstream
-  async function users() {
-    const idLoggued = localStorage.getItem("idLoggued")
-    let result = await fetch('http://localhost:4000/users', {
-=======
   async function users(){
     const idLoggued = localStorage.getItem("idLoggued")
     let result = await fetch('http://localhost:4000/users',{
->>>>>>> Stashed changes
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-<<<<<<< Updated upstream
       body: JSON.stringify({ idLoggued: idLoggued })
     })
     let response = await result.json()
     let users = response.users
     console.log(users)
     setUsers(users)
-=======
-      body: JSON.stringify({idLoggued: idLoggued})
-    })
-    let response = await result.json()
-    let users = response.users
-    return users
->>>>>>> Stashed changes
   }
 
   return (
@@ -115,10 +95,9 @@ export default function logIn() {
         <div className="modalAdmin">
           <h2>Elige el usuario que quiera eliminar</h2>
 
-          {allUsers && allUsers.length > 0 ? allUsers.map((user, index) => {
+          {allUsers && allUsers.length > 0 ? allUsers.map(user => {
             return <input key={user.id_user} type="checkbox" value={"hola"} placeholder="hola"></input>
-          }
-          ) : <h3> No hay usuarios para elimianr </h3>}
+          }) : <h3> No hay usuarios para elimianr </h3>}
           
           <button className="btn jugar" onClick={() => (setShowAdministracion(false))}>
             Aceptar
