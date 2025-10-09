@@ -69,7 +69,7 @@ export default function register() {
                         onChange={e => setPassword(e.target.value)}
                     />
                     <span onClick={() => setShowPassword(!showPassword)}>
-                        {showPassword ? "💥" : "🛥️"}
+                        {showPassword ? "💥" : "🚢"}
                     </span>
                 </div>
                 <input
