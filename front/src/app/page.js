@@ -10,6 +10,8 @@ export default function logIn() {
   const [showAdminOption, setShowAdminOption] = useState(false)
   const [showAdministracion, setShowAdministracion] = useState(false)
   const [allUsers, setUsers] = useState([])
+  const [check, setCheck] = useState()
+  const [deleteId, setDeleteId] = useState([])
 
   useEffect(() => {
     if (showAdministracion) {
@@ -47,7 +49,8 @@ export default function logIn() {
       } else {
         router.push("/lobby")
       }
-      console.log("Login exitoso")
+      setEmail("")
+      setPassword("")
     } else if (response.msg == -1) {
       alert("El email ingresado no es valido")
     } else if (response.msg == -2) {
@@ -68,6 +71,35 @@ export default function logIn() {
     let users = response.users
     console.log(users)
     setUsers(users)
+  }
+
+  async function deleteUsers(deleteUsers){
+    let result = await fetch('http://localhost:4000/deleteUsers',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(deleteUsers)
+    })
+    let response = await result.json()
+    if(response.msg == 1){
+      alert("Usuarios eliminados con exito")
+      setDeleteId([])
+      setShowAdministracion(false)
+    } else {
+      console.log(response.msg)
+      alert("Algo ocurrio")
+    }
+  }
+
+  async function objDelete(){
+    if(deleteId.length == 0){
+      alert()
+    }
+    let obj = {
+      idDelete: deleteId
+    }
+    await deleteUsers(obj)
   }
 
   return (
@@ -94,15 +126,24 @@ export default function logIn() {
       {showAdministracion && <div className="modalAdministracion">
         <div className="modalAdmin">
           <h2>Elige el usuario que quiera eliminar</h2>
-
-          {allUsers && allUsers.length > 0 ? allUsers.map((user, index) => {
-            return <input key={user.id_user} type="checkbox" value={"hola"} placeholder="hola"></input>
-          }
-          ) : <h3> No hay usuarios para elimianr </h3>}
-          
-          <button className="btn jugar" onClick={() => (setShowAdministracion(false))}>
-            Aceptar
-          </button>
+          {allUsers && allUsers.length > 0 ? <div> 
+            {allUsers.map((user) => {
+            return <label key={user.id_user} ><input type="checkbox" onChange={e => {
+              if (e.target.checked){
+                setDeleteId(prev => [...prev, user.id_user])} 
+              else {
+                for (let i = 0; i < deleteId.length; i++){
+                  if(user.id_user == deleteId[i].id_user){
+                    setDeleteId([...deleteId.splice(i, 1)])
+                  }
+                }
+              }}}></input>{user.name} - {user.email}</label>
+            })}
+            <button className="btn jugar" onClick={objDelete}>
+              Aceptar
+            </button>
+            </div>
+          : <h3> No hay usuarios para eliminar </h3>}
           <button className="btn admin" onClick={() => setShowAdministracion(false)}>
             Cerrar
           </button>
@@ -128,6 +169,7 @@ export default function logIn() {
             type="email"
             className={"input"}
             placeholder="Mail"
+            value={email}
             onChange={e => setEmail(e.target.value)}
           />
           <div className="password-container">
@@ -135,6 +177,7 @@ export default function logIn() {
               type={showPassword ? "text" : "password"}
               className="input"
               placeholder="Contraseña"
+              value={password}
               onChange={e => setPassword(e.target.value)}
             />
             <span onClick={() => setShowPassword(!showPassword)}>
