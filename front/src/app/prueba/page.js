@@ -48,3 +48,59 @@ export default function Test(){
         </>
     )
 }
+
+
+
+socket.on("pingAll", (data) =>{
+    console.log(data)
+})
+
+socket.emit("pingAll", {msg: "Hola a todos"})
+
+export default function ChatRoom() {
+  const { socket } = useSocket();
+  const searchParams = useSearchParams();
+  const room = searchParams.get("room");
+
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  // Al montar, unirse a la sala y escuchar nuevos mensajes
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.emit("joinRoom", { room });
+
+    socket.on("newMessage", (data) => {
+      setMessages((prev) => [...prev, data.message]);
+    });
+
+  }, [socket, room]);
+
+  // Función para enviar mensajes
+  const sendMessage = () => {
+    if (message.trim() !== "") {
+      socket.emit("sendMessage", { message });
+      setMessage("");
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <h2>Sala: {room}</h2>
+        <div>
+          {messages.map((msg, index) => (
+            <p key={index}>{msg}</p>
+          ))}
+        </div>
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Escribí un mensaje"
+        />
+        <button onClick={sendMessage}>Enviar</button>
+      </div>
+    </>
+  );
+}
