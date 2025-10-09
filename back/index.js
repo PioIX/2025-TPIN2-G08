@@ -179,3 +179,15 @@ app.post('/users', async function (req, res){
 		res.send({msg: -1, error: true})
 	}
 })
+
+app.post('/deleteUsers', async function (req, res){
+	try {
+		console.log(req.body)
+		for (let i = 0; i < req.body.idDelete.length; i++){
+			await realizarQuery(`DELETE FROM Users WHERE id_user = ${req.body.idDelete[i]}`)
+		}
+		res.send({msg: 1, error: false})
+	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})
