@@ -1,5 +1,23 @@
 "use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+
 export default function Lobby() {
+
+    const [idLoggued, setId] = useState(0)
+    const [name, setName] = useState("")
+    const [medals, setMedals] = useState(0)
+    const [photo, setPhoto] = useState("https://static.vecteezy.com/system/resources/thumbnails/042/600/457/small_2x/loading-circles-flat-style-modern-preloaders-png.png")
+
+    useEffect(() => {
+        setId(localStorage.getItem("idLoggued"))
+        setName(localStorage.getItem("name"))
+        setMedals(localStorage.getItem("medals"))
+        setPhoto(localStorage.getItem("photo"))
+    }, [])
+
+
     return (
         <>
 
@@ -28,18 +46,18 @@ export default function Lobby() {
                             <div className="profile">
                                 <div className="avatar-wrapper">
                                     <img
-                                        src="https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png"
+                                        src={photo}
                                         alt="Avatar"
                                         className="avatar"
                                     />
                                 </div>
                                 <div className="profile-info">
-                                    <div className="username">EteSech</div>
+                                    <div className="username">{name}</div>
 
                                     <div className="medals-stack">
                                         <div className="medal">
                                             <div className="medal-emoji">🎖️</div>
-                                            <div className="medal-count">1280</div>
+                                            <div className="medal-count">{medals}</div>
                                         </div>
                                     </div>
                                 </div>
