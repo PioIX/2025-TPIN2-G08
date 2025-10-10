@@ -29,22 +29,26 @@ export default function Lobby() {
     });
     let response = await result.json();
     if (response.msg == 1) {
-        setUsers(response.users);
+        setShowModalNewFriend(true)
+        setUsers(response.usersWithOutRelation);
     }
 }
 
-    async function newFriend() {
+    async function newFriend(idNewFriend) {
+        const idLoggued = localStorage.getItem("idLoggued")
         let result = await fetch("http://localhost:4000/newFriend", {
             method: "POST",
             headers: {
-            "Content-Type": "appication/json",
+            "Content-Type": "application/json",
             },
-        body: JSON.stringify({ idLoggued: idLoggued, idFriend: newFriendId }),
+        body: JSON.stringify({ idLoggued: idLoggued, idFriend: idNewFriend }),
     });
     let response = await result.json();
     if (response.msg == 1) {
         alert("Amigo agregado");
         setShowModalNewFriend(false);
+    } else {
+        console.log(response.msg)
     }
 }
 
@@ -53,33 +57,34 @@ return (
         {/* ACA VAN TODOS LOS MODAL */}
         {/* ACA VAN TODOS LOS MODAL */}
         {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
-            {showModalNewFriend && users && users.length > 0 ? (
-        <div>
-            {users.map((user) => {
-            return (
-                <label key={user.id_user}>
-                <input
-                    type="checkbox"
-                    onChange={(e) => {
-                    if (e.target.checked) {
-                        setNewFriend(user.id_user);
-                    } else {
-                        setNewFriend();
-                    }
-                    }}
-                ></input>
-                {user.name} - {user.email}
-                </label>
-            );
-            })}
-            <button onClick={newFriend}> Agregar amigo</button>
-        </div>
-        ) : (
-        <div>
-            <h3>No hay usuarios para agregar</h3>
-            <button onClick={setShowModalNewFriend(false)}> Cerrar </button>
-        </div>
-        )}
+        {showModalNewFriend &&
+            <div>
+                {users.length > 0 ?
+                    <div>
+                        {users.map((user) => {
+                        return (
+                            <label key={user.id_user}>
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setNewFriend(user.id_user);
+                                    } else {
+                                        setNewFriend();
+                                    }}}
+                                ></input>
+                                {user.name} - {user.email}
+                            </label>
+                        )})}
+                        <button onClick={() => {newFriend(newFriendId)}}> Agregar amigo</button>
+                        <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                    </div>: 
+                    <div>
+                        <h3>No hay amigos para agregar</h3>
+                        <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                    </div>
+                }
+            </div>}
 
         {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
         {/* ACA VAN TODOS LOS MODAL */}
@@ -117,34 +122,8 @@ return (
                     <li>Nadal</li>
                     <li>Bolt</li>
                     <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
                 </ul>
-                <button onCLick={usersWithOutRelationWithLoggued} type="button">
+                <button onClick={usersWithOutRelationWithLoggued} type="button">
                     Agregar amigos
                 </button>
                 </div>
