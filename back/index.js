@@ -131,6 +131,9 @@ app.post('/verifyUser', async function(req, res){
 		if (user.length > 0){
 			let user = await realizarQuery(`SELECT * FROM Users WHERE email = '${req.body.email}' AND password = '${req.body.password}'`)
 			if (user.length > 0){
+				if(!user[0].photo || esURLValida(user[0].photo) == false){
+					user[0].photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
+				}
 				res.send({user, msg: 1, error: false})
 			} else {
 				res.send({msg: -2, error: false})
@@ -155,7 +158,7 @@ function esURLValida(str) {
 app.post('/newUser', async function (req, res){
 	try{
 		console.log(req.body)
-		if (!req.body.photo && esURLValida(req.body.photo) == false){
+		if (!req.body.photo || esURLValida(req.body.photo) == false){
 			req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 		}
 		await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
@@ -188,6 +191,34 @@ app.post('/deleteUsers', async function (req, res){
 		}
 		res.send({msg: 1, error: false})
 	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/newFriend', async function(req, res){
+	try{
+		console.log(req.body)
+		await realizarQuery(`INSERT INTO Friends (id_user, id_friend) VALUES
+			(${req.body.idLoggued}, ${req.body.idFriend})`)
+		res.send({msg: 1, error: false})
+	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('usersFriend', async function(req, res){
+	let usersWithOutRelation = []
+	try {
+		console.log(req.body)
+		let users = await realizarQuery(`SELECT id_user FROM Users WHERE id_user = ${req.body.idLoggued}`)
+		for (let i = 0; i < users.length; i++){
+			usersWithOutRelation.concat(await realizarQuery(`
+				SELECT email, name, id_user
+				FROM Users
+				INNER JOIN Friends ON Users.id_user = Friends.id_user
+				WHERE Friends.id_user <> ${req.body.idLoggued} AND Friends.id_friend <> ${users[i].id_user} AND Friends.id_friend <> ${req.body.idLoggued} AND Friends.id_user <> ${users[i].id_user}`))
+		}
+	} catch(e){
 		res.send({msg: e.message, error: true})
 	}
 })
