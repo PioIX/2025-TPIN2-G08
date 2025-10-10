@@ -176,7 +176,7 @@ app.post('/users', async function (req, res){
 		if (users.length > 0){
 			res.send({users, msg: 1, error: false})
 		} else {
-			res.send({mag: 0, error: false})
+			res.send({msg: 0, error: false})
 		}
 	} catch(e){
 		res.send({msg: -1, error: true})
@@ -206,18 +206,30 @@ app.post('/newFriend', async function(req, res){
 	}
 })
 
-app.post('usersFriend', async function(req, res){
+app.post('/usersFriends', async function(req, res){
+	let userRelation
+	let usersWithRelation = []
 	let usersWithOutRelation = []
 	try {
 		console.log(req.body)
-		let users = await realizarQuery(`SELECT id_user FROM Users WHERE id_user = ${req.body.idLoggued}`)
-		for (let i = 0; i < users.length; i++){
-			usersWithOutRelation.concat(await realizarQuery(`
-				SELECT email, name, id_user
-				FROM Users
-				INNER JOIN Friends ON Users.id_user = Friends.id_user
-				WHERE Friends.id_user <> ${req.body.idLoggued} AND Friends.id_friend <> ${users[i].id_user} AND Friends.id_friend <> ${req.body.idLoggued} AND Friends.id_user <> ${users[i].id_user}`))
+		let users = await realizarQuery(`SELECT id_user, email, name FROM Users WHERE id_user <> ${req.body.idLoggued}`)
+		userRelation = await realizarQuery(`
+			SELECT id_user, id_friend
+			FROM Friends
+			WHERE id_user = ${req.body.idLoggued} OR id_friend = ${req.body.idLoggued}`)
+		for (let i = 0; i < userRelation.length; i++){
+			if (userRelation[i].id_user != req.body.idLoggued){
+				usersWithRelation.push(userRelation[i].id_user)
+			} else {
+				usersWithRelation.push(userRelation[i].id_friend)
+			}
 		}
+		for (let i = 0; i < users.length; i++){
+			if (usersWithRelation.includes(users[i].id_user) == false){
+				usersWithOutRelation.push(users[i])
+			}
+		}
+		res.send({usersWithOutRelation, msg: 1, error: false})
 	} catch(e){
 		res.send({msg: e.message, error: true})
 	}
