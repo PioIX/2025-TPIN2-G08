@@ -18,10 +18,6 @@ export default function logIn() {
     }
   }, [showAdministracion])
 
-  function register() {
-    router.push("/register")
-  }
-
   async function login(dataUser) {
     let result = await fetch('http://localhost:4000/verifyUser', {
       method: "POST",
@@ -35,16 +31,11 @@ export default function logIn() {
   }
 
   async function objLogin() {
-    console.log("Entre en la funcion")
     let obj = {
       email: email,
       password: password
     }
     let response = await login(obj)
-    localStorage.setItem("idLoggued", response.user[0].id_user)
-    localStorage.setItem("name", response.user[0].name)
-    localStorage.setItem("medals", response.user[0].medals)
-    localStorage.setItem("photo", response.user[0].photo)
     if (response.msg == 1) {
       if (response.user[0].admin == 1) {
         setShowAdminOption(true)
@@ -53,6 +44,10 @@ export default function logIn() {
       }
       setEmail("")
       setPassword("")
+      localStorage.setItem("idLoggued", response.user[0].id_user)
+      localStorage.setItem("name", response.user[0].name)
+      localStorage.setItem("medals", response.user[0].medals)
+      localStorage.setItem("photo", response.user[0].photo)
     } else if (response.msg == -1) {
       alert("El email ingresado no es valido")
     } else if (response.msg == -2) {
