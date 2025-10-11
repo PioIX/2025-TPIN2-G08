@@ -108,13 +108,12 @@ io.on("connection", (socket) => {
 		console.log("🔌 Usuario desconectado");
 	})
 
-	socket.on('nameEvent', data =>{
-		if (data.msg == "hola"){
-			data.msg = "xd"
+	socket.on('solicitud', data =>{
+		if (data.rechazar == true){
+			io.emit('solicitud', data)
 		} else {
-			data.msg = "no xd"
+			io.emit('solicitud', data)
 		}
-		io.to(req.session.room).emit('nameEvent', data.msg)
 	})
 });
 /*
