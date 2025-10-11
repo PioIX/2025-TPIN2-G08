@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useEffectEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function Lobby() {
     const [idLoggued, setId] = useState(0);
@@ -11,6 +12,11 @@ export default function Lobby() {
     const [users, setUsers] = useState([]);
     const [showModalNewFriend, setShowModalNewFriend] = useState(false);
     const [newFriendId, setNewFriend] = useState(0);
+    const {socket, isConnected} = useSocket()
+    const [invitation, setInvitation] = useState(false)
+    const [nameInvitation, setNameInvitation] = useState()
+    const [otherId, setOtherId] = useState(0)
+    const [rejectInvitation, setRejectInvitation] = useState(false)
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
@@ -18,6 +24,22 @@ export default function Lobby() {
         setMedals(localStorage.getItem("medals"));
         setPhoto(localStorage.getItem("photo"));
     }, []);
+
+    useEffect(()=>{
+        if (!socket) return
+
+        socket.on('solicitud', data =>{
+            if (data.idLoggued == idLoggued) return
+            if (data.idFriend == idLoggued && data.rechazar == false){
+                setInvitation(true)
+                setNameInvitation(data.name)
+                setOtherId(data.idLoggued)
+            } else if(data.idFriend != idLoggued && data.rechazar == true){
+                setRejectInvitation(true)
+                setNameInvitation(data.name)
+            }
+        })
+    }, [socket])
 
     async function usersWithOutRelationWithLoggued() {
         let result = await fetch("http://localhost:4000/usersFriends", {
@@ -34,6 +56,17 @@ export default function Lobby() {
     }
 }
 
+    function emitInvitation(idNewFriend){
+        socket.emit('solicitud', {idLoggued: idLoggued, idFriend: idNewFriend, name: name, rechazar: false})
+        alert("Invitacion enviada")
+        setShowModalNewFriend(false);
+}
+
+    function deleteInvitation(){
+        socket.emit('solicitud', {rechazar: true, name: name, idFriend: idLoggued})
+        setInvitation(false)
+    }
+
     async function newFriend(idNewFriend) {
         const idLoggued = localStorage.getItem("idLoggued")
         let result = await fetch("http://localhost:4000/newFriend", {
@@ -46,7 +79,7 @@ export default function Lobby() {
     let response = await result.json();
     if (response.msg == 1) {
         alert("Amigo agregado");
-        setShowModalNewFriend(false);
+        setInvitation(false)
     } else {
         console.log(response.msg)
     }
@@ -76,7 +109,7 @@ return (
                                 {user.name} - {user.email}
                             </label>
                         )})}
-                        <button onClick={() => {newFriend(newFriendId)}}> Agregar amigo</button>
+                        <button onClick={() => {emitInvitation(newFriendId)}}> Agregar amigo</button>
                         <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
                     </div>: 
                     <div>
@@ -84,6 +117,19 @@ return (
                         <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
                     </div>
                 }
+            </div>}
+
+            {invitation &&
+            <div>
+                <h2>Invitacion recibida de {nameInvitation}</h2>
+                <button onClick={() =>{newFriend(otherId)}}>Aceptar</button>
+                <button onClick={deleteInvitation}>Rechazar</button>
+            </div>}
+
+            {rejectInvitation &&
+            <div>
+                <h2>Invitacion rechazada de {nameInvitation}</h2>
+                <button onClick={() => setRejectInvitation(false)}> OK </button>
             </div>}
 
         {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
