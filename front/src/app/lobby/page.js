@@ -17,12 +17,14 @@ export default function Lobby() {
     const [nameInvitation, setNameInvitation] = useState()
     const [otherId, setOtherId] = useState(0)
     const [rejectInvitation, setRejectInvitation] = useState(false)
+    const [userFriends, setFriends] = useState([])
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
         setName(localStorage.getItem("name"));
         setMedals(localStorage.getItem("medals"));
         setPhoto(localStorage.getItem("photo"));
+        friends()
     }, []);
 
     useEffect(()=>{
@@ -40,6 +42,21 @@ export default function Lobby() {
             }
         })
     }, [socket])
+
+    async function friends(){
+        const idLoggued = localStorage.getItem("idLoggued")
+        let result = await fetch('http://localhost:4000/friends',{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setFriends(response.userFriends)
+        }
+    }
 
     async function usersWithOutRelationWithLoggued() {
         let result = await fetch("http://localhost:4000/usersFriends", {
@@ -60,7 +77,7 @@ export default function Lobby() {
         socket.emit('solicitud', {idLoggued: idLoggued, idFriend: idNewFriend, name: name, rechazar: false})
         alert("Invitacion enviada")
         setShowModalNewFriend(false);
-}
+    }
 
     function deleteInvitation(){
         socket.emit('solicitud', {rechazar: true, name: name, idFriend: idLoggued})
@@ -80,6 +97,7 @@ export default function Lobby() {
     if (response.msg == 1) {
         alert("Amigo agregado");
         setInvitation(false)
+        await friends()
     } else {
         console.log(response.msg)
     }
@@ -162,16 +180,17 @@ return (
                 </div>
 
                 <div className="friends">
-                <h3>👥 Amigos</h3>
-                <ul>
-                    <li>Capitan america</li>
-                    <li>Nadal</li>
-                    <li>Bolt</li>
-                    <li>Capitan america</li>
-                </ul>
-                <button onClick={usersWithOutRelationWithLoggued} type="button">
-                    Agregar amigos
-                </button>
+                    <h3>👥 Amigos</h3>
+                    {userFriends.length > 0 ?
+                    <li>
+                        {userFriends.map(u => {
+                            return <ul key={u.id_user}>{u.name} - {u.email}</ul>
+                        })}
+                    </li>:
+                    <h2>Aun no tienes amigos</h2>}
+                    <button onClick={usersWithOutRelationWithLoggued} type="button">
+                        Agregar amigos
+                    </button>
                 </div>
             </div>
 
