@@ -17,6 +17,7 @@ export default function Lobby() {
     const [nameInvitation, setNameInvitation] = useState()
     const [otherId, setOtherId] = useState(0)
     const [rejectInvitation, setRejectInvitation] = useState(false)
+    const [aceptInvitation, setAceptInvitation] = useState(false)
     const [userFriends, setFriends] = useState([])
 
     useEffect(() => {
@@ -32,12 +33,15 @@ export default function Lobby() {
 
         socket.on('solicitud', data =>{
             if (data.idLoggued == idLoggued) return
-            if (data.idFriend == idLoggued && data.rechazar == false){
+            if (data.idFriend == idLoggued && data.rechazar == false && data.answer == false){
                 setInvitation(true)
                 setNameInvitation(data.name)
                 setOtherId(data.idLoggued)
-            } else if(data.idFriend != idLoggued && data.rechazar == true){
+            } else if(data.idFriend != idLoggued && data.rechazar == true && data.answer == true){
                 setRejectInvitation(true)
+                setNameInvitation(data.name)
+            } else if(data.idFriend != idLoggued && data.rechazar == false && data.answer == true){
+                setAceptInvitation(true)
                 setNameInvitation(data.name)
             }
         })
@@ -74,13 +78,13 @@ export default function Lobby() {
 }
 
     function emitInvitation(idNewFriend){
-        socket.emit('solicitud', {idLoggued: idLoggued, idFriend: idNewFriend, name: name, rechazar: false})
+        socket.emit('solicitud', {idLoggued: idLoggued, idFriend: idNewFriend, name: name, rechazar: false, answer: false})
         alert("Invitacion enviada")
         setShowModalNewFriend(false);
     }
 
     function deleteInvitation(){
-        socket.emit('solicitud', {rechazar: true, name: name, idFriend: idLoggued})
+        socket.emit('solicitud', {rechazar: true, name: name, idFriend: idLoggued, answer: true})
         setInvitation(false)
     }
 
@@ -97,6 +101,7 @@ export default function Lobby() {
     if (response.msg == 1) {
         alert("Amigo agregado");
         setInvitation(false)
+        socket.emit('solicitud', {rechazar: false, idFriend: idLoggued, answer: true, name: name})
         await friends()
     } else {
         console.log(response.msg)
@@ -148,6 +153,12 @@ return (
             <div>
                 <h2>Invitacion rechazada de {nameInvitation}</h2>
                 <button onClick={() => setRejectInvitation(false)}> OK </button>
+            </div>}
+
+            {aceptInvitation &&
+            <div>
+                <h2>Invitacion aceptada de {nameInvitation}</h2>
+                <button onClick={() => {setAceptInvitation(false); friends()}}> OK </button>
             </div>}
 
         {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
