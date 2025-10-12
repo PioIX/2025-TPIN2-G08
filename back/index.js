@@ -233,3 +233,32 @@ app.post('/usersFriends', async function(req, res){
 		res.send({msg: e.message, error: true})
 	}
 })
+
+app.post('/friends', async function(req, res){
+	let userRelations
+	let idUserFriend = []
+	let userFriends = []
+	try {
+		console.log(req.body)
+		userRelations = await realizarQuery(`
+			SELECT id_user, id_friend
+			FROM Friends
+			WHERE id_user = ${req.body.idLoggued} OR id_friend = ${req.body.idLoggued}`)
+		for (let i = 0; i < userRelations.length; i++){
+			if (userRelations[i].id_user != req.body.idLoggued){
+				idUserFriend.push(userRelations[i].id_user)
+			} else {
+				idUserFriend.push(userRelations[i].id_friend)
+			}
+		}
+		for (let i = 0; i < idUserFriend.length; i++){
+			userFriends = userFriends.concat(await realizarQuery(`
+				SELECT Users.id_user, Users.email, Users.name
+				FROM Users
+				WHERE Users.id_user = ${idUserFriend[i]}`))
+		}
+		res.send({userFriends, msg: 1, error: false})
+	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
