@@ -257,6 +257,7 @@ html, body {
 
 /* --- AMIGOS --- */
 .friends {
+  position: relative;
   margin-top: 20px;
   padding: 14px;
   background:  rgba(9, 44, 58, 0.5);
@@ -358,7 +359,6 @@ html, body {
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
   text-align: center;
   z-index: 1000;
-  animation: fadeIn 0.25s ease-out;
 }
 
 /* Título */
@@ -466,4 +466,148 @@ html, body {
   font-style: italic;
   opacity: 0.8;
   color: #fff;
+}
+
+.add-friend-icon {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  color: #ccc;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.add-friend-icon:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.centrate{
+  text-align: center;
+}
+
+
+
+/* Fondo oscuro desenfocado */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Caja del modal */
+.modal-new-friend {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  color: white;
+  animation: fadeIn 0.3s ease-out;
+  text-align: center;
+}
+
+/* Encabezado */
+.modal-new-friend h2 {
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  color: #fdf572;
+}
+
+/* Lista de usuarios */
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Ítem de usuario */
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.1);
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.user-item:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.user-name {
+  font-weight: bold;
+  color: #fff;
+}
+
+.user-email {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* Botones */
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.btn.confirm {
+  background: #22c55e;
+  color: white;
+}
+
+.btn.confirm:hover {
+  background: #16a34a;
+}
+
+.btn.cancel {
+  background: #ef4444;
+  color: white;
+}
+
+.btn.cancel:hover {
+  background: #b91c1c;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
