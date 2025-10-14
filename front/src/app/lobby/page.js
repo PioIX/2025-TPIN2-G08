@@ -114,36 +114,47 @@ export default function Lobby() {
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
-            {showModalNewFriend &&
-                <div>
-                    {users.length > 0 ?
-                        <div>
-                            {users.map((user) => {
-                                return (
-                                    <label key={user.id_user}>
-                                        <input
-                                            type="checkbox"
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    setNewFriend(user.id_user);
-                                                } else {
-                                                    setNewFriend();
-                                                }
-                                            }}
-                                        ></input>
-                                        {user.name} - {user.email}
-                                    </label>
-                                )
-                            })}
-                            <button onClick={() => { emitInvitation(newFriendId) }}> Agregar amigo</button>
-                            <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
-                        </div> :
-                        <div>
-                            <h3>No hay amigos para agregar</h3>
-                            <button onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
-                        </div>
-                    }
-                </div>}
+
+            {showModalNewFriend && (
+                <div className="modal-overlay">
+                    <div className="modal-new-friend">
+                        {users.length > 0 ? (
+                            <>
+                                <h2>Enviar solicitud de amistad</h2>
+                                <div className="user-list">
+                                    {users.map((user) => (
+                                        <label key={user.id_user} className="user-item">
+                                            <input
+                                                type="checkbox"
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setNewFriend(user.id_user);
+                                                    } else {
+                                                        setNewFriend();
+                                                    }
+                                                }}
+                                            />
+                                            <div>
+                                                <div className="user-name">{user.name}</div>
+                                                <div className="user-email">{user.email}</div>
+                                            </div>
+                                        </label>
+                                    ))}
+                                </div>
+                                <button className="btn confirm" onClick={() => emitInvitation(newFriendId)}>Agregar amigo</button>
+                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                            </>
+                        ) : (
+                            <>
+                                <h3>No hay usuarios para agregar</h3>
+                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/*---------------------------*/}
 
             {requests &&
                 <div>
@@ -166,6 +177,7 @@ export default function Lobby() {
                 </div>
             }
 
+            
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -197,16 +209,19 @@ export default function Lobby() {
 
                             <div className="friends">
                                 <h3>👥 Amigos</h3>
+
+                                <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}>
+                                    +
+                                </div>
+
                                 {userFriends.length > 0 ?
                                     <li>
                                         {userFriends.map(u => {
                                             return <ul key={u.id_user}>{u.name} - {u.email}</ul>
                                         })}
                                     </li> :
-                                    <h2>Aun no tienes amigos</h2>}
-                                <button onClick={usersWithOutRelationWithLoggued} type="button">
-                                    Agregar amigos
-                                </button>
+
+                                    <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
                                 <button onClick={() => setRequests(true)}>Solicitudes</button>
                             </div>
                         </div>
