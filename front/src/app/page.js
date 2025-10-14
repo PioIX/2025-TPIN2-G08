@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Alerta from "@/components/alerta";
 
 export default function logIn() {
   const [email, setEmail] = useState("");
@@ -12,9 +13,21 @@ export default function logIn() {
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
 
+  /*alerta*/
+  const [showAlert, setShowAlert] = useState(false);
+  const [mensajeAlerta, setMensajeAlerta] = useState("");
+  const [tipoAlerta, setTipoAlerta] = useState("");
+
+  /*funcion para que salga la alerta*/
+  const mostrarAlerta = (mensajeAlerta, tipoAlerta = "error") => {
+    setAlertText(texto);
+    setAlertType(tipo);
+    setShowAlert(true);
+  };
+
   useEffect(() => {
     if (showAdministracion) {
-      users();
+      users();  
     }
   }, [showAdministracion]);
 
@@ -49,9 +62,13 @@ export default function logIn() {
       localStorage.setItem("medals", response.user[0].medals);
       localStorage.setItem("photo", response.user[0].photo);
     } else if (response.msg == -1) {
-      alert("El email ingresado no es valido");
+      return(
+        <Alerta text={"El email no es valido"} />
+      )
     } else if (response.msg == -2) {
-      alert("La contraseña ingresada no es valida");
+      return(
+        <Alerta text={"La contraseña ingresada no es valida"} />
+      )
     }
   }
 
@@ -84,7 +101,9 @@ export default function logIn() {
       setShowAdministracion(false);
     } else {
       console.log(response.msg);
-      alert("Algo ocurrio");
+      return(
+        <Alerta text={"Algo ocurrio"} />
+      )
     }
   }
 
