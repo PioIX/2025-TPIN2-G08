@@ -19,6 +19,7 @@ export default function Lobby() {
     const [rejectInvitation, setRejectInvitation] = useState(false)
     const [aceptInvitation, setAceptInvitation] = useState(false)
     const [userFriends, setFriends] = useState([])
+    const [requests, setRequests] = useState(false)
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
@@ -113,6 +114,7 @@ export default function Lobby() {
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
+
             {showModalNewFriend && (
                 <div className="modal-overlay">
                     <div className="modal-new-friend">
@@ -154,29 +156,28 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
-            {invitation &&
+            {requests &&
                 <div>
-                    <h2>Invitacion recibida de {nameInvitation}</h2>
-                    <button onClick={() => { newFriend(otherId) }}>Aceptar</button>
-                    <button onClick={deleteInvitation}>Rechazar</button>
-                </div>}
+                    {invitation &&
+                        <div>
+                            <h2>Invitacion recibida de {nameInvitation}</h2>
+                            <button onClick={() => { newFriend(otherId) }}>Aceptar</button>
+                            <button onClick={deleteInvitation}>Rechazar</button>
+                        </div>}
+                    {rejectInvitation &&
+                        <div>
+                            <h2>Invitacion rechazada de {nameInvitation}</h2>
+                            <button onClick={() => setRejectInvitation(false)}> OK </button>
+                        </div>}
+                    {aceptInvitation &&
+                        <div>
+                            <h2>Invitacion aceptada de {nameInvitation}</h2>
+                            <button onClick={() => { setAceptInvitation(false); friends() }}> OK </button>
+                        </div>}
+                </div>
+            }
 
-            {/*---------------------------*/}
-
-            {rejectInvitation &&
-                <div>
-                    <h2>Invitacion rechazada de {nameInvitation}</h2>
-                    <button onClick={() => setRejectInvitation(false)}> OK </button>
-                </div>}
-
-            {/*---------------------------*/}
-
-            {aceptInvitation &&
-                <div>
-                    <h2>Invitacion aceptada de {nameInvitation}</h2>
-                    <button onClick={() => { setAceptInvitation(false); friends() }}> OK </button>
-                </div>}
-
+            
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -208,16 +209,20 @@ export default function Lobby() {
 
                             <div className="friends">
                                 <h3>👥 Amigos</h3>
+
                                 <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}>
                                     +
                                 </div>
+
                                 {userFriends.length > 0 ?
                                     <li>
                                         {userFriends.map(u => {
                                             return <ul key={u.id_user}>{u.name} - {u.email}</ul>
                                         })}
                                     </li> :
+
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
+                                <button onClick={() => setRequests(true)}>Solicitudes</button>
                             </div>
                         </div>
 
