@@ -112,9 +112,9 @@ io.on("connection", (socket) => {
 		if (data.rechazar == true){
 			io.emit('solicitud', data)
 		} else {
+			io.emit('solicitud', data)
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
 				(${data.idLoggued}, ${data.idFriend})`)
-			io.emit('solicitud', data)
 		}
 	})
 });
@@ -261,6 +261,23 @@ app.post('/friends', async function(req, res){
 		}
 		res.send({userFriends, msg: 1, error: false})
 	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/invitations', async function(req, res){
+	let fromUsers = []
+	try{
+		console.log(req.body)
+		let invitations = await realizarQuery(`SELECT fromUser FROM Requests WHERE toUser = ${req.body.idLoggued}`)
+		for (let i = 0; i < invitations.length; i++){
+			fromUsers.push(await realizarQuery(`
+				SELECT email, name
+				FROM Users
+				WHERE id_user = ${invitations[i].fromUsers}`))
+		}
+		res.send({fromUsers, msg: 1, error: false})
+	} catch(e) {
 		res.send({msg: e.message, error: true})
 	}
 })
