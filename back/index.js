@@ -108,10 +108,12 @@ io.on("connection", (socket) => {
 		console.log("🔌 Usuario desconectado");
 	})
 
-	socket.on('solicitud', data =>{
+	socket.on('solicitud', async data =>{
 		if (data.rechazar == true){
 			io.emit('solicitud', data)
 		} else {
+			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
+				(${data.idLoggued}, ${data.idFriend})`)
 			io.emit('solicitud', data)
 		}
 	})
