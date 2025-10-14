@@ -195,7 +195,7 @@ export default function logIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <span onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? "💥" : "🚢"}
+              {showPassword ? "🙉" : "🙈"}
             </span>
           </div>
           <div className={"buttons"}>
