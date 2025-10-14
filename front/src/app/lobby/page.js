@@ -13,13 +13,11 @@ export default function Lobby() {
     const [showModalNewFriend, setShowModalNewFriend] = useState(false);
     const [newFriendId, setNewFriend] = useState(0);
     const { socket, isConnected } = useSocket()
-    const [invitation, setInvitation] = useState(false)
     const [nameInvitation, setNameInvitation] = useState()
     const [otherId, setOtherId] = useState(0)
-    const [rejectInvitation, setRejectInvitation] = useState(false)
-    const [aceptInvitation, setAceptInvitation] = useState(false)
     const [userFriends, setFriends] = useState([])
     const [requests, setRequests] = useState(false)
+    const [invitationsUser, setInvitationsUser] = useState([])
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
@@ -35,14 +33,16 @@ export default function Lobby() {
         socket.on('solicitud', data => {
             if (data.idLoggued == idLoggued) return
             if (data.idFriend == idLoggued && data.rechazar == false && data.answer == false) {
-                setInvitation(true)
                 setNameInvitation(data.name)
                 setOtherId(data.idLoggued)
+                let obj = {
+                    id_user: otherId,
+                    name: nameInvitation
+                }
+                setInvitationsUser([...invitationsUser, obj])
             } else if (data.idFriend != idLoggued && data.rechazar == true && data.answer == true) {
-                setRejectInvitation(true)
                 setNameInvitation(data.name)
             } else if (data.idFriend != idLoggued && data.rechazar == false && data.answer == true) {
-                setAceptInvitation(true)
                 setNameInvitation(data.name)
             }
         })
@@ -86,7 +86,6 @@ export default function Lobby() {
 
     function deleteInvitation() {
         socket.emit('solicitud', { rechazar: true, name: name, idFriend: idLoggued, answer: true })
-        setInvitation(false)
     }
 
     async function newFriend(idNewFriend) {
@@ -101,11 +100,24 @@ export default function Lobby() {
         let response = await result.json();
         if (response.msg == 1) {
             alert("Amigo agregado");
-            setInvitation(false)
             socket.emit('solicitud', { rechazar: false, idFriend: idLoggued, answer: true, name: name })
             await friends()
         } else {
             console.log(response.msg)
+        }
+    }
+
+    async function invitations(){
+        let result = await fetch('http://localhost:4000/invitations', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setInvitationsUser(response.fromUsers)
         }
     }
 
@@ -158,25 +170,15 @@ export default function Lobby() {
 
             {requests &&
                 <div>
-                    {invitation &&
-                        <div>
-                            <h2>Invitacion recibida de {nameInvitation}</h2>
-                            <button onClick={() => { newFriend(otherId) }}>Aceptar</button>
-                            <button onClick={deleteInvitation}>Rechazar</button>
-                        </div>}
-                    {rejectInvitation &&
-                        <div>
-                            <h2>Invitacion rechazada de {nameInvitation}</h2>
-                            <button onClick={() => setRejectInvitation(false)}> OK </button>
-                        </div>}
-                    {aceptInvitation &&
-                        <div>
-                            <h2>Invitacion aceptada de {nameInvitation}</h2>
-                            <button onClick={() => { setAceptInvitation(false); friends() }}> OK </button>
-                        </div>}
+                    {invitationsUser.length > 0 &&
+                    <div>
+                        {invitationsUser.map(u => {
+                            return <div key={u.id_user}>Invitacion de {u.name}<button onClick={() => {newFriend(u.id_user)}}>Aceptar</button><button onClick={deleteInvitation}>Rechzar</button></div>
+                        })}    
+                    </div>}
+                    <button onClick={() => setRequests(false)}> Cerrar </button>
                 </div>
             }
-
             
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -220,9 +222,8 @@ export default function Lobby() {
                                             return <ul key={u.id_user}>{u.name} - {u.email}</ul>
                                         })}
                                     </li> :
-
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
-                                <button onClick={() => setRequests(true)}>Solicitudes</button>
+                                <button onClick={() => {invitations(); setRequests(true)}}>Solicitudes</button>
                             </div>
                         </div>
 
