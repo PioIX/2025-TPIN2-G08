@@ -28,40 +28,39 @@ export default function register() {
     }
     async function objNewUser() {
         if (name == "") {
-            // alert("Debe completar el campo del nombre")
             console.log("Debe completar el campo del nombre");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo del nombre")
         } else if (email == "") {
-            //alert("Debe completar el campo del email")
             console.log("Debe completar el campo del email");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo del email")
         } else if (password == "") {
-            //alert("Debe completar el campo de la contraseña")
             console.log("Debe completar el campo de la contraseña");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo de la contraseña")
-        }
-        let obj = {
-            photo: photo,
-            name: name,
-            email: email,
-            password: password
-        }
-        let response = await newUser(obj)
-        if (response.msg == 1) {
-            //alert("Registro exitoso")
-            console.log("Registro exitoso");
-            setShowInconveniente(true)
-            setInconveniente("Registro exitoso")
-            router.push("/")
         } else {
-            //alert("Algo ha ocurrido")
-            console.log("Algo ha ocurrido");
-            setShowInconveniente(true)
-            setInconveniente("Algo ha ocurrido")
+            let obj = {
+                photo: photo,
+                name: name,
+                email: email,
+                password: password
+            }
+            let response = await newUser(obj)
+            if (response.msg == 1) {
+                //alert("Registro exitoso")
+                console.log("Registro exitoso");
+                setShowInconveniente(true)
+                setInconveniente("Registro exitoso")
+                router.push("/")
+            } else {
+                //alert("Algo ha ocurrido")
+                console.log("Algo ha ocurrido");
+                setShowInconveniente(true)
+                setInconveniente("Algo ha ocurrido")
+            }
         }
+
     }
 
     return (
