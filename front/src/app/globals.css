@@ -191,6 +191,7 @@ html, body {
 
 /* --- PERFIL --- */
 .profile {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -471,7 +472,7 @@ html, body {
 .add-friend-icon {
   position: absolute;
   top: 12px;
-  right: 18px;
+   right: 50px;
   color: #ccc;
   width: 28px;
   height: 28px;
@@ -610,4 +611,99 @@ html, body {
     opacity: 1;
     transform: scale(1);
   }
+}
+/* "+" y campanita en fila */
+.friends .notification-icon {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  color: #ccc;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.friends .add-friend-icon:hover,
+.friends .notification-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Campanita a la derecha del + */
+.friends .header-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Modal de invitaciones */
+.requests-modal {
+  position: absolute;
+  top: 80px;
+  right: 330px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: 25px;
+  border-top-right-radius: 5px;
+  padding: 16px;
+  width: 260px;
+  min-height: 140px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Animación desde la derecha (suave) */
+@keyframes slideIn {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Botones del modal */
+.requests-modal button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.requests-modal button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.logOut {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  filter: grayscale(100%) brightness(1);
+  transition: all 0.25s ease;
+}
+
+.logOut:hover {
+  transform: scale(1.15) rotate(-5deg);
+  filter: grayscale(0%) brightness(1.4);
 }
