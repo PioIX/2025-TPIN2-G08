@@ -206,14 +206,14 @@ async function checkInvitation(to){
                         invitationsUser.map(u => (
                             <div key={u.id_user}>
                                 Invitación de {u.name}
-                                <button onClick={() => {newFriend(u.id_user); setRequests(false)}}>Aceptar</button>
-                                <button onClick={() => {let rechazar = true; deleteInvitations(u.id_user, rechazar)}}>Rechazar</button>
+                                <button className="tilde" onClick={() => {newFriend(u.id_user); setRequests(false)}}>✔</button>
+                                <button className="cruz" onClick={() => {let rechazar = true; deleteInvitations(u.id_user, rechazar)}}>✖</button>
                             </div>
                         ))
                     ) : (
                         <p>No hay nuevas invitaciones</p>
                     )}
-                    <button onClick={() => setRequests(false)}>Cerrar</button>
+                    <button className="cerrar-requests" onClick={() => setRequests(false)}>Cerrar</button>
                 </div>
             )}
             

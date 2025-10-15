@@ -186,7 +186,6 @@ export default function logIn() {
         >
           <div
             className="inconveniente"
-            onClick={(e) => e.stopPropagation()} // Evita que el click dentro cierre el modal
           >
             <h2>{inconveniente}</h2>
             <button
