@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+
 export default function logIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,6 +10,8 @@ export default function logIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminOption, setShowAdminOption] = useState(false);
   const [showAdministracion, setShowAdministracion] = useState(false);
+  const [showInconveniente, setShowInconveniente] = useState(false);
+  const [inconveniente, setInconveniente] = useState("");
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
 
@@ -49,9 +52,15 @@ export default function logIn() {
       localStorage.setItem("medals", response.user[0].medals);
       localStorage.setItem("photo", response.user[0].photo);
     } else if (response.msg == -1) {
-      alert("El email ingresado no es valido");
+      /*alert("El email ingresado no es valido")*/
+      console.log("El email ingresado no es válido");
+      setShowInconveniente(true)
+      setInconveniente("El email ingresado no es válido")
     } else if (response.msg == -2) {
-      alert("La contraseña ingresada no es valida");
+      /*alert("La contraseña ingresada no es valida")*/
+      console.log("La contraseña ingresada no es válida");
+      setShowInconveniente(true)
+      setInconveniente("La contraseña ingresada no es válida")
     }
   }
 
@@ -166,6 +175,32 @@ export default function logIn() {
           </div>
         </div>
       )}
+
+      {showInconveniente && (
+        <div
+          className="cuadroCompleto"
+          onClick={() => {
+            setShowInconveniente(false);
+            setInconveniente("");
+          }}
+        >
+          <div
+            className="inconveniente"
+          >
+            <h2>{inconveniente}</h2>
+            <button
+              className="btn cerrar"
+              onClick={() => {
+                setShowInconveniente(false);
+                setInconveniente("");
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
       {/* ACA VAN TODOS LOS MODAL */}

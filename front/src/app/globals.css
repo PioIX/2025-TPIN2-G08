@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   overflow: hidden;
@@ -23,14 +24,15 @@ html, body {
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 25px;
   font-weight: 500;
-  
+
 }
+
 .subTitle {
   font-family: 'Poppins', sans-serif;
   color: #f3f186ce;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 25px;
-  
+
 }
 
 
@@ -59,8 +61,9 @@ html, body {
   outline: none;
   transition: all 0.3s ease-in-out;
 }
+
 .input::placeholder {
-  color: black; 
+  color: black;
   opacity: 1;
 }
 
@@ -94,21 +97,27 @@ html, body {
 
 .button:hover {
   background-color: #c4c270;
- 
+
 }
 
 .button:active {
   transform: translateY(1px);
 }
-.link{
-  color: rgb(86, 92, 94);
+
+.link {
+  margin-top: 5px;
+  color: rgb(75, 80, 82);
   text-align: center;
-  text-decoration: underline;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
-.link:hover{
+
+.link:hover {
   color: rgba(0, 0, 0, 0.699);
   text-align: center;
   text-decoration: underline;
+  transform: scale(1.1);
 }
 
 
@@ -122,7 +131,7 @@ html, body {
 
 .password-container .input {
   width: 100%;
-  padding-right: 40px; 
+  padding-right: 40px;
 }
 
 .password-container span {
@@ -135,11 +144,12 @@ html, body {
   color: black;
   user-select: none;
   opacity: 0.7;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .password-container span:hover {
   opacity: 1;
+  transform: translateY(-50%) scale(1.1); /* 👈 combina ambas transformaciones */
 }
 
 /* --- CONTENEDOR GENERAL --- */
@@ -159,7 +169,7 @@ html, body {
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1;
 }
 
@@ -172,10 +182,10 @@ html, body {
   height: 80vh;
   border-radius: 20px;
   padding: 26px;
-  background:  rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -191,13 +201,14 @@ html, body {
 
 /* --- PERFIL --- */
 .profile {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 15px;
   padding: 12px;
   background: rgba(9, 44, 58, 0.5);
   border-radius: 14px;
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15);
   flex-wrap: wrap;
 }
 
@@ -221,11 +232,13 @@ html, body {
   display: flex;
   flex-direction: column;
 }
+
 .username {
   font-size: 1.3rem;
   font-weight: bold;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.7);
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
 }
+
 .level {
   font-size: 0.95rem;
   opacity: 0.9;
@@ -248,22 +261,27 @@ html, body {
   padding: 6px 10px;
   border-radius: 10px;
   font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   animation: medal-glow 2s infinite alternate;
 }
 
-.medal-emoji { font-size: 1.3rem; }
-.medal-count { font-size: 0.95rem; }
+.medal-emoji {
+  font-size: 1.3rem;
+}
+
+.medal-count {
+  font-size: 0.95rem;
+}
 
 /* --- AMIGOS --- */
 .friends {
   position: relative;
   margin-top: 20px;
   padding: 14px;
-  background:  rgba(9, 44, 58, 0.5);
+  background: rgba(9, 44, 58, 0.5);
   border-radius: 12px;
   flex: 1;
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15);
   max-height: 35%;
   overflow-y: auto;
 }
@@ -272,31 +290,37 @@ html, body {
 .friends::-webkit-scrollbar {
   width: 8px;
 }
+
 .friends::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 6px;
 }
+
 .friends::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
+
 .friends h3 {
   margin: 0 0 10px 0;
   text-align: center;
   font-size: 1.1rem;
 }
+
 .friends ul {
   list-style: none;
   padding: 0;
 }
+
 .friends li {
   margin: 6px 0;
   padding: 8px;
   border-radius: 8px;
   transition: background 0.2s;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
+
 .friends li:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* --- DERECHA --- */
@@ -306,9 +330,10 @@ html, body {
   font-size: 2.4rem;
   font-weight: 800;
   color: #fdf572;
-  text-shadow: 0 0 10px rgba(0,0,0,0.9);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
   margin-bottom: 10px;
 }
+
 .board {
   flex: 1;
   display: flex;
@@ -316,11 +341,12 @@ html, body {
   justify-content: center;
   width: 100%;
 }
+
 .board img {
-  width: 50%;
+  width: 60%;
   border-radius: 12px;
   border: 3px solid #fdf572;
-  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
 }
 
 /* --- BOTÓN JUGAR --- */
@@ -328,6 +354,7 @@ html, body {
   text-align: center;
   margin-top: 12px;
 }
+
 .play-btn {
   background: linear-gradient(135deg, #1f6feb, #3f8fff);
   color: #fff;
@@ -338,9 +365,10 @@ html, body {
   font-weight: bold;
   cursor: pointer;
   animation: pulse 1.6s infinite;
-  box-shadow: 0 0 20px rgba(31,111,235,0.6);
+  box-shadow: 0 0 20px rgba(31, 111, 235, 0.6);
   transition: transform 0.2s;
 }
+
 .play-btn:hover {
   transform: scale(1.05);
 }
@@ -412,13 +440,14 @@ html, body {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
 }
 
-.modalAdministracion{
+.modalAdministracion {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -471,7 +500,7 @@ html, body {
 .add-friend-icon {
   position: absolute;
   top: 12px;
-  right: 18px;
+  right: 50px;
   color: #ccc;
   width: 28px;
   height: 28px;
@@ -490,7 +519,7 @@ html, body {
   transform: scale(1.1);
 }
 
-.centrate{
+.centrate {
   text-align: center;
 }
 
@@ -503,7 +532,7 @@ html, body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -521,7 +550,7 @@ html, body {
   width: 400px;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
   color: white;
   animation: fadeIn 0.3s ease-out;
   text-align: center;
@@ -547,7 +576,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   padding: 12px;
   border-radius: 10px;
   cursor: pointer;
@@ -555,7 +584,7 @@ html, body {
 }
 
 .user-item:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .user-name {
@@ -606,8 +635,223 @@ html, body {
     opacity: 0;
     transform: scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* "+" y campanita en fila */
+.friends .notification-icon {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  color: #ccc;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.friends .add-friend-icon:hover,
+.friends .notification-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Campanita a la derecha del + */
+.friends .header-icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Modal de invitaciones */
+.requests-modal {
+  position: absolute;
+  top: 60px;
+  right: 190px;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: 25px;
+  border-top-right-radius: 5px;
+  padding: 16px;
+  width: 260px;
+  min-height: 90px;
+  max-height: 500px;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideIn 0.3s ease forwards;
+}
+
+.requests-modal > div,
+.requests-modal > p {
+  margin: 0;
+}
+
+.requests-modal button.cerrar-requests {
+  align-self: flex-end;
+  margin-top: auto; /* Empuja el botón al final */
+  padding: 8px 16px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+}
+
+
+
+/* Animación desde la derecha (suave) */
+@keyframes slideIn {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+.logOut {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  filter: grayscale(100%) brightness(1);
+  transition: all 0.25s ease;
+}
+
+.logOut:hover {
+  transform: scale(1.15) rotate(-5deg);
+  filter: grayscale(0%) brightness(1.4);
+}
+
+/*ALERTA PERSONALIZADA */
+
+.cuadroCompleto {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.1); /* capa mínima para detectar clics afuera */
+  backdrop-filter: blur(3px); 
+}
+
+.inconveniente {
+  margin-top: 25px;
+  background: rgba(16, 30, 55, 0.9);
+  border: 2px solid #3aa8ff;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  color: #e8f1ff;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+  font-family: "Segoe UI", sans-serif;
+  animation: deslizar 0.35s ease-out;
+}
+
+.inconveniente h2 {
+  margin: 0;
+  color: #9bd6ff;
+  text-shadow: 0 0 8px rgba(0, 153, 255, 0.4);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn.cerrar {
+  margin-top: 10px;
+  background: #173a66;
+  color: #e8f1ff;
+  border: 1px solid #3aa8ff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn.cerrar:hover {
+  background: #23558f;
+  box-shadow: 0 0 8px rgba(58, 168, 255, 0.5);
+}
+
+/* animación suave desde arriba */
+@keyframes deslizar {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.tilde {
+  background-color: #28a745; /* verde agradable */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(40, 167, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.tilde:hover {
+  background-color: #218838; /* verde oscuro al hover */
+}
+
+.cruz {
+  background-color: #dc3545; /* rojo fuerte */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.cruz:hover {
+  background-color: #c82333; /* rojo oscuro al hover */
+}
+
+.cerrar-requests {
+  background-color: #343a40;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(52, 58, 64, 0.6);
+  transition: background-color 0.3s ease;
+  
+}
+.cerrar-requests:hover {
+  background-color: #23272b;
 }

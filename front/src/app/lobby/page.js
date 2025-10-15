@@ -3,6 +3,7 @@
 import { useState, useEffect, useEffectEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
+import { Router } from "next/router";
 
 export default function Lobby() {
     const [idLoggued, setId] = useState(0);
@@ -17,7 +18,9 @@ export default function Lobby() {
     const [userFriends, setFriends] = useState([])
     const [requests, setRequests] = useState(false)
     const [invitationsUser, setInvitationsUser] = useState([])
+    const router = useRouter();
     const [advice, setAdvice] = useState()
+
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
@@ -141,10 +144,10 @@ async function checkInvitation(to){
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({idLoggued: idLoggued})
+            body: JSON.stringify({ idLoggued: idLoggued })
         })
         let response = await result.json()
-        if (response.msg == 1){
+        if (response.msg == 1) {
             setInvitationsUser(response.fromUsers)
             setRequests(true)
         }
@@ -197,23 +200,29 @@ async function checkInvitation(to){
 
             {/*---------------------------*/}
 
-            {requests &&
-                <div>
-                    {invitationsUser.length > 0 ?
-                    <div>
-                        {invitationsUser.map((u, index) => {
-                            return <div key={index}>Invitacion de {u.name}<button onClick={() => {newFriend(u.id_user); setRequests(false)}}>Aceptar</button><button onClick={() => {let rechazar = true; deleteInvitations(u.id_user, rechazar)}}>Rechzar</button></div>
-                        })}    
-                    </div>:
-                    <h2>No tiene solicitudes pendientes</h2>}
-                    <button onClick={() => {setRequests(false); setAdvice(false)}}> Cerrar </button>
+            {requests && (
+                <div className="requests-modal">
+                    {invitationsUser.length > 0 ? (
+                        invitationsUser.map(u => (
+                            <div key={u.id_user}>
+                                Invitación de {u.name}
+                                <button className="tilde" onClick={() => {newFriend(u.id_user); setRequests(false)}}>✔</button>
+                                <button className="cruz" onClick={() => {let rechazar = true; deleteInvitations(u.id_user, rechazar)}}>✖</button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No hay nuevas invitaciones</p>
+                    )}
+                    <button className="cerrar-requests" onClick={() => setRequests(false)}>Cerrar</button>
                 </div>
-            }
+            )}
             
+           {/*---------------------------*/}
+
             {advice &&
             <div>
                 <h2>{nameInvitation} rechazo tu solicitud de amistad</h2>
-                <button onClick={() => setAdvice(false)}> Cerrar </button>
+                <button onClick={() => {setRequests(false); setAdvice(false)}}> Cerrar </button>
             </div>}
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
@@ -233,6 +242,7 @@ async function checkInvitation(to){
                                 <div className="avatar-wrapper">
                                     <img src={photo} alt="Avatar" className="avatar" />
                                 </div>
+                                <img className="logOut" onClick={()=> router.replace("/")} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
                                 <div className="profile-info">
                                     <div className="username">{name}</div>
 
@@ -248,18 +258,21 @@ async function checkInvitation(to){
                             <div className="friends">
                                 <h3>👥 Amigos</h3>
 
-                                <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}>
-                                    +
+                                <div className="header-icons">
+                                    <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}>
+                                        +
+                                    </div>
+                                    <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}>
+                                        🕭
+                                    </div>
                                 </div>
-
                                 {userFriends.length > 0 ?
-                                    <li>
+                                    <ul>
                                         {userFriends.map(u => {
-                                            return <ul key={u.id_user}>{u.name} - {u.email}</ul>
+                                            return <li key={u.id_user}>{u.name} - {u.email}</li>
                                         })}
-                                    </li> :
+                                    </ul> :
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
-                                <button onClick={invitations}>Solicitudes</button>
                             </div>
                         </div>
 
