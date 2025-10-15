@@ -343,7 +343,7 @@ body {
 }
 
 .board img {
-  width: 50%;
+  width: 60%;
   border-radius: 12px;
   border: 3px solid #fdf572;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
@@ -676,16 +676,16 @@ body {
 /* Modal de invitaciones */
 .requests-modal {
   position: absolute;
-  top: 80px;
-  right: 330px;
+  top: 60px;
+  right: 190px;
   background: rgba(0, 0, 0, 0.85);
   color: white;
   border-radius: 25px;
   border-top-right-radius: 5px;
   padding: 16px;
   width: 260px;
-  min-height: 140px;
-  max-height: 400px;
+  min-height: 90px;
+  max-height: 500px;
   overflow-y: auto;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);
@@ -695,6 +695,25 @@ body {
   gap: 10px;
   animation: slideIn 0.3s ease forwards;
 }
+
+.requests-modal > div,
+.requests-modal > p {
+  margin: 0;
+}
+
+.requests-modal button.cerrar-requests {
+  align-self: flex-end;
+  margin-top: auto; /* Empuja el botón al final */
+  padding: 8px 16px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+}
+
+
 
 /* Animación desde la derecha (suave) */
 @keyframes slideIn {
@@ -709,20 +728,6 @@ body {
   }
 }
 
-/* Botones del modal */
-.requests-modal button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.requests-modal button:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
 
 .logOut {
   position: absolute;
@@ -803,3 +808,50 @@ body {
   }
 }
 
+.tilde {
+  background-color: #28a745; /* verde agradable */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(40, 167, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.tilde:hover {
+  background-color: #218838; /* verde oscuro al hover */
+}
+
+.cruz {
+  background-color: #dc3545; /* rojo fuerte */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.cruz:hover {
+  background-color: #c82333; /* rojo oscuro al hover */
+}
+
+.cerrar-requests {
+  background-color: #343a40;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(52, 58, 64, 0.6);
+  transition: background-color 0.3s ease;
+  
+}
+.cerrar-requests:hover {
+  background-color: #23272b;
+}
