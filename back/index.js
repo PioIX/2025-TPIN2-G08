@@ -111,10 +111,12 @@ io.on("connection", (socket) => {
 	socket.on('solicitud', async data =>{
 		if (data.rechazar == true){
 			io.emit('solicitud', data)
-		} else {
+		} else if(data.rechazar == false && data.answer == false){
 			io.emit('solicitud', data)
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
 				(${data.idLoggued}, ${data.idFriend})`)
+		} else {
+			io.emit('solicitud', data)
 		}
 	})
 });
@@ -270,14 +272,38 @@ app.post('/invitations', async function(req, res){
 	try{
 		console.log(req.body)
 		let invitations = await realizarQuery(`SELECT fromUser FROM Requests WHERE toUser = ${req.body.idLoggued}`)
+		console.log(invitations)
 		for (let i = 0; i < invitations.length; i++){
-			fromUsers.push(await realizarQuery(`
-				SELECT email, name
+			fromUsers = fromUsers.concat(await realizarQuery(`
+				SELECT email, name, id_user
 				FROM Users
-				WHERE id_user = ${invitations[i].fromUsers}`))
+				WHERE id_user = ${invitations[i].fromUser}`))
 		}
 		res.send({fromUsers, msg: 1, error: false})
 	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/deleteinvitations', async function(req, res){
+	try {
+		console.log(req.body)
+		await realizarQuery(`DELETE FROM Requests WHERE toUser = ${req.body.idLoggued} AND fromUser = ${req.body.from}`)
+		res.send({msg: 1, error: false})
+	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/checkinvitation', async function(req, res){
+	try {
+		let check = await realizarQuery(`SELECT * FROM Requests WHERE fromUser = ${req.body.from} AND toUser = ${req.body.to}`)
+		if (check.length > 0){
+			res.send({msg: -1, error: false})
+		} else {
+			res.send({msg: 1, error: false})
+		}
+	} catch(e){
 		res.send({msg: e.message, error: true})
 	}
 })
