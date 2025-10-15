@@ -3,7 +3,6 @@
 import { useState, useEffect, useEffectEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
-import { Router } from "next/router";
 
 export default function Lobby() {
     const [idLoggued, setId] = useState(0);
@@ -20,6 +19,8 @@ export default function Lobby() {
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
     const [advice, setAdvice] = useState()
+    const [showInconveniente, setShowInconveniente] = useState(false);
+    const [inconveniente, setInconveniente] = useState("");
 
 
     useEffect(() => {
@@ -33,9 +34,7 @@ export default function Lobby() {
     useEffect(() => {
         if (!socket) return
 
-        socket.on('solicitud', data => {
-            if (data.idLoggued == idLoggued) return
-            console.log(data)
+        socket.on('solicitudBack', data => {
             if (data.idFriend == idLoggued && data.rechazar == false && data.answer == false) {
                 let obj = {
                     id_user: data.idLoggued,
@@ -48,6 +47,12 @@ export default function Lobby() {
             } else if (data.idFriend != idLoggued && data.rechazar == false && data.answer == true) {
                 setNameInvitation(data.name)
                 friends()
+            }
+        })
+
+        socket.on('invitacionBack', data => {
+            if (data.idFriend == idLoggued) {
+
             }
         })
     }, [socket])
@@ -82,24 +87,26 @@ export default function Lobby() {
         }
     }
 
-async function checkInvitation(to){
-    let result = await fetch('http://localhost:4000/checkinvitation',{
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({from: idLoggued, to: to})
-    })
-    let response = await result.json()
-    if (response.msg == 1){
-        socket.emit('solicitud', { idLoggued: idLoggued, idFriend: to, name: name, rechazar: false, answer: false })
-        alert("Invitacion enviada")
-        setShowModalNewFriend(false);
-    } else {
-        alert("Ya le has enviado una invitacion a este usuario")
-        setShowModalNewFriend(false)
+    async function checkInvitation(to) {
+        let result = await fetch('http://localhost:4000/checkinvitation', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ from: idLoggued, to: to })
+        })
+        let response = await result.json()
+        if (response.msg == 1) {
+            socket.emit('solicitud', { idLoggued: idLoggued, idFriend: to, name: name, rechazar: false, answer: false })
+            setShowInconveniente(true)
+            setInconveniente("Invitacion enviada")
+            setShowModalNewFriend(false);
+        } else {
+            setShowInconveniente(true)
+            setInconveniente("Ya le has enviado una invitacion a este usuario")
+            setShowModalNewFriend(false)
+        }
     }
-}
 
     async function newFriend(idNewFriend) {
         const idLoggued = localStorage.getItem("idLoggued")
@@ -112,7 +119,8 @@ async function checkInvitation(to){
         });
         let response = await result.json();
         if (response.msg == 1) {
-            alert("Amigo agregado");
+            setShowInconveniente(true)
+            setInconveniente("Amigo agregado")
             socket.emit('solicitud', { rechazar: false, idFriend: idLoggued, answer: true, name: name })
             await friends()
             let rechazar = false
@@ -123,22 +131,22 @@ async function checkInvitation(to){
         }
     }
 
-    async function deleteInvitations(fromUser, rechazar){
+    async function deleteInvitations(fromUser, rechazar) {
         let result = await fetch('http://localhost:4000/deleteinvitations', {
-            method:"POST",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({idLoggued: idLoggued, from: fromUser})
+            body: JSON.stringify({ idLoggued: idLoggued, from: fromUser })
         })
         let response = await result.json()
-        if (response.msg == 1 && rechazar == true){
+        if (response.msg == 1 && rechazar == true) {
             socket.emit('solicitud', { rechazar: true, name: name, idFriend: idLoggued, answer: true })
             setRequests(false)
         }
     }
 
-    async function invitations(){
+    async function invitations() {
         let result = await fetch('http://localhost:4000/invitations', {
             method: "POST",
             headers: {
@@ -151,6 +159,12 @@ async function checkInvitation(to){
             setInvitationsUser(response.fromUsers)
             setRequests(true)
         }
+    }
+
+    function invitar(idFriend) {
+        socket.emit('invitacionJugar', { idFriend: idFriend, from: idLoggued })
+        setShowInconveniente(true)
+        setInconveniente("Invitacion enviada")
     }
 
     return (
@@ -206,8 +220,8 @@ async function checkInvitation(to){
                         invitationsUser.map(u => (
                             <div key={u.id_user}>
                                 Invitación de {u.name}
-                                <button className="tilde" onClick={() => {newFriend(u.id_user); setRequests(false)}}>✔</button>
-                                <button className="cruz" onClick={() => {let rechazar = true; deleteInvitations(u.id_user, rechazar)}}>✖</button>
+                                <button className="tilde" onClick={() => { newFriend(u.id_user); setRequests(false) }}>✔</button>
+                                <button className="cruz" onClick={() => { let rechazar = true; deleteInvitations(u.id_user, rechazar) }}>✖</button>
                             </div>
                         ))
                     ) : (
@@ -216,14 +230,34 @@ async function checkInvitation(to){
                     <button className="cerrar-requests" onClick={() => setRequests(false)}>Cerrar</button>
                 </div>
             )}
-            
-           {/*---------------------------*/}
+
+            {/*---------------------------*/}
 
             {advice &&
-            <div>
-                <h2>{nameInvitation} rechazo tu solicitud de amistad</h2>
-                <button onClick={() => {setRequests(false); setAdvice(false)}}> Cerrar </button>
-            </div>}
+                <div>
+                    <h2>{nameInvitation} rechazo tu solicitud de amistad</h2>
+                    <button onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
+                </div>}
+
+            {showInconveniente && (
+                <div className="cuadroCompleto"
+                    onClick={() => {
+                        setShowInconveniente(false);
+                        setInconveniente("");
+                    }}>
+                    <div className="inconveniente">
+                        <h2>{inconveniente}</h2>
+                        <button
+                            className="btn cerrar"
+                            onClick={() => {
+                                setShowInconveniente(false);
+                                setInconveniente("");
+                            }}>
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -242,7 +276,7 @@ async function checkInvitation(to){
                                 <div className="avatar-wrapper">
                                     <img src={photo} alt="Avatar" className="avatar" />
                                 </div>
-                                <img className="logOut" onClick={()=> router.replace("/")} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
+                                <img className="logOut" onClick={() => router.replace("/")} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
                                 <div className="profile-info">
                                     <div className="username">{name}</div>
 
@@ -269,7 +303,7 @@ async function checkInvitation(to){
                                 {userFriends.length > 0 ?
                                     <ul>
                                         {userFriends.map(u => {
-                                            return <li key={u.id_user}>{u.name} - {u.email}</li>
+                                            return <li key={u.id_user}>{u.name} - {u.email}<button onClick={() => invitar(u.id_user)}>Invitar a jugar</button></li>
                                         })}
                                     </ul> :
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
