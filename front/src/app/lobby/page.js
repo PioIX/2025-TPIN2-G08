@@ -19,6 +19,7 @@ export default function Lobby() {
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
     const [advice, setAdvice] = useState()
+    const [advice2, setAdvice2] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
     const [inconveniente, setInconveniente] = useState("");
 
@@ -46,7 +47,9 @@ export default function Lobby() {
                 setAdvice(true)
             } else if (data.idFriend != idLoggued && data.rechazar == false && data.answer == true) {
                 setNameInvitation(data.name)
+                setAdvice2(true)
                 friends()
+                
             }
         })
 
@@ -234,10 +237,20 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {advice &&
-                <div>
-                    <h2>{nameInvitation} rechazo tu solicitud de amistad</h2>
-                    <button onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
-                </div>}
+            <div className ="modal-rechazo-solicitud">
+                <h2 className ="mensaje-rechazo-solicitud">{nameInvitation} rechazo tu solicitud de amistad</h2>
+                <button className ="boton-rechazo-solicitud" onClick={() => {setRequests(false); setAdvice(false)}}> Cerrar </button>
+            </div>}
+
+           {/*---------------------------*/}
+
+            {advice2 &&
+            <div className ="modal-acepta-solicitud">
+                <h2 className ="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
+                <button className ="boton-acepta-solicitud" onClick={() => {setRequests(false); setAdvice2(false)}}> Cerrar </button>
+            </div>}
+
+          {/*---------------------------*/}
 
             {showInconveniente && (
                 <div className="cuadroCompleto"
@@ -299,6 +312,7 @@ export default function Lobby() {
                                     <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}>
                                         🕭
                                     </div>
+                                    {invitationsUser.length > 0 && <div className="circulo-notificacion" onClick={() => { invitations(); setRequests(true) }}>🔴</div>}
                                 </div>
                                 {userFriends.length > 0 ?
                                     <ul>
