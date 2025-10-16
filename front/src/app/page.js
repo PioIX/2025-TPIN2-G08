@@ -112,7 +112,9 @@ export default function logIn() {
 
       {showAdminOption && (
         <div className="modalAdministracion">
-          <img src="/barco volver.png" className={"btnVolver"}></img>
+          <button className="btnVolver" onClick={() => setShowAdminOption(false)}>
+            ← Volver
+          </button>
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
             <button className="btn jugar" onClick={() => router.push("/lobby")}>

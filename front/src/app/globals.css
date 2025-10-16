@@ -818,7 +818,74 @@ body {
 }
 
 .btnVolver {
-  width: 100px;
-  top: 35px;
-  left: 35px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #1e2a38; /* color oscuro bonito */
+  color: #fff;
+  border: 2px solid #4fc3f7;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+.btnVolver:hover {
+  background-color: #4fc3f7;
+  color: #1e2a38;
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+.modalSeguroMini {
+  position: absolute;
+  top: 125px; /* ajustá según el icono */
+  left: 500px; /* ajustá según tu layout */
+  z-index: 9999;
+}
+
+.contenidoMini {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 15px 18px;
+  color: white;
+  width: 130px;
+  text-align: center;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.contenidoMini p {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.botonesMini {
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
+}
+
+.botonesMini button {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.botonesMini button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+
