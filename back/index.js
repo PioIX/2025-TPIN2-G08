@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
 
 	socket.on('pingAll', data => {
 		console.log("PING ALL: ", data);
-		data.msj = "holaputo"
+		data.msj = "hola"
 		io.emit('ping', {msg: data.msj});
 	});
 
