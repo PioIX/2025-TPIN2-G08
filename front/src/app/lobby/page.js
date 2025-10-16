@@ -37,20 +37,19 @@ export default function Lobby() {
         if (!socket) return
 
         socket.on('solicitudBack', data => {
-            if (data.idFriend == idLoggued && data.rechazar == false && data.answer == false) {
+            if (data.rechazar == false && data.answer == false) {
                 let obj = {
                     id_user: data.idLoggued,
                     name: data.name
                 }
                 setInvitationsUser([...invitationsUser, obj])
-            } else if (data.idFriend != idLoggued && data.rechazar == true && data.answer == true) {
+            } else if (data.rechazar == true && data.answer == true) {
                 setNameInvitation(data.name)
                 setAdvice(true)
-            } else if (data.idFriend != idLoggued && data.rechazar == false && data.answer == true) {
+            } else if (data.rechazar == false && data.answer == true) {
                 setNameInvitation(data.name)
                 setAdvice2(true)
                 friends()
-
             }
         })
 
@@ -101,7 +100,7 @@ export default function Lobby() {
         })
         let response = await result.json()
         if (response.msg == 1) {
-            socket.emit('solicitud', { idLoggued: idLoggued, idFriend: to, name: name, rechazar: false, answer: false })
+            socket.emit('solicitud', { idLoggued: idLoggued, room: "P" + to, name: name, rechazar: false, answer: false})
             setShowInconveniente(true)
             setInconveniente("Invitacion enviada")
             setShowModalNewFriend(false);
@@ -125,7 +124,7 @@ export default function Lobby() {
         if (response.msg == 1) {
             setShowInconveniente(true)
             setInconveniente("Amigo agregado")
-            socket.emit('solicitud', { rechazar: false, idFriend: idLoggued, answer: true, name: name })
+            socket.emit('solicitud', { room: "P" + idLoggued, name: name , rechazar: false, answer: true})
             await friends()
             let rechazar = false
             await deleteInvitations(idNewFriend, rechazar)
@@ -145,7 +144,7 @@ export default function Lobby() {
         })
         let response = await result.json()
         if (response.msg == 1 && rechazar == true) {
-            socket.emit('solicitud', { rechazar: true, name: name, idFriend: idLoggued, answer: true })
+            socket.emit('solicitud', { name: name, room: "P" + idLoggued, rechazar: true, answer: true })
             setRequests(false)
         }
     }
