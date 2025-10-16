@@ -16,6 +16,7 @@ export default function logIn() {
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
   const {socket, isConnected} = useSocket()
+  const [id, setId] = useState(0)
 
   useEffect(() => {
     if (showAdministracion) {
@@ -53,9 +54,10 @@ export default function logIn() {
       localStorage.setItem("photo", response.user[0].photo);
       if (response.user[0].admin == 1) {
         setShowAdminOption(true);
+        setId(response.user[0].id_user)
       } else {
         socket.emit('joinRoom', {room: "P" + response.user[0].id_user})
-        router.replace("/lobby");
+        router.replace(`/lobby`);
       }
       setEmail("");
       setPassword("")
@@ -122,7 +124,7 @@ export default function logIn() {
         <div className="modalAdministracion">
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
-            <button className="btn jugar" onClick={() => {router.push("/lobby"); const idLoggued = localStorage.getItem("idLoggued"); socket.emit('joinRoom', {room: "P" + idLoggued})}}>
+            <button className="btn jugar" onClick={() => {socket.emit('joinRoom', {room: "P" + id}); router.replace(`/lobby`);}}>
               Jugar
             </button>
             <button
