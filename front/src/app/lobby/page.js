@@ -335,7 +335,7 @@ export default function Lobby() {
                             </div>
 
                             <div className="play-area">
-                                <button className="play-btn">¡Jugar!</button>
+                                <button onClick={()=> router.replace("/game")} className="play-btn">¡Jugar!</button>
                             </div>
                         </div>
                     </div>

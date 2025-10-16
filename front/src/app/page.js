@@ -43,7 +43,7 @@ export default function logIn() {
       if (response.user[0].admin == 1) {
         setShowAdminOption(true);
       } else {
-        router.push("/lobby");
+        router.replace("/lobby");
       }
       setEmail("");
       setPassword("");
