@@ -90,18 +90,7 @@ io.on("connection", (socket) => {
 		req.session.room = data.room;
 		socket.join(req.session.room);
 
-		io.to(req.session.room).emit('joinRoom', { user: req.session.user, room: req.session.room });
-	});
-
-	socket.on('pingAll', data => {
-		console.log("PING ALL: ", data);
-		data.msj = "holaputo"
-		io.emit('ping', {msg: data.msj});
-	});
-
-	socket.on('sendMessage', data => {
-		console.log("La room es: " + req.session.room + " el mensaje es: " + data.msg)
-		io.to(req.session.room).emit('newMessage',  data.msg );
+		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room});
 	});
 
 	socket.on('disconnect', () => {
@@ -113,16 +102,16 @@ io.on("connection", (socket) => {
 			io.to(data.room).emit('solicitudBack', data)
 		} else if(data.rechazar == false && data.answer == false){
 			io.to(data.room).emit('solicitudBack', data)
+			idFriend = parseInt(data.room.slice(1, 3))
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
-				(${data.idLoggued}, ${data.idFriend})`)
+				(${data.idLoggued}, ${idFriend})`)
 		} else {
 			io.to(data.room).emit('solicitudBack', data)
 		}
 	})
 
 	socket.on('invitacionJugar', data => {
-		console.log(data.from)
-		io.emit('invitacionBack', data)
+		io.to(data.room).emit('invitacionBack', data)
 	})
 });
 /*

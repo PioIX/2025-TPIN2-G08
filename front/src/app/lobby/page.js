@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useEffectEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function Lobby() {
@@ -18,10 +18,14 @@ export default function Lobby() {
     const [requests, setRequests] = useState(false)
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
-    const [advice, setAdvice] = useState()
+    const [advice, setAdvice] = useState(false)
     const [advice2, setAdvice2] = useState(false)
+    const [advice3, setAdvice3] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
     const [inconveniente, setInconveniente] = useState("");
+    const [firstRender, setFirstRender] = useState(false)
+    const [playInvitation, setPlayInvitation] = useState(false)
+    const [fromId, setFromId] = useState(0)
     const [showFriendProfile, setShowFriendProfile] = useState(false);
 
 
@@ -31,7 +35,14 @@ export default function Lobby() {
         setMedals(localStorage.getItem("medals"));
         setPhoto(localStorage.getItem("photo"));
         friends()
+        setFirstRender(true)
     }, []);
+
+    useEffect(()=>{
+        if(firstRender){
+            socket.emit('joinRoom', {room: "P" + idLoggued})
+        }
+    }, [firstRender])
 
     useEffect(() => {
         if (!socket) return
@@ -54,9 +65,25 @@ export default function Lobby() {
         })
 
         socket.on('invitacionBack', data => {
-            if (data.idFriend == idLoggued) {
-
+            if(data.rechazar == false && data.answer == false){
+                setNameInvitation(data.name)
+                setPlayInvitation(true)
+                let fromId = data.from
+                setFromId(fromId)
+            } else if(data.rechazar == true){
+                setNameInvitation(data.name)
+                let fromId = data.from
+                setFromId(fromId)
+                setAdvice3(true)
+            } else if(data.rechazar == false && data.answer == true){
+                let fromId = data.from
+                socket.emit('joinRoom', {room: "G"+idLoggued+fromId})
+                router.replace("/game")
             }
+        })
+
+        socket.on('checkRoom', data => {
+            console.log(data)
         })
     }, [socket])
 
@@ -124,7 +151,7 @@ export default function Lobby() {
         if (response.msg == 1) {
             setShowInconveniente(true)
             setInconveniente("Amigo agregado")
-            socket.emit('solicitud', { room: "P" + idLoggued, name: name , rechazar: false, answer: true})
+            socket.emit('solicitud', { room: "P" + idNewFriend, name: name , rechazar: false, answer: true})
             await friends()
             let rechazar = false
             await deleteInvitations(idNewFriend, rechazar)
@@ -144,7 +171,7 @@ export default function Lobby() {
         })
         let response = await result.json()
         if (response.msg == 1 && rechazar == true) {
-            socket.emit('solicitud', { name: name, room: "P" + idLoggued, rechazar: true, answer: true })
+            socket.emit('solicitud', { name: name, room: "P" + fromUser, rechazar: true, answer: true })
             setRequests(false)
         }
     }
@@ -165,7 +192,7 @@ export default function Lobby() {
     }
 
     function invitar(idFriend) {
-        socket.emit('invitacionJugar', { idFriend: idFriend, from: idLoggued })
+        socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
         setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
     }
@@ -271,6 +298,31 @@ export default function Lobby() {
                     </div>
                 </div>
             )}
+
+            {/*---------------------------*/}
+
+            {playInvitation &&
+                <div>
+                    <h2>Recibiste una invitacion de {nameInvitation} para jugar una partida</h2>
+                    <button onClick={async () => {
+                        await socket.emit('invitacionJugar', {room: "P"+fromId, name: name, rechazar: false, answer: true, from: idLoggued})
+                        await socket.emit('joinRoom', {room: "G"+fromId+idLoggued})
+                        setPlayInvitation(false)
+                        router.replace("/game")}}>¡Jugar!</button>
+                    <button onClick={() => {
+                        socket.emit('invitacionJugar', {room: "P"+fromId, name: name, rechazar: true, answer: true, from: idLoggued})
+                        setPlayInvitation(false)}}>Rechazar</button>
+                </div>
+            }
+
+            {/*---------------------------*/}
+
+            {advice3 && 
+                <div>
+                    <h2>{nameInvitation} rechazo tu invitacion para jugar</h2>
+                    <button onClick={() => setAdvice3(false)}> OK </button>
+                </div>
+            }
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
