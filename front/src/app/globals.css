@@ -32,7 +32,6 @@ body {
   color: #f3f186ce;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 25px;
-
 }
 
 
@@ -69,15 +68,13 @@ body {
 
 .input:hover {
   border-color: white;
-  color: white;
   box-shadow: 0 0 8px #ffffff;
   transform: scale(1.01);
 }
 
 .input:focus {
-  background-color: #a3a265;
+  background-color: #e4e009ce;
   border-color: white;
-  color: white;
   box-shadow: 0 0 8px #ffffff;
   transform: scale(1.01);
 }
@@ -107,9 +104,9 @@ body {
 }
 
 .button:hover {
-  background-color: #a3a265;
+  background-color: #e4e009ce;
   border-color: white;
-  color: white;
+  color: rgb(0, 0, 0);
   box-shadow: 0 0 8px #ffffff;
   transform: scale(1.03);
 }
@@ -405,6 +402,7 @@ body {
 
 /* Título */
 .modalAdmin h2 {
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 1.4rem;
   margin-bottom: 20px;
   margin-top: -5px;
@@ -430,6 +428,7 @@ body {
 .btn.jugar {
   background: #22c55e;
   color: white;
+  transition: all 0.2s ease;
 }
 
 .btn.jugar:hover {
@@ -441,6 +440,7 @@ body {
 .btn.admin {
   background: #3b82f6;
   color: white;
+  transition: all 0.2s ease;
 }
 
 .btn.admin:hover {
@@ -769,30 +769,30 @@ body {
 
 .inconveniente {
   margin-top: 25px;
-  background: rgba(16, 30, 55, 0.9);
-  border: 2px solid #3aa8ff;
+  background: rgba(55, 16, 24, 0.9);
+  border: 2px solid #ff3a96;
   padding: 20px 40px;
   border-radius: 10px;
   text-align: center;
   color: #e8f1ff;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 25px rgba(253, 18, 18, 0.342);
   font-family: "Segoe UI", sans-serif;
   animation: deslizar 0.35s ease-out;
 }
 
 .inconveniente h2 {
   margin: 0;
-  color: #9bd6ff;
-  text-shadow: 0 0 8px rgba(0, 153, 255, 0.4);
+  color: #ff9ba3;
+  text-shadow: 0 0 8px rgba(255, 0, 106, 0.4);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .btn.cerrar {
   margin-top: 10px;
-  background: #173a66;
+  background: #661721;
   color: #e8f1ff;
-  border: 1px solid #3aa8ff;
+  border: 1px solid #ff3a5b;
   padding: 8px 20px;
   border-radius: 6px;
   cursor: pointer;
@@ -801,8 +801,8 @@ body {
 }
 
 .btn.cerrar:hover {
-  background: #23558f;
-  box-shadow: 0 0 8px rgba(58, 168, 255, 0.5);
+  background: #8f2331;
+  box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
 }
 
 /* animación suave desde arriba */
@@ -817,3 +817,8 @@ body {
   }
 }
 
+.btnVolver {
+  width: 100px;
+  top: 35px;
+  left: 35px;
+}
