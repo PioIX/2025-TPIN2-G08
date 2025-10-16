@@ -46,15 +46,15 @@ export default function Juego() {
 
 
       <div className="game-container">
-        {/* Botón de rendirse */}
+
         <button className="surrender" onClick={()=>setRendirse(true)}>🏳️</button>
 
-        {/* Título */}
+     
         <div className="top-bar">
           <h1 className="game-title">BATALLA NAVAL</h1>
         </div>
 
-        {/* Tableros */}
+     
         <div className="boards">
           <div className="board-section">
             <h2>Tablero enemigo</h2>

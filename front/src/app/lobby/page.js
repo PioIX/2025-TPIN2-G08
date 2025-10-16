@@ -26,6 +26,7 @@ export default function Lobby() {
     const [firstRender, setFirstRender] = useState(false)
     const [playInvitation, setPlayInvitation] = useState(false)
     const [fromId, setFromId] = useState(0)
+    const [showFriendProfile, setShowFriendProfile] = useState(false);
 
 
     useEffect(() => {
@@ -263,20 +264,20 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {advice &&
-            <div className ="modal-rechazo-solicitud">
-                <h2 className ="mensaje-rechazo-solicitud">{nameInvitation} rechazo tu solicitud de amistad</h2>
-                <button className ="boton-rechazo-solicitud" onClick={() => {setRequests(false); setAdvice(false)}}> Cerrar </button>
-            </div>}
+                <div className="modal-rechazo-solicitud">
+                    <h2 className="mensaje-rechazo-solicitud">{nameInvitation} rechazo tu solicitud de amistad</h2>
+                    <button className="boton-rechazo-solicitud" onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
+                </div>}
 
             {/*---------------------------*/}
 
             {advice2 &&
-            <div className ="modal-acepta-solicitud">
-                <h2 className ="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
-                <button className ="boton-acepta-solicitud" onClick={() => {setRequests(false); setAdvice2(false)}}> Cerrar </button>
-            </div>}
+                <div className="modal-acepta-solicitud">
+                    <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
+                    <button className="boton-acepta-solicitud" onClick={() => { setRequests(false); setAdvice2(false) }}> Cerrar </button>
+                </div>}
 
-            {/*---------------------------*/} 
+            {/*---------------------------*/}
 
             {showInconveniente && (
                 <div className="cuadroCompleto"
@@ -368,7 +369,16 @@ export default function Lobby() {
                                 {userFriends.length > 0 ?
                                     <ul>
                                         {userFriends.map(u => {
-                                            return <li key={u.id_user}>{u.name} - {u.email}<button onClick={() => invitar(u.id_user)}>Invitar a jugar</button></li>
+                                            return (
+                                                <li key={u.id_user}>
+                                                    <button
+                                                        className="friend-button"
+                                                        onClick={() => setShowFriendProfile(true)}
+                                                    >
+                                                        {u.name} - {u.email}
+                                                    </button>
+                                                </li>
+                                            )
                                         })}
                                     </ul> :
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
@@ -379,14 +389,47 @@ export default function Lobby() {
                             <div className="title-right">BATALLA NAVAL</div>
 
                             <div className="board">
-                                <img
-                                    src="https://www.shutterstock.com/image-vector/sea-battle-board-game-vector-600nw-1672369615.jpg"
-                                    alt="Tablero Batalla Naval"
-                                />
+                                {/* Modal de perfil del amigo */}
+                                {showFriendProfile && (
+                                    <div className="modal-friend-profile">
+                                        <div className="friend-profile-header">
+                                            <div className="friend-avatar-wrapper">
+                                                <img
+                                                    src="https://static.vecteezy.com/system/resources/thumbnails/042/600/457/small_2x/loading-circles-flat-style-modern-preloaders-png.png"
+                                                    alt="Avatar"
+                                                    className="friend-avatar"
+                                                />
+                                            </div>
+                                            <h2 className="friend-name">vaca lola</h2>
+                                            <div className="friend-email">lola@gmail</div>
+                                        </div>
+
+                                        <div className="friend-stats">
+                                            <div className="stat-item">
+                                                <span className="stat-label">Partidas ganadas:</span>
+                                                <span className="stat-value">67</span>
+                                            </div>
+                                            <div className="stat-item">
+                                                <span className="stat-label">Partidas perdidas:</span>
+                                                <span className="stat-value">76</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="friend-actions">
+                                            <button
+                                                className="btn play-friend-btn"
+                                                onClick={() => router.replace("/game")}
+                                            >
+                                                Jugar
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                {/* Modal de perfil del amigo */}
                             </div>
 
                             <div className="play-area">
-                                <button onClick={()=> router.replace("/game")} className="play-btn">¡Jugar!</button>
+                                <button onClick={() => router.replace("/game")} className="play-btn">¡Jugar!</button>
                             </div>
                         </div>
                     </div>
