@@ -110,13 +110,13 @@ io.on("connection", (socket) => {
 
 	socket.on('solicitud', async data =>{
 		if (data.rechazar == true){
-			io.emit('solicitudBack', data)
+			io.to(data.room).emit('solicitudBack', data)
 		} else if(data.rechazar == false && data.answer == false){
-			io.emit('solicitudBack', data)
+			io.to(data.room).emit('solicitudBack', data)
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
 				(${data.idLoggued}, ${data.idFriend})`)
 		} else {
-			io.emit('solicitudBack', data)
+			io.to(data.room).emit('solicitudBack', data)
 		}
 	})
 
