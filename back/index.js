@@ -301,3 +301,27 @@ app.post('/checkinvitation', async function(req, res){
 		res.send({msg: e.message, error: true})
 	}
 })
+
+app.post('/friendprofile', async function(req, res){
+	let idFriend
+	try {
+		let relation = await realizarQuery(`SELECT id_friend, id_user 
+			FROM Friends 
+			WHERE id_user = ${req.body.idLoggued} AND id_friend = ${req.body.idFriend} 
+			OR id_user = ${req.body.idFriend} AND id_friend = ${req.body.idLoggued}`)
+		for (let i = 0; i < relation.length; i++){
+			if (relation[i].id_user != req.body.idLoggued){
+				idFriend = relation[i].id_friend
+			} else {
+				idFriend = relation[i].id_user
+			}
+		}
+		console.log(idFriend)
+		let friend = await realizarQuery(`SELECT email, name, photo, medals
+			FROM Users
+			WHERE id_user = ${idFriend}`)
+		res.send({friend, msg: 1, error: false})
+	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})

@@ -27,6 +27,10 @@ export default function Lobby() {
     const [playInvitation, setPlayInvitation] = useState(false)
     const [fromId, setFromId] = useState(0)
     const [showFriendProfile, setShowFriendProfile] = useState(false);
+    const [emailFriend, setEmailFriend] = useState()
+    const [nameFriend, setNameFriend] = useState()
+    const [medalsFriend, setMedalsFriend] = useState()
+    const [photoFriend, setPhotoFriend] = useState()
 
 
     useEffect(() => {
@@ -188,6 +192,24 @@ export default function Lobby() {
         if (response.msg == 1) {
             setInvitationsUser(response.fromUsers)
             setRequests(true)
+        }
+    }
+
+    async function friendProfile(idFriend){
+        let result = await fetch('http://localhost:4000/friendprofile',{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idFriend: idFriend, idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setNameFriend(response.friend[0].name)
+            setEmailFriend(response.friend[0].email)
+            setPhotoFriend(response.friend[0].photo)
+            setMedalsFriend(response.friend[0].medals)
+            console.log(response)
         }
     }
 
@@ -373,8 +395,7 @@ export default function Lobby() {
                                                 <li key={u.id_user}>
                                                     <button
                                                         className="friend-button"
-                                                        onClick={() => setShowFriendProfile(true)}
-                                                    >
+                                                        onClick={() => {friendProfile(u.id_user); setShowFriendProfile(true)}}>
                                                         {u.name} - {u.email}
                                                     </button>
                                                 </li>
@@ -395,31 +416,26 @@ export default function Lobby() {
                                         <div className="friend-profile-header">
                                             <div className="friend-avatar-wrapper">
                                                 <img
-                                                    src="https://static.vecteezy.com/system/resources/thumbnails/042/600/457/small_2x/loading-circles-flat-style-modern-preloaders-png.png"
+                                                    src={photoFriend}
                                                     alt="Avatar"
                                                     className="friend-avatar"
                                                 />
                                             </div>
-                                            <h2 className="friend-name">vaca lola</h2>
-                                            <div className="friend-email">lola@gmail</div>
+                                            <h2 className="friend-name">{nameFriend}</h2>
+                                            <div className="friend-email">{emailFriend}</div>
                                         </div>
 
                                         <div className="friend-stats">
                                             <div className="stat-item">
-                                                <span className="stat-label">Partidas ganadas:</span>
-                                                <span className="stat-value">67</span>
-                                            </div>
-                                            <div className="stat-item">
-                                                <span className="stat-label">Partidas perdidas:</span>
-                                                <span className="stat-value">76</span>
+                                                <span className="stat-label">medallas</span>
+                                                <span className="stat-value">{medalsFriend}</span>
                                             </div>
                                         </div>
 
                                         <div className="friend-actions">
                                             <button
                                                 className="btn play-friend-btn"
-                                                onClick={() => router.replace("/game")}
-                                            >
+                                                onClick={() => router.replace("/game")}>
                                                 Jugar
                                             </button>
                                         </div>
