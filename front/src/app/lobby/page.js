@@ -31,6 +31,7 @@ export default function Lobby() {
     const [nameFriend, setNameFriend] = useState()
     const [medalsFriend, setMedalsFriend] = useState()
     const [photoFriend, setPhotoFriend] = useState()
+    const [idFriend, setIdFriend] = useState() 
 
 
     useEffect(() => {
@@ -201,7 +202,7 @@ export default function Lobby() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({idFriend: idFriend, idLoggued: idLoggued})
+            body: JSON.stringify({idFriend: idFriend})
         })
         let response = await result.json()
         if (response.msg == 1){
@@ -209,7 +210,7 @@ export default function Lobby() {
             setEmailFriend(response.friend[0].email)
             setPhotoFriend(response.friend[0].photo)
             setMedalsFriend(response.friend[0].medals)
-            console.log(response)
+            setIdFriend(response.friend[0].id_user)
         }
     }
 
@@ -435,9 +436,10 @@ export default function Lobby() {
                                         <div className="friend-actions">
                                             <button
                                                 className="btn play-friend-btn"
-                                                onClick={() => router.replace("/game")}>
+                                                onClick={() => {invitar(idFriend); setShowFriendProfile(false)}}>
                                                 Jugar
                                             </button>
+                                            <button className="btn play-friend-btn" onClick={() => setShowFriendProfile(false)}>Cerrar</button>
                                         </div>
                                     </div>
                                 )}
