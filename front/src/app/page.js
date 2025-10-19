@@ -215,8 +215,8 @@ export default function logIn() {
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
       <div className={"container"}>
+        <img src="/LogoBN.svg"></img>
         <div className={"form"}>
-          <h1 className={"title"}>BATALLA NAVAL</h1>
           <h2 className={"subTitle"}>Iniciar Sesión</h2>
           <input
             type="email"

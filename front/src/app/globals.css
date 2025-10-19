@@ -16,6 +16,14 @@ body {
   text-align: center;
 }
 
+.container img {
+  position: absolute;
+  top: 45px;
+  align-self: center;
+  width: 30%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
 
 .title {
   font-family: 'Poppins', sans-serif;
