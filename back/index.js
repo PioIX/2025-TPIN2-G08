@@ -89,7 +89,6 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-
 		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room});
 	});
 

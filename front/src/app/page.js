@@ -122,6 +122,9 @@ export default function logIn() {
 
       {showAdminOption && (
         <div className="modalAdministracion">
+          <button className="btnVolver" onClick={() => setShowAdminOption(false)}>
+            ← Volver
+          </button>
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
             <button className="btn jugar" onClick={() => {socket.emit('joinRoom', {room: "P" + id}); router.replace(`/lobby`);}}>
@@ -221,8 +224,8 @@ export default function logIn() {
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
       <div className={"container"}>
+        <img src="/LogoBN.svg"></img>
         <div className={"form"}>
-          <h1 className={"title"}>BATALLA NAVAL</h1>
           <h2 className={"subTitle"}>Iniciar Sesión</h2>
           <input
             type="email"
