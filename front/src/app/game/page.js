@@ -1,19 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 export default function Juego() {
   const router = useRouter();
   const [rendirse, setRendirse] = useState(false);
-
+  const [ship, setShip] = useState(true)
+  const [idLoggued, setId] = useState()
+  const {socket, isConnected} = useSocket()
+  const [firstRender, setFirsRender] = useState(false)
   const cells = [];
   for (let i = 0; i < 100; i++) {
     cells.push(<div className="cell" key={i}></div>);
   }
 
+  useEffect(() => {
+    setId(localStorage.getItem("idLoggued"))
+    setFirsRender(true)
+  }, [])
+
+  useEffect(() => {
+    if (!socket) return 
+      socket.on('checkRoom', data =>{
+        console.log(data)
+      })
+  }, [socket])
+
+  useEffect(() => {
+    if (firstRender) {
+      socket.emit('joinRoom', {room: "P" + idLoggued})
+    }
+  }, [firstRender])
 
   return (
-
     <>
       {/* ACA VAN TODOS LOS MODAL */}
       {/* ACA VAN TODOS LOS MODAL */}
@@ -26,7 +46,7 @@ export default function Juego() {
           <h3>¿Seguro que querés rendirte?</h3>
           <p>Perderás la partida actual</p>
           <div className="popup-botones">
-            <button className="btn-si" onClick={()=> router.replace("/lobby")}>Rendirse</button>
+            <button className="btn-si" onClick={() => router.replace("/lobby")}>Rendirse</button>
             <button className="btn-no" onClick={() => setRendirse(false)}>Cancelar</button>
           </div>
         </div>
@@ -43,31 +63,33 @@ export default function Juego() {
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
-
-
       <div className="game-container">
-
-        <button className="surrender" onClick={()=>setRendirse(true)}>🏳️</button>
-
-     
-        <div className="top-bar">
-          <h1 className="game-title">BATALLA NAVAL</h1>
-        </div>
-
-     
-        <div className="boards">
-          <div className="board-section">
-            <h2>Tablero enemigo</h2>
-            <div className="board enemy-board">{cells}</div>
+        <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
+          <div className="top-bar">
+            <h1 className="game-title">BATALLA NAVAL</h1>
           </div>
-
-          <div className="board-section">
-            <h2>Tu tablero</h2>
-            <div className="board player-board">{cells}</div>
+        {ship ? 
+          <div className="boards">
+            <div className="board-section">
+              <h2>Tu tablero</h2>
+              <div className="board player-board">{cells}</div>
+            </div>
+            <button onClick={() => setShip(false)}>Jugar</button>
           </div>
-        </div>
+        :
+          <div className="boards">
+            <div className="board-section">
+              <h2>Tu tablero</h2>
+              <div className="board player-board">{cells}</div>
+            </div>
+
+            <div className="board-section">
+              <h2>Tablero enemigo</h2>
+              <div className="board enemy-board">{cells}</div>
+            </div>
+          </div>}
       </div>
-
+      
 
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
       {/* ACA VA LA PAGINA PRINCIPAL */}
