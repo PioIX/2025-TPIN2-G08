@@ -18,6 +18,8 @@ export default function Lobby() {
     const [requests, setRequests] = useState(false)
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
+    const [showSeguro, setShowSeguro] = useState(false);
+    const [Seguro, setSeguro] = useState(false);
     const [advice, setAdvice] = useState(false)
     const [advice2, setAdvice2] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
@@ -299,6 +301,17 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
+            {showSeguro && (
+                <div className="modalSeguroMini" onClick={() => setShowSeguro(false)}>
+                    <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
+                        <p>¿Cerrar sesión?</p>
+                        <div className="botonesMini">
+                            <button onClick={() => setSeguro(true)}>Sí</button>
+                            <button onClick={() => {
+                                setShowSeguro(false)
+                                setSeguro(true)
+                            }}>No</button>
+                        </div>
             {advice2 &&
                 <div className="modal-acepta-solicitud">
                     <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
@@ -392,7 +405,7 @@ export default function Lobby() {
                                 <div className="avatar-wrapper">
                                     <img src={photo} alt="Avatar" className="avatar" />
                                 </div>
-                                <img className="logOut" onClick={() => router.replace("/")} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
+                                <img className="logOut" onClick={() => setShowSeguro(true)} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
                                 <div className="profile-info">
                                     <div className="username">{name}</div>
 

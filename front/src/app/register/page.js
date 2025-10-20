@@ -66,8 +66,8 @@ export default function register() {
     return (
         <>
             <div className={"container"}>
+                <img src="/LogoBN.svg"></img>
                 <div className={"form"}>
-                    <h1 className={"title"}>BATALLA NAVAL</h1>
                     <h2 className={"subTitle"}>Registro</h2>
                     <input
                         type="text"
