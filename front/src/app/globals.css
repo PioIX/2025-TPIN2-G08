@@ -1,9 +1,61 @@
-html,
-body {
+:root{
+  /* Base: 1rem = 16px. Si quieres otra escala, cambia aquí (ej: 62.5% -> 1rem = 10px) */
+  font-size: 100%;
+  --radius: 12px;
+  --main-yellow: #fdf572;
+  --panel-bg: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
+}
+
+/* Reset / normalize ligero */
+*,
+*::before,
+*::after{ box-sizing: border-box; }
+
+html,body,#__next {
   height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 100%; /* 16px */
+  line-height: 1.4;
+}
+
+body {
   margin: 0;
+  background-color: #061827;
+  color: #fff;
+  -webkit-tap-highlight-color: transparent;
   overflow: hidden;
 }
+
+/* Inputs, buttons y selects: quitar estilos inconsistentes del navegador */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Links y listas */
+a { color: inherit; text-decoration: none; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+/* Imágenes: consistencia */
+img { display: block; max-width: 100%; height: auto; }
+
+/* Helpers para usar rem: (ejemplo rápido de conversión)
+   1rem = 16px, por ejemplo 24px = 1.5rem, 12px = 0.75rem
+*/
 
 
 .container {
@@ -330,18 +382,6 @@ body {
   padding: 0;
 }
 
-.friends li {
-  margin: 6px 0;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background 0.2s;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.friends li:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
 /* --- DERECHA --- */
 
 .title-right {
@@ -349,24 +389,8 @@ body {
   font-size: 2.4rem;
   font-weight: 800;
   color: #fdf572;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
-  margin-bottom: 10px;
 }
 
-.board {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-.board img {
-  width: 50%;
-  border-radius: 12px;
-  border: 3px solid #fdf572;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-}
 
 /* --- BOTÓN JUGAR --- */
 .play-area {
@@ -456,18 +480,8 @@ body {
   transform: scale(1.03);
 }
 
-/* Animación de entrada */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.95);
-  }
 
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
+
 
 .modalAdministracion {
   display: flex;
@@ -698,16 +712,16 @@ body {
 /* Modal de invitaciones */
 .requests-modal {
   position: absolute;
-  top: 80px;
-  right: 330px;
+  top: 60px;
+  right: 190px;
   background: rgba(0, 0, 0, 0.85);
   color: white;
   border-radius: 25px;
   border-top-right-radius: 5px;
   padding: 16px;
   width: 260px;
-  min-height: 140px;
-  max-height: 400px;
+  min-height: 90px;
+  max-height: 500px;
   overflow-y: auto;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);
@@ -717,6 +731,25 @@ body {
   gap: 10px;
   animation: slideIn 0.3s ease forwards;
 }
+
+.requests-modal > div,
+.requests-modal > p {
+  margin: 0;
+}
+
+.requests-modal button.cerrar-requests {
+  align-self: flex-end;
+  margin-top: auto; /* Empuja el botón al final */
+  padding: 8px 16px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+}
+
+
 
 /* Animación desde la derecha (suave) */
 @keyframes slideIn {
@@ -731,20 +764,6 @@ body {
   }
 }
 
-/* Botones del modal */
-.requests-modal button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.requests-modal button:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
 
 .logOut {
   position: absolute;
@@ -897,3 +916,760 @@ body {
 }
 
 
+.tilde {
+  background-color: #28a745; /* verde agradable */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(40, 167, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.tilde:hover {
+  background-color: #218838; /* verde oscuro al hover */
+}
+
+.cruz {
+  background-color: #dc3545; /* rojo fuerte */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.5);
+  transition: background-color 0.3s ease;
+}
+.cruz:hover {
+  background-color: #c82333; /* rojo oscuro al hover */
+}
+
+.cerrar-requests {
+  background-color: #343a40;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(52, 58, 64, 0.6);
+  transition: background-color 0.3s ease;
+  
+}
+.cerrar-requests:hover {
+  background-color: #23272b;
+}
+
+.circulo-notificacion{
+    position: absolute;
+  top: 5px;
+  right: 12px;
+  color: #ccc;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.5rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+.circulo-notificacion:hover{
+  transform: scale(1.2);
+}
+
+/* Modal de rechazo de solicitud - Sin overlay */
+.modal-rechazo-solicitud {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(16, 30, 55, 0.95);
+  border: 2px solid #dc3545;
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(220, 53, 69, 0.4);
+  color: white;
+  animation: fadeInScale 0.3s ease-out;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  z-index: 1000;
+}
+
+/* Título del rechazo */
+.mensaje-rechazo-solicitud {
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Botón de cerrar */
+.boton-rechazo-solicitud {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.boton-rechazo-solicitud:hover {
+  background: linear-gradient(135deg, #c82333, #a71e2a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.6);
+}
+
+.boton-rechazo-solicitud:active {
+  transform: translateY(0);
+}
+
+
+
+/* Efecto de pulso sutil en el borde */
+.modal-rechazo-solicitud {
+  animation: fadeInScale 0.3s ease-out, pulseBorder 2s infinite;
+}
+
+
+
+/* Modal de aceptación de solicitud - Sin overlay */
+.modal-acepta-solicitud {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(16, 30, 55, 0.95);
+  border: 2px solid #28a745;
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 16px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(40, 167, 69, 0.4);
+  color: white;
+  animation: fadeInScale 0.3s ease-out;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  z-index: 1000;
+}
+
+/* Título de la aceptación */
+.mensaje-acepta-solicitud {
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  color: #6bff8d;
+  text-shadow: 0 0 10px rgba(107, 255, 141, 0.3);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Botón de cerrar */
+.boton-acepta-solicitud {
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.boton-acepta-solicitud:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+.boton-acepta-solicitud:active {
+  transform: translateY(0);
+}
+
+/* Efecto de pulso sutil en el borde */
+.modal-acepta-solicitud {
+  animation: fadeInScale 0.3s ease-out, pulseBorderGreen 2s infinite;
+}
+
+
+
+
+/* ======= CONTENEDOR GENERAL ======= */
+.game-container {
+  height: 100vh;
+  width: 100%;
+  background: url("https://img1.wallspic.com/crops/9/7/9/0/4/140979/140979-crucero_ligero-3840x2160.jpg") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: "Poppins", sans-serif;
+  color: #fdf572;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 0;
+}
+
+/* ======= BARRA SUPERIOR ======= */
+.top-bar {
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  padding: 20px 60px;
+  position: relative;
+}
+
+.game-title {
+  font-size: 2.4rem;
+  color: #fffaa5;
+  text-shadow: 0 0 10px rgba(255, 255, 140, 0.7),
+               0 0 25px rgba(255, 255, 140, 0.5);
+  letter-spacing: 2px;
+}
+
+.exit-btn {
+  background: rgba(255, 255, 160, 0.85);
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(255, 255, 180, 0.6);
+  transition: all 0.3s ease;
+}
+
+.exit-btn:hover {
+  background: #cfc874;
+  transform: scale(1.05);
+}
+
+/* ======= SECCIÓN DE TABLEROS ======= */
+.boards {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  padding: 40px 50px;
+  display: flex;
+  gap: 80px;
+  animation: fadeIn 0.8s ease;
+}
+
+.board-section {
+  text-align: center;
+}
+
+.board-section h2 {
+  color: #fffaa5;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 42px);
+  grid-template-rows: repeat(10, 42px);
+  gap: 3px;
+  background: rgba(5, 30, 45, 0.7);
+  border: 2px solid #fdf572;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 255, 150, 0.2);
+  transition: all 0.3s ease;
+}
+
+.board:hover {
+  box-shadow: 0 0 25px rgba(255, 255, 180, 0.4);
+}
+
+.cell {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  transition: all 0.25s;
+}
+
+.cell:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* ======= BARRA INFERIOR ======= */
+.bottom-bar {
+  margin-top: 50px;
+  display: flex;
+  gap: 25px;
+  z-index: 2;
+}
+
+.action-btn {
+  background: rgba(255, 255, 160, 0.85);
+  color: black;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(255, 255, 150, 0.4);
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background: #cfc874;
+  transform: scale(1.1);
+}
+
+/* ======= ANIMACIONES ======= */
+
+
+.surrender {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 60, 60, 0.8); /* rojo translúcido */
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.surrender:hover {
+  background: rgba(255, 90, 90, 1);
+  transform: scale(1.15);
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+}
+
+.surrender:active {
+  transform: scale(1);
+  opacity: 0.9;
+}
+
+/* Popup de rendición */
+.popup-rendicion {
+  position: absolute;
+  top: 80px;
+  right: 40px;
+  width: 260px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  border-top-right-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  z-index: 1500;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  color: #cf3838;
+  animation: popupAparecer 0.25s ease-out;
+}
+
+/* Título y texto */
+.popup-rendicion h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+}
+
+.popup-rendicion p {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  color: #f3f186ce;
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+
+/* Botones */
+.popup-botones {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.popup-botones button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Botón "Rendirse" */
+.btn-si {
+  background: rgba(243, 57, 57, 0.85);
+  color: white;
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+.btn-si:hover {
+  background: rgba(200, 40, 40, 0.9);
+  transform: scale(1.05);
+}
+
+/* Botón "Cancelar" */
+.btn-no {
+  background: rgba(89, 206, 66, 0.85);
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+.btn-no:hover {
+  background: rgba(55, 189, 14, 0.9);
+  transform: scale(1.05);
+}
+
+
+.friend-button {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+.friend-button:last-child {
+    margin-bottom: 0;
+}
+
+.friend-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+.friends li {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.friends li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Modal de perfil del amigo */
+/* contenedor donde se mostrará el panel (centra el "modal" en el espacio del antiguo board) */
+.panel-center {
+  display: flex;
+  align-items: flex-start; /* arranca justo debajo del título */
+  justify-content: center;
+  padding: 8px; /* menos padding vertical */
+  margin-top: 6px; /* pequeño separador desde el título */
+  height: auto; /* permite que el panel tome su alto natural */
+}
+
+/* Panel de perfil (reutilizable para perfil o mensaje de bienvenida) */
+.friend-panel {
+  width: 70%;
+  height: 300px;
+  background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
+  border: 1px solid rgba(253,245,114,0.12);
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  position: relative;
+  z-index: 2;
+  animation: fadeInScale 160ms ease-out;
+  overflow: hidden;
+}
+
+/* variante para bienvenida */
+.friend-panel.welcome {
+  width: 70%;
+  height: 300px;
+  justify-content: center;
+  text-align: center;
+}
+
+/* botón cerrar */
+.friend-panel .close-panel {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #ddd;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+.friend-panel .close-panel:hover { color: #fff; transform: scale(1.05); }
+
+/* Encabezado: avatar + texto en fila */
+.friend-profile-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+/* avatar más compacto y con borde destacado */
+.friend-avatar-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(130deg, gold, #ffdf70, #c7971d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.friend-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #061827;
+}
+
+/* nombre y email alineados verticalmente */
+.friend-name {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #fdf572;
+  margin: 0;
+  line-height: 1.05;
+}
+.friend-email {
+  font-size: 0.82rem;
+  color: #dfe7ffcc;
+  margin-top: 4px;
+}
+
+/* Stats: compactos y centrados */
+.friend-stats {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  background: rgba(255,255,255,0.03);
+  padding: 8px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: #cfd8ffaa;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 4px;
+}
+
+/* Acciones: botones claros, separados y con alineación consistente */
+.friend-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.friend-actions .play-friend-btn,
+.friend-actions .cancel {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.friend-actions .play-friend-btn {
+  background: linear-gradient(135deg, #1f6feb, #3f8fff);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(63, 143, 255, 0.12);
+  position: absolute;
+  bottom: 2px;
+  width: 90%;
+}
+
+.friend-actions .play-friend-btn:hover {
+  transform: translateY(-2px);
+}
+
+.friend-actions .cancel {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.friend-actions .cancel:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+/* Ajustes responsivos para pantallas pequeñas */
+@media (max-width: 420px) {
+  .friend-profile-header { gap: 10px; }
+  .friend-avatar-wrapper { width: 60px; height: 60px; }
+  .friend-avatar { width: 54px; height: 54px; }
+  .friend-panel { padding: 12px; }
+  .title-right { font-size: 1.9rem; }
+}
+
+.modal-play-invitation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, rgba(22, 35, 70, 0.92), rgba(18, 50, 109, 0.88));
+  border: 1px solid rgba(100, 160, 255, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  width: 380px;
+  padding: 28px;
+  text-align: center;
+  z-index: 1200;
+  color: #f0f4ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Animación de aparición */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Título */
+.modal-play-invitation .titulo-modal {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+}
+
+/* Texto */
+.modal-play-invitation .texto-modal {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+  margin-bottom: 25px;
+}
+
+/* Contenedor de botones */
+.modal-play-invitation .botones-modal {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+/* Botones base */
+.modal-play-invitation .btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  min-width: 120px;
+}
+
+/* Botón aceptar */
+.modal-play-invitation .btn.aceptar {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.modal-play-invitation .btn.aceptar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.55);
+}
+
+/* Botón rechazar */
+.modal-play-invitation .btn.rechazar {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.modal-play-invitation .btn.rechazar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.55);
+}

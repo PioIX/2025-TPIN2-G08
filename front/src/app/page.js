@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 
 export default function logIn() {
@@ -14,12 +15,19 @@ export default function logIn() {
   const [inconveniente, setInconveniente] = useState("");
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
+  const {socket, isConnected} = useSocket()
+  const [id, setId] = useState(0)
 
   useEffect(() => {
     if (showAdministracion) {
       users();
     }
   }, [showAdministracion]);
+
+  useEffect(()=>{
+    if (!socket) return 
+
+  }, [socket])
 
   async function login(dataUser) {
     let result = await fetch("http://localhost:4000/verifyUser", {
@@ -40,17 +48,19 @@ export default function logIn() {
     };
     let response = await login(obj);
     if (response.msg == 1) {
-      if (response.user[0].admin == 1) {
-        setShowAdminOption(true);
-      } else {
-        router.push("/lobby");
-      }
-      setEmail("");
-      setPassword("");
       localStorage.setItem("idLoggued", response.user[0].id_user);
       localStorage.setItem("name", response.user[0].name);
       localStorage.setItem("medals", response.user[0].medals);
       localStorage.setItem("photo", response.user[0].photo);
+      if (response.user[0].admin == 1) {
+        setShowAdminOption(true);
+        setId(response.user[0].id_user)
+      } else {
+        socket.emit('joinRoom', {room: "P" + response.user[0].id_user})
+        router.replace(`/lobby`);
+      }
+      setEmail("");
+      setPassword("")
     } else if (response.msg == -1) {
       /*alert("El email ingresado no es valido")*/
       console.log("El email ingresado no es válido");
@@ -117,7 +127,7 @@ export default function logIn() {
           </button>
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
-            <button className="btn jugar" onClick={() => router.push("/lobby")}>
+            <button className="btn jugar" onClick={() => {socket.emit('joinRoom', {room: "P" + id}); router.replace(`/lobby`);}}>
               Jugar
             </button>
             <button
@@ -189,7 +199,6 @@ export default function logIn() {
         >
           <div
             className="inconveniente"
-            onClick={(e) => e.stopPropagation()} // Evita que el click dentro cierre el modal
           >
             <h2>{inconveniente}</h2>
             <button

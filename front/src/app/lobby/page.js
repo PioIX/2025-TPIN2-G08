@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useEffectEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
-import { Router } from "next/router";
 
 export default function Lobby() {
     const [idLoggued, setId] = useState(0);
@@ -19,9 +18,21 @@ export default function Lobby() {
     const [requests, setRequests] = useState(false)
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
-    const [advice, setAdvice] = useState()
     const [showSeguro, setShowSeguro] = useState(false);
     const [Seguro, setSeguro] = useState(false);
+    const [advice, setAdvice] = useState(false)
+    const [advice2, setAdvice2] = useState(false)
+    const [showInconveniente, setShowInconveniente] = useState(false);
+    const [inconveniente, setInconveniente] = useState("");
+    const [firstRender, setFirstRender] = useState(false)
+    const [playInvitation, setPlayInvitation] = useState(false)
+    const [fromId, setFromId] = useState(0)
+    const [showFriendProfile, setShowFriendProfile] = useState(false);
+    const [emailFriend, setEmailFriend] = useState()
+    const [nameFriend, setNameFriend] = useState()
+    const [medalsFriend, setMedalsFriend] = useState()
+    const [photoFriend, setPhotoFriend] = useState()
+    const [idFriend, setIdFriend] = useState()
 
 
     useEffect(() => {
@@ -30,27 +41,61 @@ export default function Lobby() {
         setMedals(localStorage.getItem("medals"));
         setPhoto(localStorage.getItem("photo"));
         friends()
+        setFirstRender(true)
     }, []);
 
     useEffect(() => {
+        if (firstRender) {
+            socket.emit('joinRoom', { room: "P" + idLoggued })
+        }
+    }, [firstRender])
+    useEffect(() => {
+        if (nameInvitation) {
+            setInconveniente(`${nameInvitation} rechazó tu invitación para jugar`)
+        }
+    }, [nameInvitation])
+    useEffect(() => {
         if (!socket) return
 
-        socket.on('solicitud', data => {
-            if (data.idLoggued == idLoggued) return
-            console.log(data)
-            if (data.idFriend == idLoggued && data.rechazar == false && data.answer == false) {
+        socket.on('solicitudBack', data => {
+            if (data.rechazar == false && data.answer == false) {
                 let obj = {
                     id_user: data.idLoggued,
                     name: data.name
                 }
                 setInvitationsUser([...invitationsUser, obj])
-            } else if (data.idFriend != idLoggued && data.rechazar == true && data.answer == true) {
+            } else if (data.rechazar == true && data.answer == true) {
                 setNameInvitation(data.name)
                 setAdvice(true)
-            } else if (data.idFriend != idLoggued && data.rechazar == false && data.answer == true) {
+            } else if (data.rechazar == false && data.answer == true) {
                 setNameInvitation(data.name)
+                setAdvice2(true)
                 friends()
             }
+        })
+
+        socket.on('invitacionBack', data => {
+            if (data.rechazar == false && data.answer == false) {
+                setNameInvitation(data.name)
+                setPlayInvitation(true)
+                let fromId = data.from
+                setFromId(fromId)
+            } else if (data.rechazar == true) {
+                console.log(data)  
+                setNameInvitation(data.name)
+                let fromId = data.from
+                setFromId(fromId)
+                setShowInconveniente(true)
+            } else if (data.rechazar == false && data.answer == true) {
+                let fromId = data.from
+                socket.emit('joinRoom', { room: "G" + idLoggued + fromId })
+                router.replace("/game")
+                
+            }
+        })
+
+        socket.on('checkRoom', data => {
+            console.log(data)
         })
     }, [socket])
 
@@ -94,11 +139,13 @@ export default function Lobby() {
         })
         let response = await result.json()
         if (response.msg == 1) {
-            socket.emit('solicitud', { idLoggued: idLoggued, idFriend: to, name: name, rechazar: false, answer: false })
-            alert("Invitacion enviada")
+            socket.emit('solicitud', { idLoggued: idLoggued, room: "P" + to, name: name, rechazar: false, answer: false })
+            setShowInconveniente(true)
+            setInconveniente("Invitacion enviada")
             setShowModalNewFriend(false);
         } else {
-            alert("Ya le has enviado una invitacion a este usuario")
+            setShowInconveniente(true)
+            setInconveniente("Ya le has enviado una invitacion a este usuario")
             setShowModalNewFriend(false)
         }
     }
@@ -114,8 +161,9 @@ export default function Lobby() {
         });
         let response = await result.json();
         if (response.msg == 1) {
-            alert("Amigo agregado");
-            socket.emit('solicitud', { rechazar: false, idFriend: idLoggued, answer: true, name: name })
+            setShowInconveniente(true)
+            setInconveniente("Amigo agregado")
+            socket.emit('solicitud', { room: "P" + idNewFriend, name: name, rechazar: false, answer: true })
             await friends()
             let rechazar = false
             await deleteInvitations(idNewFriend, rechazar)
@@ -135,7 +183,7 @@ export default function Lobby() {
         })
         let response = await result.json()
         if (response.msg == 1 && rechazar == true) {
-            socket.emit('solicitud', { rechazar: true, name: name, idFriend: idLoggued, answer: true })
+            socket.emit('solicitud', { name: name, room: "P" + fromUser, rechazar: true, answer: true })
             setRequests(false)
         }
     }
@@ -153,6 +201,30 @@ export default function Lobby() {
             setInvitationsUser(response.fromUsers)
             setRequests(true)
         }
+    }
+
+    async function friendProfile(idFriend) {
+        let result = await fetch('http://localhost:4000/friendprofile', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ idFriend: idFriend })
+        })
+        let response = await result.json()
+        if (response.msg == 1) {
+            setNameFriend(response.friend[0].name)
+            setEmailFriend(response.friend[0].email)
+            setPhotoFriend(response.friend[0].photo)
+            setMedalsFriend(response.friend[0].medals)
+            setIdFriend(response.friend[0].id_user)
+        }
+    }
+
+    function invitar(idFriend) {
+        socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
+        setShowInconveniente(true)
+        setInconveniente("Invitacion enviada")
     }
 
     return (
@@ -208,23 +280,23 @@ export default function Lobby() {
                         invitationsUser.map(u => (
                             <div key={u.id_user}>
                                 Invitación de {u.name}
-                                <button onClick={() => { newFriend(u.id_user); setRequests(false) }}>Aceptar</button>
-                                <button onClick={() => { let rechazar = true; deleteInvitations(u.id_user, rechazar) }}>Rechazar</button>
+                                <button className="tilde" onClick={() => { newFriend(u.id_user); setRequests(false) }}>✔</button>
+                                <button className="cruz" onClick={() => { let rechazar = true; deleteInvitations(u.id_user, rechazar) }}>✖</button>
                             </div>
                         ))
                     ) : (
                         <p>No hay nuevas invitaciones</p>
                     )}
-                    <button onClick={() => setRequests(false)}>Cerrar</button>
+                    <button className="cerrar-requests" onClick={() => setRequests(false)}>Cerrar</button>
                 </div>
             )}
 
             {/*---------------------------*/}
 
             {advice &&
-                <div>
-                    <h2>{nameInvitation} rechazo tu solicitud de amistad</h2>
-                    <button onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
+                <div className="modal-rechazo-solicitud">
+                    <h2 className="mensaje-rechazo-solicitud">{nameInvitation} rechazo tu solicitud de amistad</h2>
+                    <button className="boton-rechazo-solicitud" onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
                 </div>}
 
             {/*---------------------------*/}
@@ -240,6 +312,77 @@ export default function Lobby() {
                                 setSeguro(true)
                             }}>No</button>
                         </div>
+            {advice2 &&
+                <div className="modal-acepta-solicitud">
+                    <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
+                    <button className="boton-acepta-solicitud" onClick={() => { setRequests(false); setAdvice2(false) }}> Cerrar </button>
+                </div>}
+
+            {/*---------------------------*/}
+
+            {showInconveniente && (
+                <div className="cuadroCompleto"
+                    onClick={() => {
+                        setShowInconveniente(false);
+                        setInconveniente("");
+                    }}>
+                    <div className="inconveniente">
+                        <h2>{inconveniente}</h2>
+                        <button
+                            className="btn cerrar"
+                            onClick={() => {
+                                setShowInconveniente(false);
+                                setInconveniente("");
+                            }}>
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/*---------------------------*/}
+
+            {playInvitation && (
+                <div className="modal-play-invitation">
+                    <h2 className="titulo-modal">Invitación de partida</h2>
+                    <p className="texto-modal">
+                        <strong>{nameInvitation}</strong> te invita a jugar una partida de <b>Batalla Naval</b>.
+                    </p>
+
+                    <div className="botones-modal">
+                        <button
+                            className="btn aceptar"
+                            onClick={async () => {
+                                await socket.emit('invitacionJugar', {
+                                    room: "P" + fromId,
+                                    name: name,
+                                    rechazar: false,
+                                    answer: true,
+                                    from: idLoggued
+                                });
+                                await socket.emit('joinRoom', { room: "G" + fromId + idLoggued });
+                                setPlayInvitation(false);
+                                router.replace("/game");
+                            }}
+                        >
+                            JUGAR
+                        </button>
+
+                        <button
+                            className="btn rechazar"
+                            onClick={() => {
+                                socket.emit('invitacionJugar', {
+                                    room: "P" + fromId,
+                                    name: name,
+                                    rechazar: true,
+                                    answer: true,
+                                    from: idLoggued
+                                });
+                                setPlayInvitation(false);
+                            }}
+                        >
+                            RECHAZAR
+                        </button>
                     </div>
                 </div>
             )}
@@ -285,11 +428,20 @@ export default function Lobby() {
                                     <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}>
                                         🕭
                                     </div>
+                                    {invitationsUser.length > 0 && <div className="circulo-notificacion" onClick={() => { invitations(); setRequests(true) }}>🔴</div>}
                                 </div>
                                 {userFriends.length > 0 ?
                                     <ul>
                                         {userFriends.map(u => {
-                                            return <li key={u.id_user}>{u.name} - {u.email}</li>
+                                            return (
+                                                <li key={u.id_user}>
+                                                    <button
+                                                        className="friend-button"
+                                                        onClick={() => { friendProfile(u.id_user); setShowFriendProfile(true) }}>
+                                                        {u.name} - {u.email}
+                                                    </button>
+                                                </li>
+                                            )
                                         })}
                                     </ul> :
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
@@ -299,15 +451,43 @@ export default function Lobby() {
                         <div className="right-col">
                             <div className="title-right">BATALLA NAVAL</div>
 
-                            <div className="board">
-                                <img
-                                    src="https://www.shutterstock.com/image-vector/sea-battle-board-game-vector-600nw-1672369615.jpg"
-                                    alt="Tablero Batalla Naval"
-                                />
-                            </div>
 
-                            <div className="play-area">
-                                <button className="play-btn">¡Jugar!</button>
+                            <div className="panel-center">
+                                {showFriendProfile ? (
+
+                                    <div className="friend-panel" role="dialog" aria-modal="true">
+
+                                        <div className="profile">
+                                            <div className="avatar-wrapper">
+                                                <img src={photoFriend} className="avatar" />
+                                            </div>
+                                            <div className="profile-info">
+                                                <div className="username">{nameFriend}</div>
+
+                                                <div className="medals-stack">
+                                                    <div className="medal">
+                                                        <div className="medal-emoji">🎖️</div>
+                                                        <div className="medal-count">{medalsFriend}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>Acá va el historial de partidas</div>
+                                        <div className="friend-actions">
+                                            <button
+                                                className="btn play-friend-btn"
+                                                onClick={() => { invitar(idFriend); setShowFriendProfile(false); }}
+                                            >
+                                                Jugar
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="friend-panel welcome">
+                                        <h2>Bienvenido!</h2>
+                                        <p>Selecciona un amigo para ver su perfil</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

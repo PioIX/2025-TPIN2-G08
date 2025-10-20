@@ -89,19 +89,7 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-
-		io.to(req.session.room).emit('joinRoom', { user: req.session.user, room: req.session.room });
-	});
-
-	socket.on('pingAll', data => {
-		console.log("PING ALL: ", data);
-		data.msj = "hola"
-		io.emit('ping', {msg: data.msj});
-	});
-
-	socket.on('sendMessage', data => {
-		console.log("La room es: " + req.session.room + " el mensaje es: " + data.msg)
-		io.to(req.session.room).emit('newMessage',  data.msg );
+		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room});
 	});
 
 	socket.on('disconnect', () => {
@@ -110,14 +98,19 @@ io.on("connection", (socket) => {
 
 	socket.on('solicitud', async data =>{
 		if (data.rechazar == true){
-			io.emit('solicitud', data)
+			io.to(data.room).emit('solicitudBack', data)
 		} else if(data.rechazar == false && data.answer == false){
-			io.emit('solicitud', data)
+			io.to(data.room).emit('solicitudBack', data)
+			idFriend = parseInt(data.room.slice(1, 3))
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
-				(${data.idLoggued}, ${data.idFriend})`)
+				(${data.idLoggued}, ${idFriend})`)
 		} else {
-			io.emit('solicitud', data)
+			io.to(data.room).emit('solicitudBack', data)
 		}
+	})
+
+	socket.on('invitacionJugar', data => {
+		io.to(data.room).emit('invitacionBack', data)
 	})
 });
 /*
@@ -304,6 +297,15 @@ app.post('/checkinvitation', async function(req, res){
 			res.send({msg: 1, error: false})
 		}
 	} catch(e){
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/friendprofile', async function(req, res){
+	try {
+		let friend = await realizarQuery(`SELECT id_user, email, name, photo, medals FROM Users WHERE id_user = ${req.body.idFriend}`)
+		res.send({friend, msg: 1, error: false})
+	} catch(e) {
 		res.send({msg: e.message, error: true})
 	}
 })
