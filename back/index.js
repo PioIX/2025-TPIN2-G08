@@ -309,3 +309,29 @@ app.post('/friendprofile', async function(req, res){
 		res.send({msg: e.message, error: true})
 	}
 })
+
+app.put('/editProfile', async function(req, res){
+	if (!req.body.photo || esURLValida(req.body.photo) == false){
+		req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
+	}
+	try {
+		if (req.body.name && req.body.photo){
+			await realizarQuery(`UPDATE Users 
+				SET name=${req.body.name}, photo=${req.body.photo} 
+				WHERE id_user=${req.body.idLoggued}`)
+			res.send({msg: 1, error: false})
+		} else if(req.body.name){
+			await realizarQuery(`UPDATE Users
+				SET name=${req.body.name}
+				WHERE id_user=${req.body.idLoggued}`)
+			res.send({msg: 2, error: false})
+		} else if(req.body.photo){
+			await realizarQuery(`UPDATE Users
+				SET photo=${req.body.photo}
+				WHERE id_user=${req,body.idLoggued}`)
+			res.send({msg: 3, error: false})
+		}
+	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useEffectEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function Lobby() {
@@ -214,6 +214,20 @@ export default function Lobby() {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
         setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
+    }
+
+    async function editProfile(){
+        let result = await fetch("http://localhost:4000/editProfile", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setName()
+        }
     }
 
     return (
@@ -446,7 +460,7 @@ export default function Lobby() {
                                 {showFriendProfile ? (
                                     <div className="friend-panel" role="dialog" aria-modal="true">
                                         <div className="profile">
-                                            <div className="avatar-wrapper">
+                                            <div className="avatar-wrapper" onClick={editProfile}>
                                                 <img src={photoFriend} className="avatar" />
                                             </div>
                                             <div className="profile-info">
