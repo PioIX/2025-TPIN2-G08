@@ -15,8 +15,34 @@ export default function Juego() {
   const [barcoSeleccionado, setBarcoSeleccionado] = useState(null);
   
   const cells = [];
+  let posicionLetra = ""
   for (let i = 0; i < 100; i++) {
-    cells.push(<div className="cell" key={i}
+      if(i +1 >= 1 && i+1 <= 10){
+         posicionLetra = "A"
+      }else if(i +1 >= 11 && i+1 <= 20){
+        posicionLetra = "B"
+      }else if(i +1 >= 21 && i+1 <= 30){
+        posicionLetra = "C"
+      }else if(i +1 >= 31 && i+1 <= 40){
+        posicionLetra = "D"
+      }else if(i +1 >= 41 && i+1 <= 50){
+        posicionLetra = "E"
+      }else if(i +1 >= 51 && i+1 <= 60){
+        posicionLetra = "F"
+      }else if(i +1 >= 61 && i+1 <= 70){
+        posicionLetra = "G"
+      }else if(i +1 >= 71 && i+1 <= 80){
+        posicionLetra = "H"
+      }else if(i +1 >= 81 && i+1 <= 90){
+         posicionLetra = "I"
+      }else if(i +1 >= 91 && i+1 <= 100){
+         posicionLetra = "J"
+      }
+
+      let guardoNum = (i+1).toString()
+      let posicionNum = guardoNum.slice(guardoNum.length -1)
+      let posicion = posicionLetra + posicionNum
+    cells.push(<div className="cell" key={i+1} id={posicionNum}
     onClick={()=>{
       if(elegirPosicionBarco2x1){
         
@@ -27,7 +53,7 @@ export default function Juego() {
 
     }
     }
-    ></div>);
+    >{posicion}</div>);
   }
 
   useEffect(() => {
