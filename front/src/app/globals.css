@@ -297,6 +297,7 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #111;
+  cursor: pointer;
 }
 
 .profile-info {

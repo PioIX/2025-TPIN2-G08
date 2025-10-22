@@ -49,9 +49,6 @@ export default function logIn() {
     let response = await login(obj);
     if (response.msg == 1) {
       localStorage.setItem("idLoggued", response.user[0].id_user);
-      localStorage.setItem("name", response.user[0].name);
-      localStorage.setItem("medals", response.user[0].medals);
-      localStorage.setItem("photo", response.user[0].photo);
       if (response.user[0].admin == 1) {
         setShowAdminOption(true);
         setId(response.user[0].id_user)

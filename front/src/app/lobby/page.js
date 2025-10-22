@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useEffectEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function Lobby() {
@@ -31,13 +31,14 @@ export default function Lobby() {
     const [medalsFriend, setMedalsFriend] = useState()
     const [photoFriend, setPhotoFriend] = useState()
     const [idFriend, setIdFriend] = useState()
+    const [modalEditProfile, setEditProfile] = useState(false)
+    const [newName, setNewName] = useState()
+    const [newPhoto, setNewPhoto] = useState()
 
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
-        setName(localStorage.getItem("name"));
-        setMedals(localStorage.getItem("medals"));
-        setPhoto(localStorage.getItem("photo"));
+        user()
         friends()
         setFirstRender(true)
     }, []);
@@ -88,6 +89,23 @@ export default function Lobby() {
             console.log(data)
         })
     }, [socket])
+
+    async function user(){
+        const idLoggued = localStorage.getItem("idLoggued")
+        let result = await fetch('http://localhost:4000/user', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setName(response.user.name)
+            setPhoto(response.user.photo)
+            setMedals(response.user.medals)
+        }
+    }
 
     async function friends() {
         const idLoggued = localStorage.getItem("idLoggued")
@@ -214,6 +232,53 @@ export default function Lobby() {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
         setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
+    }
+
+    async function editProfile(){
+        if(!newName && !newPhoto){
+            setInconveniente("Complete el campo del nombre o del mail")
+            setShowInconveniente(true)
+            return -1
+        }
+        let result = await fetch("http://localhost:4000/editProfile", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued, name: newName, photo: newPhoto})
+        })
+        let response = await result.json()
+        console.log(response)
+        if (response.msg == 1){
+            setName(response.name)
+            setPhoto(response.photo)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 1.1){
+            setName(response.name)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 2){
+            setName(response.name)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 3){
+            setPhoto(response.photo)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        }
     }
 
     return (
@@ -381,6 +446,15 @@ export default function Lobby() {
                 </div>
             )}
 
+            {/*---------------------------*/}
+
+            {modalEditProfile &&
+            <div>
+                <input placeholder="Nuevo nombre" type="text" onChange={(e) => setNewName(e.target.value)}></input>    
+                <input placeholder="Nueva foto" type="text" onChange={(e) => setNewPhoto(e.target.value)}></input>
+                <button onClick={editProfile}> Guardar cambios </button>
+                <button onClick={() => {setNewName(); setNewPhoto(); setEditProfile(false)}}> Cancelar </button>
+            </div>}
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -396,7 +470,7 @@ export default function Lobby() {
                     <div className="box-grid">
                         <div className="left-col">
                             <div className="profile">
-                                <div className="avatar-wrapper">
+                                <div className="avatar-wrapper" onClick={() => setEditProfile(true)}>
                                     <img src={photo} alt="Avatar" className="avatar" />
                                 </div>
                                 <img className="logOut" onClick={() => setShowSeguro(true)} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
@@ -446,7 +520,7 @@ export default function Lobby() {
                                 {showFriendProfile ? (
                                     <div className="friend-panel" role="dialog" aria-modal="true">
                                         <div className="profile">
-                                            <div className="avatar-wrapper">
+                                            <div className="avatar-wrapper" onClick={editProfile}>
                                                 <img src={photoFriend} className="avatar" />
                                             </div>
                                             <div className="profile-info">
