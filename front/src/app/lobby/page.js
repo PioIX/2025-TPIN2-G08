@@ -81,6 +81,9 @@ export default function Lobby() {
                 setShowInconveniente(true)
                 setInconveniente(`${data.name} rechazó tu invitación para jugar`)
             } else if (data.rechazar == false && data.answer == true) {
+                data.room.slice(1, 3)
+                let id = parseInt(data.from)
+                localStorage.setItem("idPlayer", id)
                 router.replace("/game")
             }
         })
@@ -419,11 +422,10 @@ export default function Lobby() {
                                     answer: true,
                                     from: idLoggued
                                 });
-                                await socket.emit('joinRoom', { room: "G" + fromId + idLoggued });
                                 setPlayInvitation(false);
-                                router.replace("/game");
-                            }}
-                        >
+                                localStorage.setItem("idPlayer", fromId)
+                                router.push("/game")
+                            }}>
                             JUGAR
                         </button>
 
@@ -438,8 +440,7 @@ export default function Lobby() {
                                     from: idLoggued
                                 });
                                 setPlayInvitation(false);
-                            }}
-                        >
+                            }}>
                             RECHAZAR
                         </button>
                     </div>
