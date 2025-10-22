@@ -16,6 +16,10 @@ export default function Juego() {
   const [idPlayer, setIdPlayer] = useState()
   const [room, setRoom] = useState()
   const [heGaveUp, setHeGaveUp] = useState(false)
+  const [name, setName] = useState()
+  const [medals, setMedals] = useState()
+  const [photo, setPhoto] = useState()
+  const [friendName, setFriendName] = useState()
   
   const cells = [];
   let posicionLetra = ""
@@ -37,9 +41,9 @@ export default function Juego() {
       }else if(i +1 >= 71 && i+1 <= 80){
         posicionLetra = "H"
       }else if(i +1 >= 81 && i+1 <= 90){
-         posicionLetra = "I"
+        posicionLetra = "I"
       }else if(i +1 >= 91 && i+1 <= 100){
-         posicionLetra = "J"
+        posicionLetra = "J"
       }
 
       let guardoNum = (i+1).toString()
@@ -62,18 +66,20 @@ export default function Juego() {
   useEffect(() => {
     setId(localStorage.getItem("idLoggued"));
     setIdPlayer(localStorage.getItem("idPlayer"))
+    user()
     setFirsRender(true);
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("checkRoom", (data) => {
-      console.log(data);
+      socket.on("checkRoom", data => {
+        console.log(data);
     });
 
     socket.on('neverSurrender', data => {
-      if (data.rechzar){
+      if (data.rendirse == true && data.to == idLoggued){
         setHeGaveUp(true)
+        setFriendName(data.name)
       }
     })
   }, [socket]);
@@ -92,17 +98,49 @@ export default function Juego() {
     }
   }, [firstRender]);
 
+  async function user(){
+    const idLoggued = localStorage.getItem("idLoggued")
+    let result = await fetch('http://localhost:4000/user', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({idLoggued: idLoggued})
+    })
+    let response = await result.json()
+    if (response.msg == 1){
+      setName(response.user.name)
+      setPhoto(response.user.photo)
+      setMedals(response.user.medals)
+    }
+  }
+
+  async function insertGame(){
+    let result = await fetch('http://localhost:4000/insertGame',{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({date: new Date, idWinner: idPlayer, idPlayer: idLoggued})
+    })
+    await result.json()
+  }
+
   return (
     <>
       {/* ACA VAN TODOS LOS MODAL */}
       {/* ACA VAN TODOS LOS MODAL */}
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
+
       {rendirse && (
         <div className="popup-rendicion">
           <h3>¿Seguro que querés rendirte?</h3>
           <p>Perderás la partida actual</p>
           <div className="popup-botones">
-            <button className="btn-si" onClick={() => {router.replace("/lobby"); socket.emit('rendirse', {rendirse: true, room: room})}}>Rendirse</button>
+            <button className="btn-si" onClick={ async () => { 
+              await insertGame()
+              socket.emit('rendirse', {rendirse: true, room: room, name: name, to: idPlayer})
+              router.replace("/lobby")}}>Rendirse</button>
             <button className="btn-no" onClick={() => setRendirse(false)}>Cancelar</button>
           </div>
         </div>
@@ -112,8 +150,14 @@ export default function Juego() {
 
       {heGaveUp && 
       <div>
-        <h2></h2>
+        <h2>{friendName} se rindio, por lo que ganaste la partida</h2>
+        <div className="medal">
+          <div className="medal-emoji">🎖️</div>
+          <div className="medal-count">+30</div>
+        </div>
+        <button onClick={() => router.push("/lobby")}> OK </button>
       </div>}
+
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
       {/* ACA VAN TODOS LOS MODAL */}
       {/* ACA VAN TODOS LOS MODAL */}
