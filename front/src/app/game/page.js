@@ -13,12 +13,15 @@ export default function Juego() {
   const [elegirPosicionBarco2x1, setElegirPosicionBarco2x1] = useState(false);
   const [elegirPosicionBarco4x1, setElegirPosicionBarco4x1] = useState(false);
   const [barcoSeleccionado, setBarcoSeleccionado] = useState(null);
+  const [idPlayer, setIdPlayer] = useState()
+  const [room, setRoom] = useState()
+  const [heGaveUp, setHeGaveUp] = useState(false)
   
   const cells = [];
   let posicionLetra = ""
   for (let i = 0; i < 100; i++) {
       if(i +1 >= 1 && i+1 <= 10){
-         posicionLetra = "A"
+        posicionLetra = "A"
       }else if(i +1 >= 11 && i+1 <= 20){
         posicionLetra = "B"
       }else if(i +1 >= 21 && i+1 <= 30){
@@ -58,6 +61,7 @@ export default function Juego() {
 
   useEffect(() => {
     setId(localStorage.getItem("idLoggued"));
+    setIdPlayer(localStorage.getItem("idPlayer"))
     setFirsRender(true);
   }, []);
 
@@ -66,27 +70,57 @@ export default function Juego() {
     socket.on("checkRoom", (data) => {
       console.log(data);
     });
+
+    socket.on('neverSurrender', data => {
+      if (data.rechzar){
+        setHeGaveUp(true)
+      }
+    })
   }, [socket]);
 
   useEffect(() => {
     if (firstRender) {
-      socket.emit("joinRoom", { room: "P" + idLoggued });
+      let numIdLoggued = parseInt(idLoggued)
+      let numIdPlayer = parseInt(idPlayer)
+      if(numIdLoggued < numIdPlayer){
+        socket.emit("joinRoom", { room: "G" + numIdLoggued + numIdPlayer});
+        setRoom("G" + numIdLoggued + numIdPlayer)
+      } else {
+        socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued});
+        setRoom("G" + numIdPlayer + numIdLoggued)
+      }
     }
   }, [firstRender]);
 
   return (
     <>
-      {/* Modal de confirmación */}
+      {/* ACA VAN TODOS LOS MODAL */}
+      {/* ACA VAN TODOS LOS MODAL */}
+      {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
       {rendirse && (
         <div className="popup-rendicion">
           <h3>¿Seguro que querés rendirte?</h3>
           <p>Perderás la partida actual</p>
           <div className="popup-botones">
-            <button className="btn-si" onClick={() => router.replace("/lobby")}>Rendirse</button>
+            <button className="btn-si" onClick={() => {router.replace("/lobby"); socket.emit('rendirse', {rendirse: true, room: room})}}>Rendirse</button>
             <button className="btn-no" onClick={() => setRendirse(false)}>Cancelar</button>
           </div>
         </div>
       )}
+
+      {/*---------------------------*/}
+
+      {heGaveUp && 
+      <div>
+        <h2></h2>
+      </div>}
+      {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
+      {/* ACA VAN TODOS LOS MODAL */}
+      {/* ACA VAN TODOS LOS MODAL */}
+
+      {/* ACA VA LA PAGINA PRINCIPAL */}
+      {/* ACA VA LA PAGINA PRINCIPAL */}
+      {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
       <div className="game-container">
         <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
