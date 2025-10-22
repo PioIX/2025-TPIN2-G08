@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useEffectEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function Lobby() {
@@ -19,7 +19,6 @@ export default function Lobby() {
     const [invitationsUser, setInvitationsUser] = useState([])
     const router = useRouter();
     const [showSeguro, setShowSeguro] = useState(false);
-    const [Seguro, setSeguro] = useState(false);
     const [advice, setAdvice] = useState(false)
     const [advice2, setAdvice2] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
@@ -28,18 +27,18 @@ export default function Lobby() {
     const [playInvitation, setPlayInvitation] = useState(false)
     const [fromId, setFromId] = useState(0)
     const [showFriendProfile, setShowFriendProfile] = useState(false);
-    const [emailFriend, setEmailFriend] = useState()
     const [nameFriend, setNameFriend] = useState()
     const [medalsFriend, setMedalsFriend] = useState()
     const [photoFriend, setPhotoFriend] = useState()
     const [idFriend, setIdFriend] = useState()
+    const [modalEditProfile, setEditProfile] = useState(false)
+    const [newName, setNewName] = useState()
+    const [newPhoto, setNewPhoto] = useState()
 
 
     useEffect(() => {
         setId(localStorage.getItem("idLoggued"));
-        setName(localStorage.getItem("name"));
-        setMedals(localStorage.getItem("medals"));
-        setPhoto(localStorage.getItem("photo"));
+        user()
         friends()
         setFirstRender(true)
     }, []);
@@ -49,14 +48,9 @@ export default function Lobby() {
             socket.emit('joinRoom', { room: "P" + idLoggued })
         }
     }, [firstRender])
-    useEffect(() => {
-        if (nameInvitation) {
-            setInconveniente(`${nameInvitation} rechazó tu invitación para jugar`)
-        }
-    }, [nameInvitation])
+    
     useEffect(() => {
         if (!socket) return
-
         socket.on('solicitudBack', data => {
             if (data.rechazar == false && data.answer == false) {
                 let obj = {
@@ -74,23 +68,23 @@ export default function Lobby() {
             }
         })
 
-        socket.on('invitacionBack', data => {
+        socket.on('invitacionBack', data => { 
             if (data.rechazar == false && data.answer == false) {
                 setNameInvitation(data.name)
                 setPlayInvitation(true)
                 let fromId = data.from
                 setFromId(fromId)
             } else if (data.rechazar == true) {
-                console.log(data)  
                 setNameInvitation(data.name)
                 let fromId = data.from
                 setFromId(fromId)
                 setShowInconveniente(true)
+                setInconveniente(`${data.name} rechazó tu invitación para jugar`)
             } else if (data.rechazar == false && data.answer == true) {
-                let fromId = data.from
-                socket.emit('joinRoom', { room: "G" + idLoggued + fromId })
+                data.room.slice(1, 3)
+                let id = parseInt(data.from)
+                localStorage.setItem("idPlayer", id)
                 router.replace("/game")
-                
             }
         })
 
@@ -98,6 +92,23 @@ export default function Lobby() {
             console.log(data)
         })
     }, [socket])
+
+    async function user(){
+        const idLoggued = localStorage.getItem("idLoggued")
+        let result = await fetch('http://localhost:4000/user', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued})
+        })
+        let response = await result.json()
+        if (response.msg == 1){
+            setName(response.user.name)
+            setPhoto(response.user.photo)
+            setMedals(response.user.medals)
+        }
+    }
 
     async function friends() {
         const idLoggued = localStorage.getItem("idLoggued")
@@ -214,7 +225,6 @@ export default function Lobby() {
         let response = await result.json()
         if (response.msg == 1) {
             setNameFriend(response.friend[0].name)
-            setEmailFriend(response.friend[0].email)
             setPhotoFriend(response.friend[0].photo)
             setMedalsFriend(response.friend[0].medals)
             setIdFriend(response.friend[0].id_user)
@@ -225,6 +235,53 @@ export default function Lobby() {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
         setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
+    }
+
+    async function editProfile(){
+        if(!newName && !newPhoto){
+            setInconveniente("Complete el campo del nombre o del mail")
+            setShowInconveniente(true)
+            return -1
+        }
+        let result = await fetch("http://localhost:4000/editProfile", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({idLoggued: idLoggued, name: newName, photo: newPhoto})
+        })
+        let response = await result.json()
+        console.log(response)
+        if (response.msg == 1){
+            setName(response.name)
+            setPhoto(response.photo)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 1.1){
+            setName(response.name)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 2){
+            setName(response.name)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        } else if(response.msg == 3){
+            setPhoto(response.photo)
+            setInconveniente("Datos Guardados")
+            setShowInconveniente(true)
+            setEditProfile(false)
+            setNewName()
+            setNewPhoto()
+        }
     }
 
     return (
@@ -297,7 +354,8 @@ export default function Lobby() {
                 <div className="modal-rechazo-solicitud">
                     <h2 className="mensaje-rechazo-solicitud">{nameInvitation} rechazo tu solicitud de amistad</h2>
                     <button className="boton-rechazo-solicitud" onClick={() => { setRequests(false); setAdvice(false) }}> Cerrar </button>
-                </div>}
+                </div>
+            }
 
             {/*---------------------------*/}
 
@@ -306,20 +364,21 @@ export default function Lobby() {
                     <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
                         <p>¿Cerrar sesión?</p>
                         <div className="botonesMini">
-                            <button onClick={() => setSeguro(true)}>Sí</button>
-                            <button onClick={() => {
-                                setShowSeguro(false)
-                                setSeguro(true)
-                            }}>No</button>
+                            <button onClick={() => router.replace("/")}>Sí</button>
+                            <button onClick={() => setShowSeguro(false)}>No</button>
                         </div>
                     </div>
-                </div>
+                </div>)
             }
+
+            {/*---------------------------*/}
+                
             {advice2 &&
                 <div className="modal-acepta-solicitud">
                     <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
                     <button className="boton-acepta-solicitud" onClick={() => { setRequests(false); setAdvice2(false) }}> Cerrar </button>
-                </div>}
+                </div>
+            }
 
             {/*---------------------------*/}
 
@@ -363,11 +422,10 @@ export default function Lobby() {
                                     answer: true,
                                     from: idLoggued
                                 });
-                                await socket.emit('joinRoom', { room: "G" + fromId + idLoggued });
                                 setPlayInvitation(false);
-                                router.replace("/game");
-                            }}
-                        >
+                                localStorage.setItem("idPlayer", fromId)
+                                router.push("/game")
+                            }}>
                             JUGAR
                         </button>
 
@@ -382,14 +440,22 @@ export default function Lobby() {
                                     from: idLoggued
                                 });
                                 setPlayInvitation(false);
-                            }}
-                        >
+                            }}>
                             RECHAZAR
                         </button>
                     </div>
                 </div>
             )}
 
+            {/*---------------------------*/}
+
+            {modalEditProfile &&
+            <div>
+                <input placeholder="Nuevo nombre" type="text" onChange={(e) => setNewName(e.target.value)}></input>    
+                <input placeholder="Nueva foto" type="text" onChange={(e) => setNewPhoto(e.target.value)}></input>
+                <button onClick={editProfile}> Guardar cambios </button>
+                <button onClick={() => {setNewName(); setNewPhoto(); setEditProfile(false)}}> Cancelar </button>
+            </div>}
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -405,7 +471,7 @@ export default function Lobby() {
                     <div className="box-grid">
                         <div className="left-col">
                             <div className="profile">
-                                <div className="avatar-wrapper">
+                                <div className="avatar-wrapper" onClick={() => setEditProfile(true)}>
                                     <img src={photo} alt="Avatar" className="avatar" />
                                 </div>
                                 <img className="logOut" onClick={() => setShowSeguro(true)} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
@@ -425,12 +491,8 @@ export default function Lobby() {
                                 <h3>👥 Amigos</h3>
 
                                 <div className="header-icons">
-                                    <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}>
-                                        +
-                                    </div>
-                                    <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}>
-                                        🕭
-                                    </div>
+                                    <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}> + </div>
+                                    <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}> 🕭 </div>
                                     {invitationsUser.length > 0 && <div className="circulo-notificacion" onClick={() => { invitations(); setRequests(true) }}>🔴</div>}
                                 </div>
                                 {userFriends.length > 0 ?
@@ -457,11 +519,9 @@ export default function Lobby() {
 
                             <div className="panel-center">
                                 {showFriendProfile ? (
-
                                     <div className="friend-panel" role="dialog" aria-modal="true">
-
                                         <div className="profile">
-                                            <div className="avatar-wrapper">
+                                            <div className="avatar-wrapper" onClick={editProfile}>
                                                 <img src={photoFriend} className="avatar" />
                                             </div>
                                             <div className="profile-info">

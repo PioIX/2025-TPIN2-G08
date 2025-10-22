@@ -112,6 +112,10 @@ io.on("connection", (socket) => {
 	socket.on('invitacionJugar', data => {
 		io.to(data.room).emit('invitacionBack', data)
 	})
+
+	socket.on('rendirse', data => {
+		io.to(data.room).emit('neverSurrender', data)
+	})
 });
 /*
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
@@ -307,5 +311,49 @@ app.post('/friendprofile', async function(req, res){
 		res.send({friend, msg: 1, error: false})
 	} catch(e) {
 		res.send({msg: e.message, error: true})
+	}
+})
+
+app.put('/editProfile', async function(req, res){
+	try {
+		if (req.body.name && req.body.photo){
+			if(esURLValida(req.body.photo) == false){
+				await realizarQuery(`UPDATE Users
+					SET name='${req.body.name}'
+					WHERE id_user=${req.body.idLoggued}`)
+				res.send({name: req.body.name, msg: 1.1, error: false})
+			} else {
+				await realizarQuery(`UPDATE Users 
+					SET name='${req.body.name}', photo='${req.body.photo}'
+					WHERE id_user=${req.body.idLoggued}`)
+				res.send({name: req.body.name, photo: req.body.photo, msg: 1, error: false})
+			}
+		} else if(req.body.name && !req.body.photo){
+			await realizarQuery(`UPDATE Users
+				SET name='${req.body.name}'
+				WHERE id_user=${req.body.idLoggued}`)
+			res.send({name: req.body.name, msg: 2, error: false})
+		} else if(req.body.photo && !req.body.name){
+			await realizarQuery(`UPDATE Users
+				SET photo='${req.body.photo}'
+				WHERE id_user=${req.body.idLoggued}`)
+			res.send({photo: req.body.photo, msg: 3, error: false})
+		}
+	} catch(e) {
+		res.send({msg: e.message, error: true})
+	}
+})
+
+app.post('/user', async function(req, res){
+	try {
+		let user = await realizarQuery(`SELECT * FROM Users WHERE id_user=${req.body.idLoggued}`)
+		if (user.length > 0){
+			if (!user[0].photo || esURLValida(user[0].photo) == false){
+				user[0].photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
+			}
+			res.send({user: user[0], msg: 1, error: false})
+		}
+	} catch(e) {
+		res.send({msg: -1, error: false})
 	}
 })
