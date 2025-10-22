@@ -359,7 +359,7 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
-            {showSeguro && 
+            {showSeguro && (
                 <div className="modalSeguroMini" onClick={() => setShowSeguro(false)}>
                     <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
                         <p>¿Cerrar sesión?</p>
@@ -368,8 +368,8 @@ export default function Lobby() {
                             <button onClick={() => setShowSeguro(false)}>No</button>
                         </div>
                     </div>
-                </div>)
-            }
+                </div>
+            )}
 
             {/*---------------------------*/}
                 
