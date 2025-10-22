@@ -74,17 +74,7 @@ img { display: block; max-width: 100%; height: auto; }
   top: 2.5%;
   align-self: center;
   width: 30%;
-  cursor: pointer;
   transition: all 0.25s ease;
-}
-
-.title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  color: #f3f186ce;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 25px;
-  font-weight: 500;
 }
 
 .subTitle {
@@ -98,7 +88,7 @@ img { display: block; max-width: 100%; height: auto; }
 .form {
   top: 10%;
   background-color: rgba(255, 255, 255, 0.55);
-  padding: 25px;
+  padding: 1%;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(6px);
@@ -112,7 +102,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 .input {
   width: 80%;
-  padding: 10px;
+  padding: 3%;
   margin: 8px 0;
   color: rgb(0, 0, 0);
   border: 2px solid #f3f186ce;
