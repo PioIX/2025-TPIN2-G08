@@ -69,8 +69,9 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .container img {
+  z-index: 999;
   position: absolute;
-  top: 45px;
+  top: 2.5%;
   align-self: center;
   width: 30%;
   cursor: pointer;
@@ -84,18 +85,18 @@ img { display: block; max-width: 100%; height: auto; }
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 25px;
   font-weight: 500;
-
 }
 
 .subTitle {
   font-family: 'Poppins', sans-serif;
   color: #f3f186ce;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 25px;
+  margin-bottom: 0px;
 }
 
 
 .form {
+  top: 10%;
   background-color: rgba(255, 255, 255, 0.55);
   padding: 25px;
   border-radius: 12px;
@@ -113,6 +114,7 @@ img { display: block; max-width: 100%; height: auto; }
   width: 80%;
   padding: 10px;
   margin: 8px 0;
+  color: rgb(0, 0, 0);
   border: 2px solid #f3f186ce;
   background-color: #f3f186ce;
   border-radius: 6px;
@@ -135,6 +137,7 @@ img { display: block; max-width: 100%; height: auto; }
 .input:focus {
   background-color: #e4e009ce;
   border-color: white;
+  color: black;
   box-shadow: 0 0 8px #ffffff;
   transform: scale(1.01);
 }
@@ -192,7 +195,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 
-.password-container {
+.input-container {
   width: 86%;
   margin: 8px auto;
   position: relative;
@@ -200,12 +203,12 @@ img { display: block; max-width: 100%; height: auto; }
   align-items: center;
 }
 
-.password-container .input {
+.input-container .input {
   width: 100%;
   padding-right: 40px;
 }
 
-.password-container span {
+.input-container span {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -218,7 +221,7 @@ img { display: block; max-width: 100%; height: auto; }
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.password-container span:hover {
+.input-container span:hover {
   opacity: 1;
   transform: translateY(-50%) scale(1.1); /* 👈 combina ambas transformaciones */
 }
@@ -1673,4 +1676,93 @@ img { display: block; max-width: 100%; height: auto; }
 .modal-play-invitation .btn.rechazar:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.55);
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.top-bar {
+  text-align: center;
+}
+
+.board-section {
+  margin: 10px;
+}
+
+.boards {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.player-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 2px;
+}
+
+.enemy-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 2px;
+}
+
+.ship-images {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 20%; /* Puedes ajustar el ancho */
+}
+
+.ship-image2x1 {
+  width: 50%;
+  margin-bottom: 10px;
+}
+.ship-image4x1 {
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.play-button-container {
+  margin-top: 20px;
+}
+
+.btn-jugar {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-jugar:hover {
+  background-color: #45a049;
+}
+
+.surrender {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 30px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ship-image2x1, .ship-image4x1 {
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.3s ease;
+}
+
+.ship-image-selected {
+  border: 2px solid yellow;
 }

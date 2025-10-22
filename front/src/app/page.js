@@ -15,7 +15,7 @@ export default function logIn() {
   const [inconveniente, setInconveniente] = useState("");
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
-  const {socket, isConnected} = useSocket()
+  const { socket, isConnected } = useSocket()
   const [id, setId] = useState(0)
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export default function logIn() {
     }
   }, [showAdministracion]);
 
-  useEffect(()=>{
-    if (!socket) return 
+  useEffect(() => {
+    if (!socket) return
 
   }, [socket])
 
@@ -53,7 +53,7 @@ export default function logIn() {
         setShowAdminOption(true);
         setId(response.user[0].id_user)
       } else {
-        socket.emit('joinRoom', {room: "P" + response.user[0].id_user})
+        socket.emit('joinRoom', { room: "P" + response.user[0].id_user })
         router.replace(`/lobby`);
       }
       setEmail("");
@@ -95,7 +95,8 @@ export default function logIn() {
     });
     let response = await result.json();
     if (response.msg == 1) {
-      alert("Usuarios eliminados con exito");
+      setShowConveniente(true)
+      setConveniente("Usuarios eliminados con exito")
       setDeleteId([]);
       setShowAdministracion(false);
     } else {
@@ -124,7 +125,7 @@ export default function logIn() {
           </button>
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
-            <button className="btn jugar" onClick={() => {socket.emit('joinRoom', {room: "P" + id}); router.replace(`/lobby`);}}>
+            <button className="btn jugar" onClick={() => { socket.emit('joinRoom', { room: "P" + id }); router.replace(`/lobby`); }}>
               Jugar
             </button>
             <button
@@ -143,6 +144,9 @@ export default function logIn() {
 
       {showAdministracion && (
         <div className="modalAdministracion">
+          <button className="btnVolver" onClick={() => setShowAdministracion(false)}>
+            ← Volver
+          </button>
           <div className="modalAdmin">
             <h2>Elige el usuario que quiera eliminar</h2>
             {allUsers && allUsers.length > 0 ? (
@@ -178,7 +182,10 @@ export default function logIn() {
             )}
             <button
               className="btn admin"
-              onClick={() => setShowAdministracion(false)}
+              onClick={() => {
+                setShowAdministracion(false)
+                setShowAdminOption(true)
+              }}
             >
               Cerrar
             </button>
@@ -224,14 +231,17 @@ export default function logIn() {
         <img src="/LogoBN.svg"></img>
         <div className={"form"}>
           <h2 className={"subTitle"}>Iniciar Sesión</h2>
-          <input
+          <div className="input-container">
+            <input
             type="email"
             className={"input"}
             placeholder="Mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
-          <div className="password-container">
+            />
+          </div>
+
+          <div className="input-container">
             <input
               type={showPassword ? "text" : "password"}
               className="input"
