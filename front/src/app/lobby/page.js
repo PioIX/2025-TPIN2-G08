@@ -260,8 +260,8 @@ export default function Lobby() {
                                     ))}
                                 </div>
                                 <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>Agregar amigo</button>
-                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
-                            </>
+                                <button className="btn cancel" onClick={() =>setShowModalNewFriend(false)}>Cerrar</button>
+                    </>
                         ) : (
                             <>
                                 <h3>No hay usuarios para agregar</h3>
@@ -301,7 +301,7 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
-            {showSeguro && (
+            {showSeguro && 
                 <div className="modalSeguroMini" onClick={() => setShowSeguro(false)}>
                     <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
                         <p>¿Cerrar sesión?</p>
@@ -312,6 +312,9 @@ export default function Lobby() {
                                 setSeguro(true)
                             }}>No</button>
                         </div>
+                    </div>
+                </div>
+            }
             {advice2 &&
                 <div className="modal-acepta-solicitud">
                     <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>

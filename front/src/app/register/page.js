@@ -69,13 +69,16 @@ export default function register() {
                 <img src="/LogoBN.svg"></img>
                 <div className={"form"}>
                     <h2 className={"subTitle"}>Registro</h2>
-                    <input
-                        type="text"
-                        className={"input"}
-                        placeholder="Mail"
-                        onChange={e => setEmail(e.target.value)}
-                    />
-                    <div className="password-container">
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Mail"
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="input-container">
                         <input
                             type={showPassword ? "text" : "password"}
                             className="input"
@@ -86,18 +89,22 @@ export default function register() {
                             {showPassword ? "🙉" : "🙈"}
                         </span>
                     </div>
-                    <input
-                        type="text"
-                        className={"input"}
-                        placeholder="Foto de perfil (url)"
-                        onChange={e => setPhoto(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        className={"input"}
-                        placeholder="Nombre"
-                        onChange={e => setName(e.target.value)}
-                    />
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Foto de perfil (url)"
+                            onChange={e => setPhoto(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Nombre"
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
                     <div className={"buttons"}>
                         <button className={"button"} type="button" onClick={objNewUser}>
                             Registrarse
