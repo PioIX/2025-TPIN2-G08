@@ -306,9 +306,19 @@ app.post('/checkinvitation', async function(req, res){
 })
 
 app.post('/friendprofile', async function(req, res){
+	record = []
 	try {
-		let friend = await realizarQuery(`SELECT id_user, email, name, photo, medals FROM Users WHERE id_user = ${req.body.idFriend}`)
-		res.send({friend, msg: 1, error: false})
+		let friend = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idFriend}`)
+		record = await realizarQuery(`
+			SELECT G.id_game, G.date, U.name
+			FROM Games G
+			INNER JOIN UsersPerGame UP1 ON UP1.id_game = G.id_game
+			INNER JOIN UsersPerGame UP2 ON UP2.id_game = G.id_game
+			INNER JOIN Users U ON U.id_user = G.result
+			WHERE UP1.id_user = ${req.body.idLoggued}
+			AND UP2.id_user = ${req.body.idFriend}
+		`);
+		res.send({friend, msg: 1, error: false, record})
 	} catch(e) {
 		res.send({msg: e.message, error: true})
 	}
@@ -355,5 +365,34 @@ app.post('/user', async function(req, res){
 		}
 	} catch(e) {
 		res.send({msg: -1, error: false})
+	}
+})
+
+app.post('/insertGame', async function(req, res){
+	try{
+		let userWinner = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idWinner}`)
+		userWinner[0].medals = userWinner[0].medals + 30
+		await realizarQuery(`UPDATE Users SET medals = ${userWinner[0].medals} WHERE id_user = ${req.body.idWinner}`)
+		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idPlayer}`)
+		userLose[0].medals = userLose[0].medals - 30
+		if (userLose[0].medals < 0){
+			userLose[0].medals = 0
+		}
+		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idPlayer}`)
+		let stringDate = req.body.date.toString()
+		let date = stringDate.slice(0, 10)
+		let newGame = await realizarQuery(`INSERT INTO Games (date, result) VALUES
+			('${date}', ${req.body.idWinner})`)
+		let idGame = newGame.insertId
+		if (idGame > 0){
+			await realizarQuery(`INSERT INTO UsersPerGame (id_game, id_user) VALUES
+				(${idGame}, ${req.body.idWinner}),
+				(${idGame}, ${req.body.idPlayer})`)
+			res.send({msg: 1, error: false})
+		} else {
+			res.send({msg: 0, error: false})
+		}
+	} catch(e) {
+		res.send({msg: e.message, error: true})
 	}
 })

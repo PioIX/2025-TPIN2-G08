@@ -34,6 +34,7 @@ export default function Lobby() {
     const [modalEditProfile, setEditProfile] = useState(false)
     const [newName, setNewName] = useState()
     const [newPhoto, setNewPhoto] = useState()
+    const [record, setRecord] = useState([])
 
 
     useEffect(() => {
@@ -220,14 +221,16 @@ export default function Lobby() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ idFriend: idFriend })
+            body: JSON.stringify({ idFriend: idFriend, idLoggued: idLoggued })
         })
         let response = await result.json()
+        console.log(response)
         if (response.msg == 1) {
             setNameFriend(response.friend[0].name)
             setPhotoFriend(response.friend[0].photo)
             setMedalsFriend(response.friend[0].medals)
             setIdFriend(response.friend[0].id_user)
+            setRecord(response.record)
         }
     }
 
@@ -521,12 +524,11 @@ export default function Lobby() {
                                 {showFriendProfile ? (
                                     <div className="friend-panel" role="dialog" aria-modal="true">
                                         <div className="profile">
-                                            <div className="avatar-wrapper" onClick={editProfile}>
+                                            <div className="avatar-wrapper">
                                                 <img src={photoFriend} className="avatar" />
                                             </div>
                                             <div className="profile-info">
                                                 <div className="username">{nameFriend}</div>
-
                                                 <div className="medals-stack">
                                                     <div className="medal">
                                                         <div className="medal-emoji">🎖️</div>
@@ -535,12 +537,25 @@ export default function Lobby() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div>Acá va el historial de partidas</div>
+                                        <div className="record">
+                                            <h3>Historial</h3>
+                                            {record.length > 0 ? 
+                                            <div className="table">
+                                                <table>
+                                                    <thead><tr><th>Fecha</th><th>Ganador</th></tr></thead>
+                                                    <tbody>
+                                                        {record.map(r => (
+                                                        <tr key={r.id_game}><td>{r.date}</td><td>{r.name}</td></tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>:
+                                            <h4>Aun no ha jugado partidas con {nameFriend}</h4>}
+                                        </div>
                                         <div className="friend-actions">
                                             <button
                                                 className="btn play-friend-btn"
-                                                onClick={() => { invitar(idFriend); setShowFriendProfile(false); }}
-                                            >
+                                                onClick={() => { invitar(idFriend); setShowFriendProfile(false); }}>
                                                 Jugar
                                             </button>
                                         </div>
