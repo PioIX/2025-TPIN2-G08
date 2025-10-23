@@ -306,9 +306,19 @@ app.post('/checkinvitation', async function(req, res){
 })
 
 app.post('/friendprofile', async function(req, res){
+	record = []
 	try {
-		let friend = await realizarQuery(`SELECT id_user, email, name, photo, medals FROM Users WHERE id_user = ${req.body.idFriend}`)
-		res.send({friend, msg: 1, error: false})
+		let friend = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idFriend}`)
+		record = await realizarQuery(`
+			SELECT G.id_game, G.date, U.name
+			FROM Games G
+			INNER JOIN UsersPerGame UP1 ON UP1.id_game = G.id_game
+			INNER JOIN UsersPerGame UP2 ON UP2.id_game = G.id_game
+			INNER JOIN Users U ON U.id_user = G.result
+			WHERE UP1.id_user = ${req.body.idLoggued}
+			AND UP2.id_user = ${req.body.idFriend}
+		`);
+		res.send({friend, msg: 1, error: false, record})
 	} catch(e) {
 		res.send({msg: e.message, error: true})
 	}
