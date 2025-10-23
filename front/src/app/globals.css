@@ -1807,4 +1807,5 @@ img { display: block; max-width: 100%; height: auto; }
 
 .ship-image-selected {
   border: 2px solid yellow;
+   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
 }
