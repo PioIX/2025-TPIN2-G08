@@ -10,7 +10,7 @@ export default function logIn() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminOption, setShowAdminOption] = useState(false);
-  const [showAdministracion, setShowAdministracion] = useState(false);
+  const [showAdministracion, setShowAdministracion] = useState(true); /*cambiar esto*/
   const [showInconveniente, setShowInconveniente] = useState(false);
   const [inconveniente, setInconveniente] = useState("");
   const [bueno, setBueno] = useState(false);
@@ -151,7 +151,7 @@ export default function logIn() {
       {showAdministracion && (
         <div className="modalAdministracion">
           <button className="btnVolver" onClick={() => setShowAdministracion(false)}>
-            ← Volver
+            Volver
           </button>
           <div className="modalAdmin">
             <h2>Elige el usuario que quiera eliminar</h2>
@@ -162,15 +162,15 @@ export default function logIn() {
                     <label className="user-itemDelete" key={user.id_user}>
                       <input
                         type="checkbox"
+                        checked={deleteId.includes(user.id_user)}  // Marca el checkbox si el id está en deleteId
                         onChange={(e) => {
+                          console.log("onChange input");
                           if (e.target.checked) {
                             setDeleteId((prev) => [...prev, user.id_user]);
                           } else {
-                            for (let i = 0; i < deleteId.length; i++) {
-                              if (user.id_user == deleteId[i].id_user) {
-                                setDeleteId([...deleteId.splice(i, 1)]);
-                              }
-                            }
+                            setDeleteId((prev) =>
+                              prev.filter((id) => id !== user.id_user)
+                            );
                           }
                         }}
                       ></input>
@@ -179,13 +179,14 @@ export default function logIn() {
                     </label>
                   );
                 })}
-                <button className="btn jugar" onClick={objDelete}>
-                  Aceptar
-                </button>
+                
               </div>
             ) : (
-              <h3> No hay usuarios para eliminar </h3>
+              <h3>No hay usuarios para eliminar</h3>
             )}
+            <button className="btn jugar" onClick={objDelete}>
+              Aceptar
+            </button>
             <button
               className="btn admin"
               onClick={() => {
