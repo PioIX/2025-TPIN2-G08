@@ -11,6 +11,7 @@ export default function register() {
     const [showPassword, setShowPassword] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
     const [inconveniente, setInconveniente] = useState("");
+    const [bueno, setBueno] = useState(false);
 
     function iniciarSesion() {
         router.push("/")
@@ -31,14 +32,17 @@ export default function register() {
             console.log("Debe completar el campo del nombre");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo del nombre")
+            setBueno(false);
         } else if (email == "") {
             console.log("Debe completar el campo del email");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo del email")
+            setBueno(false);
         } else if (password == "") {
             console.log("Debe completar el campo de la contraseña");
             setShowInconveniente(true)
             setInconveniente("Debe completar el campo de la contraseña")
+            setBueno(false);
         } else {
             let obj = {
                 photo: photo,
@@ -48,16 +52,16 @@ export default function register() {
             }
             let response = await newUser(obj)
             if (response.msg == 1) {
-                //alert("Registro exitoso")
                 console.log("Registro exitoso");
                 setShowInconveniente(true)
                 setInconveniente("Registro exitoso")
+                setBueno(true);
                 router.push("/")
             } else {
-                //alert("Algo ha ocurrido")
                 console.log("Algo ha ocurrido");
                 setShowInconveniente(true)
                 setInconveniente("Algo ha ocurrido")
+                setBueno(false);
             }
         }
 
@@ -77,7 +81,7 @@ export default function register() {
                             onChange={e => setEmail(e.target.value)}
                         />
                     </div>
-                    
+
                     <div className="input-container">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -117,29 +121,54 @@ export default function register() {
             </div>
 
             {showInconveniente && (
-                <div
-                    className="cuadroCompleto"
-                    onClick={() => {
-                        setShowInconveniente(false);
-                        setInconveniente("");
-                    }}
-                >
+                bueno ? (
                     <div
-                        className="inconveniente"
-                        onClick={(e) => e.stopPropagation()} // evita cerrar si clicás dentro
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
                     >
-                        <h2>{inconveniente}</h2>
-                        <button
-                            className="btn cerrar"
-                            onClick={() => {
-                                setShowInconveniente(false);
-                                setInconveniente("");
-                            }}
+                        <div
+                            className="conveniente"
                         >
-                            Cerrar
-                        </button>
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarBueno"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
+                    >
+                        <div
+                            className="inconveniente"
+                        >
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarMalo"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )
+
             )}
         </>
     )

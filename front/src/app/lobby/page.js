@@ -301,7 +301,7 @@ export default function Lobby() {
                                 <h2>Enviar solicitud de amistad</h2>
                                 <div className="user-list">
                                     {users.map((user) => (
-                                        <label key={user.id_user} className="user-item">
+                                        <label key={user.id_user} className="user-itemFriends">
                                             <input
                                                 type="checkbox"
                                                 onChange={(e) => {
@@ -313,8 +313,8 @@ export default function Lobby() {
                                                 }}
                                             />
                                             <div>
-                                                <div className="user-name">{user.name}</div>
-                                                <div className="user-email">{user.email}</div>
+                                                <div className="user-nameFriends">{user.name}</div>
+                                                <div className="user-emailFriends">{user.email}</div>
                                             </div>
                                         </label>
                                     ))}
@@ -362,7 +362,7 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
-            {showSeguro && 
+            {showSeguro && (
                 <div className="modalSeguroMini" onClick={() => setShowSeguro(false)}>
                     <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
                         <p>¿Cerrar sesión?</p>
@@ -371,7 +371,8 @@ export default function Lobby() {
                             <button onClick={() => setShowSeguro(false)}>No</button>
                         </div>
                     </div>
-                </div>}
+                </div>
+            )}
 
             {/*---------------------------*/}
                 
