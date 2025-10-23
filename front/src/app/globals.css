@@ -487,18 +487,15 @@ img { display: block; max-width: 100%; height: auto; }
   text-align: center;
 }
 
-.user-list {
+.user-listDelete {
   max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 15px;
-  padding-right: 10px;
 }
 
-.user-item {
+.user-itemDelete {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(96, 74, 74, 0.1);
   padding: 10px 12px;
   border-radius: 8px;
   margin-bottom: 8px;
@@ -506,22 +503,27 @@ img { display: block; max-width: 100%; height: auto; }
   transition: background-color 0.2s ease;
 }
 
-.user-item:hover {
+.user-itemDelete:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.user-item input[type="checkbox"] {
+.user-itemDelete.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.user-itemDelete input[type="checkbox"] {
   cursor: pointer;
   width: 18px;
   height: 18px;
 }
 
-.user-name {
+.user-nameDelete {
   font-weight: 600;
-  color: #fdf572;
+  color: #ffffff;
 }
 
-.user-email {
+.user-emailDelete {
   font-style: italic;
   opacity: 0.8;
   color: #fff;
@@ -594,7 +596,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* Lista de usuarios */
-.user-list {
+.user-listFriends {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -602,7 +604,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* Ítem de usuario */
-.user-item {
+.user-itemFriends {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -613,16 +615,28 @@ img { display: block; max-width: 100%; height: auto; }
   transition: background 0.2s ease;
 }
 
-.user-item:hover {
+.user-itemFriends {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-itemFriends:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.user-name {
+.user-nameFriends {
   font-weight: bold;
   color: #fff;
 }
 
-.user-email {
+.user-emailFriends {
   font-style: italic;
   font-size: 0.9rem;
   color: #ccc;
@@ -791,7 +805,7 @@ img { display: block; max-width: 100%; height: auto; }
 .inconveniente {
   margin-top: 25px;
   background: rgba(55, 16, 24, 0.9);
-  border: 2px solid #ff3a96;
+  border: 2px solid #ff3a7c;
   padding: 20px 40px;
   border-radius: 10px;
   text-align: center;
@@ -809,11 +823,16 @@ img { display: block; max-width: 100%; height: auto; }
   font-weight: 600;
 }
 
-.btn.cerrar {
+.btn.cerrarMalo:hover {
+  background: #8f2331;
+  box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
+}
+
+.btn.cerrarMalo {
   margin-top: 10px;
   background: #661721;
   color: #e8f1ff;
-  border: 1px solid #ff3a5b;
+  border: 1px solid #ff3a7c;
   padding: 8px 20px;
   border-radius: 6px;
   cursor: pointer;
@@ -821,9 +840,42 @@ img { display: block; max-width: 100%; height: auto; }
   transition: all 0.2s ease-in-out;
 }
 
-.btn.cerrar:hover {
-  background: #8f2331;
-  box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
+.conveniente {
+  margin-top: 25px;
+  background: rgba(19, 16, 55, 0.9);
+  border: 2px solid #3a89ff;
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  color: #e8f1ff;
+  box-shadow: 0 6px 25px rgba(18, 49, 253, 0.342);
+  font-family: "Segoe UI", sans-serif;
+  animation: deslizar 0.35s ease-out;
+}
+
+.conveniente h2 {
+  margin: 0;
+  color: #9be6ff;
+  text-shadow: 0 0 8px rgba(0, 55, 255, 0.4);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.btn.cerrarBueno {
+  margin-top: 10px;
+  background: #172066;
+  color: #e8f1ff;
+  border: 1px solid #3a89ff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn.cerrarBueno:hover {
+  background: #23458f;
+  box-shadow: 0 0 8px rgba(58, 117, 255, 0.5);
 }
 
 /* animación suave desde arriba */
