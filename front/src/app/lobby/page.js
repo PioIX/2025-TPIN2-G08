@@ -427,7 +427,7 @@ export default function Lobby() {
                                 });
                                 setPlayInvitation(false);
                                 localStorage.setItem("idPlayer", fromId)
-                                router.push("/game")
+                                router.replace("/game")
                             }}>
                             JUGAR
                         </button>

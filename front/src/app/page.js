@@ -151,7 +151,7 @@ export default function logIn() {
       {showAdministracion && (
         <div className="modalAdministracion">
           <button className="btnVolver" onClick={() => setShowAdministracion(false)}>
-            Volver
+            ↩
           </button>
           <div className="modalAdmin">
             <h2>Elige el usuario que quiera eliminar</h2>
@@ -293,7 +293,7 @@ export default function logIn() {
             <a
               className={"link"}
               type="button"
-              onClick={() => router.push(`/register`)}
+              onClick={() => router.replace(`/register`)}
             >
               Registrarse
             </a>

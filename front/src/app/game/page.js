@@ -178,7 +178,7 @@ export default function Juego() {
             <div className="medal-emoji">🎖️</div>
             <div className="medal-count">+30</div>
           </div>
-          <button onClick={() => router.push("/lobby")}> OK </button>
+          <button onClick={() => router.replace("/lobby")}> OK </button>
         </div>}
 
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
