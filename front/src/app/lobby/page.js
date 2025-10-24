@@ -23,6 +23,7 @@ export default function Lobby() {
     const [advice2, setAdvice2] = useState(false)
     const [showInconveniente, setShowInconveniente] = useState(false);
     const [inconveniente, setInconveniente] = useState("");
+    const [bueno, setBueno] = useState(false);
     const [firstRender, setFirstRender] = useState(false)
     const [playInvitation, setPlayInvitation] = useState(false)
     const [fromId, setFromId] = useState(0)
@@ -81,6 +82,7 @@ export default function Lobby() {
                 setFromId(fromId)
                 setShowInconveniente(true)
                 setInconveniente(`${data.name} rechazó tu invitación para jugar`)
+                setBueno(false)
             } else if (data.rechazar == false && data.answer == true) {
                 data.room.slice(1, 3)
                 let id = parseInt(data.from)
@@ -155,10 +157,12 @@ export default function Lobby() {
             setShowInconveniente(true)
             setInconveniente("Invitacion enviada")
             setShowModalNewFriend(false);
+            setBueno(true)
         } else {
             setShowInconveniente(true)
             setInconveniente("Ya le has enviado una invitacion a este usuario")
             setShowModalNewFriend(false)
+            setBueno(false)
         }
     }
 
@@ -175,6 +179,7 @@ export default function Lobby() {
         if (response.msg == 1) {
             setShowInconveniente(true)
             setInconveniente("Amigo agregado")
+            setBueno(true)
             socket.emit('solicitud', { room: "P" + idNewFriend, name: name, rechazar: false, answer: true })
             await friends()
             let rechazar = false
@@ -238,12 +243,14 @@ export default function Lobby() {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
         setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
+        setBueno(true)
     }
 
     async function editProfile() {
         if (!newName && !newPhoto) {
             setInconveniente("Complete el campo del nombre o del mail")
             setShowInconveniente(true)
+            setBueno(false)
             return -1
         }
         let result = await fetch("http://localhost:4000/editProfile", {
@@ -260,6 +267,7 @@ export default function Lobby() {
             setPhoto(response.photo)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
+            setBueno(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
@@ -267,6 +275,7 @@ export default function Lobby() {
             setName(response.name)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
+            setBueno(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
@@ -274,6 +283,7 @@ export default function Lobby() {
             setName(response.name)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
+            setBueno(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
@@ -281,6 +291,7 @@ export default function Lobby() {
             setPhoto(response.photo)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
+            setBueno(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
@@ -363,10 +374,10 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {showSeguro && (
-                <div className="modalSeguroMini" onClick={() => setShowSeguro(false)}>
-                    <div className="contenidoMini" onClick={(e) => e.stopPropagation()}>
+                <div className="modalSeguro" onClick={() => setShowSeguro(false)}>
+                    <div className="contenidoSeguro" onClick={(e) => e.stopPropagation()}>
                         <p>¿Cerrar sesión?</p>
-                        <div className="botonesMini">
+                        <div className="botonesSeguro">
                             <button onClick={() => router.replace("/")}>Sí</button>
                             <button onClick={() => setShowSeguro(false)}>No</button>
                         </div>
@@ -386,23 +397,54 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {showInconveniente && (
-                <div className="cuadroCompleto"
-                    onClick={() => {
-                        setShowInconveniente(false);
-                        setInconveniente("");
-                    }}>
-                    <div className="inconveniente">
-                        <h2>{inconveniente}</h2>
-                        <button
-                            className="btn cerrar"
-                            onClick={() => {
-                                setShowInconveniente(false);
-                                setInconveniente("");
-                            }}>
-                            Cerrar
-                        </button>
+                bueno ? (
+                    <div
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
+                    >
+                        <div
+                            className="conveniente"
+                        >
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarBueno"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
+                    >
+                        <div
+                            className="inconveniente"
+                        >
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarMalo"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )
+
             )}
 
             {/*---------------------------*/}

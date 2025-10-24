@@ -920,7 +920,7 @@ img { display: block; max-width: 100%; height: auto; }
   position: absolute;
   top: 20px;
   left: 20px;
-  background-color: #1e2a38; /* color oscuro bonito */
+  background-color: #1e2a38;
   color: #fff;
   border: 2px solid #4fc3f7;
   padding: 10px 20px;
@@ -940,52 +940,74 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 
-.modalSeguroMini {
-  position: absolute;
-  top: 125px; /* ajustá según el icono */
-  left: 500px; /* ajustá según tu layout */
+/* Modal general (fondo oscuro) */
+.modalSeguro {
+  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 9999;
-}
-
-.contenidoMini {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 15px 18px;
-  color: white;
-  width: 130px;
-  text-align: center;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.contenidoMini p {
-  margin: 0 0 8px;
-  font-weight: 600;
-}
-
-.botonesMini {
   display: flex;
-  justify-content: space-around;
-  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  background: transparent; /* Fondo oscuro con algo de transparencia */
+  width: 100%;
+  height: 100%;
 }
 
-.botonesMini button {
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
+/* Contenido del modal con fondo */
+.contenidoSeguro {
+  position: relative;  /* Esto permite mover solo el contenido del modal */
+  bottom: 24%;
+  right: 12.5%;/* Cambiar este valor para mover el modal más arriba o abajo */
+  background: rgba(255, 255, 255, 0.15); /* Fondo translúcido */
+  border-radius: 15px;
+  border: 2px solid #3a89ff; /* Borde del modal */
+  padding: 15px 25px; /* Espaciado interno */
+  color: #e8f1ff;
+  text-align: center;
+  font-family: "Segoe UI", sans-serif;
+  width: 200px; /* Tamaño del modal */
+  box-shadow: 0 4px 15px rgba(18, 49, 253, 0.342); /* Sombra suave */
+}
+
+/* Estilo para el texto dentro del modal */
+.contenidoSeguro p {
+  margin: 0 0 6px;
+  font-weight: 600;
+  color: #9be6ff;
+}
+
+/* Estilo para los botones */
+.botonesSeguro {
+  display: flex;
+  justify-content: space-between;
+  gap: 3px;
+}
+
+.botonesSeguro button {
+  background: #172066;
+  border: 1px solid #3a89ff;
+  color: #e8f1ff;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
   cursor: pointer;
-  transition: 0.25s;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
 }
 
-.botonesMini button:hover {
-  background: rgba(255, 255, 255, 0.4);
+.botonesSeguro button:hover {
+  background: #23458f;
+  box-shadow: 0 0 6px rgba(58, 117, 255, 0.5);
 }
+
+
+
+
+
+
 
 
 .tilde {

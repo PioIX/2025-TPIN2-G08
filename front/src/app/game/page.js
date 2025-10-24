@@ -23,6 +23,9 @@ export default function Juego() {
   const [cells, setCells] = useState([])
   const [position1, setPosition1] = useState()
   const [position2, setPosition2] = useState()
+  const [showInconveniente, setShowInconveniente] = useState(false);
+  const [inconveniente, setInconveniente] = useState("");
+  const [bueno, setBueno] = useState(false);
 
 
   function positions() {
