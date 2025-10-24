@@ -14,7 +14,7 @@ export default function register() {
     const [bueno, setBueno] = useState(false);
 
     function iniciarSesion() {
-        router.push("/")
+        router.replace("/")
     }
     async function newUser(newUser) {
         let result = await fetch('http://localhost:4000/newUser', {
@@ -56,7 +56,12 @@ export default function register() {
                 setShowInconveniente(true)
                 setInconveniente("Registro exitoso")
                 setBueno(true);
-                router.push("/")
+                router.replace("/")
+            }else if(response.msg == -1){
+                console.log("El email ya está registrado");
+                setShowInconveniente(true)
+                setInconveniente("El email ya está registrado")
+                
             } else {
                 console.log("Algo ha ocurrido");
                 setShowInconveniente(true)

@@ -302,6 +302,7 @@ img { display: block; max-width: 100%; height: auto; }
   font-size: 1.3rem;
   font-weight: bold;
   text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+  margin-bottom: 4px;
 }
 
 .level {
@@ -310,12 +311,6 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* --- MEDALLAS --- */
-.medals-stack {
-  margin-top: 8px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
 
 .medal {
   display: flex;
@@ -347,7 +342,8 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 12px;
   flex: 1;
   box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15);
-  max-height: 35%;
+  min-height: 35rem;
+  max-height: 35rem;
   overflow-y: auto;
 }
 
@@ -418,12 +414,29 @@ img { display: block; max-width: 100%; height: auto; }
   transform: translate(-50%, -50%);
   background: #1e293b;
   color: white;
-  width: 220px;
+  width: 22rem;
+  max-height: 30rem;
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
   text-align: center;
   z-index: 1000;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.modalAdmin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalAdmin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.modalAdmin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Título */
@@ -488,7 +501,14 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .user-listDelete {
-  max-height: 300px;
+  max-height: 200px;
+  /* Altura máxima del contenedor */
+  overflow-y: auto;
+  /* Scroll vertical */
+  overflow-x: hidden;
+  /* Evitar el scroll horizontal */
+  width: 100%;
+  /* Asegura que el ancho se limite al 100% */
 }
 
 .user-itemDelete {
@@ -501,32 +521,38 @@ img { display: block; max-width: 100%; height: auto; }
   margin-bottom: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  word-wrap: break-word;
+  /* Asegura que el texto largo se ajuste */
+  overflow-wrap: break-word;
+  /* Prevent overflow from long text */
 }
 
 .user-itemDelete:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.user-itemDelete.selected {
-  background-color: #007bff;
-  color: #fff;
-}
-
 .user-itemDelete input[type="checkbox"] {
   cursor: pointer;
   width: 18px;
   height: 18px;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  transition:all 0,7s ease;
 }
 
-.user-nameDelete {
-  font-weight: 600;
-  color: #ffffff;
+.user-itemDelete input[type="checkbox"]:checked {
+  background-color: #ff00002f;
+  border-color: #ffffff;
 }
 
+.user-nameDelete,
 .user-emailDelete {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   font-style: italic;
   opacity: 0.8;
   color: #fff;
+  font-weight: 600;
 }
 
 .add-friend-icon {
@@ -1455,13 +1481,13 @@ img { display: block; max-width: 100%; height: auto; }
   justify-content: center;
   padding: 8px; /* menos padding vertical */
   margin-top: 6px; /* pequeño separador desde el título */
-  height: auto; /* permite que el panel tome su alto natural */
 }
 
 /* Panel de perfil (reutilizable para perfil o mensaje de bienvenida) */
 .friend-panel {
-  width: 70%;
-  height: 300px;
+  width: 80%;
+  min-height: 35rem;
+  max-height: 35rem;
   background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
   border: 1px solid rgba(253,245,114,0.12);
   padding: 14px 16px;
@@ -1480,8 +1506,9 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* variante para bienvenida */
 .friend-panel.welcome {
-  width: 70%;
-  height: 300px;
+  width: 80%;
+  min-height: 35rem;
+  max-height: 35rem;
   justify-content: center;
   text-align: center;
 }
@@ -1808,4 +1835,218 @@ img { display: block; max-width: 100%; height: auto; }
 .ship-image-selected {
   border: 2px solid yellow;
    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+}
+
+.record {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #3f8fff #0d1b3b;
+}
+
+/* Scrollbar para Chrome, Edge y Safari */
+.record::-webkit-scrollbar {
+  width: 8px;
+}
+
+.record::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3f8fff, #1f6feb);
+  border-radius: 10px;
+}
+
+.record::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1f6feb, #3f8fff);
+}
+
+.record::-webkit-scrollbar-track {
+  background: #0d1b3b;
+}
+/* Fondo oscuro translúcido detrás del modal */
+.modal-edit-profile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(12, 18, 36, 0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor principal del modal */
+.modal-edit-profile-content {
+  background: linear-gradient(145deg, #1b2748, #0d162d);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  width: 340px;
+  color: #f4f7ff;
+  text-align: center;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+/* Título del modal */
+.modal-edit-profile-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  color: #fdf572; /* dorado suave */
+  text-shadow: 0 0 10px rgba(253, 245, 114, 0.3);
+}
+
+/* Inputs */
+.modal-edit-profile-content input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #e5ebff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.modal-edit-profile-content input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #4c8bff;
+  box-shadow: 0 0 8px rgba(76, 139, 255, 0.4);
+}
+
+/* Botones */
+.modal-edit-profile-content button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Botón guardar */
+.modal-edit-profile-content button:first-of-type {
+  background: linear-gradient(135deg, #254edb, #437eff);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(63, 143, 255, 0.25);
+}
+
+.modal-edit-profile-content button:first-of-type:hover {
+  background: linear-gradient(135deg, #437eff, #6aa8ff);
+  transform: translateY(-1px);
+}
+
+/* Botón cancelar */
+.modal-edit-profile-content button:last-of-type {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.modal-edit-profile-content button:last-of-type:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Animación suave */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.friend-panel h3 {
+  font-size: 1.4rem;
+  color: #7cb6ff;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+}
+
+
+
+
+/* 📜 Tabla de historial */
+.record .table {
+  margin-top: 14px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
+}
+
+.record table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.record th,
+.record td {
+  padding: 10px;
+  text-align: center;
+}
+
+.record thead {
+  background: rgba(33, 80, 155, 0.6);
+  color: #fff;
+}
+
+.record tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+.record tbody tr:hover {
+  background: rgba(60, 90, 160, 0.4);
+  transition: 0.3s;
+}
+
+/* Texto de historial vacío */
+.record h4 {
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+  margin-top: 15px;
+}
+
+/* ⬇ margen al final del historial */
+.record:last-child {
+  margin-bottom: 16px;
+}
+/* Agrega espacio entre el historial y el botón Jugar */
+.friend-actions {
+  margin-top: 24px;
+}
+
+/* Si el historial está justo arriba del botón */
+.record {
+  margin-bottom: 24px;
+}
+
+/* En caso de que haya poco contenido, aseguramos separación visual */
+.friend-panel .btn.play-friend-btn {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 0;
+  margin-bottom: 12px;
+  color: #e4ecff;
+  font-size: 0.95rem;
+}
+
+.stats p {
+  margin: 0;
 }

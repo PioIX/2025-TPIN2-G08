@@ -89,17 +89,17 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room});
+		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room });
 	});
 
 	socket.on('disconnect', () => {
 		console.log("🔌 Usuario desconectado");
 	})
 
-	socket.on('solicitud', async data =>{
-		if (data.rechazar == true){
+	socket.on('solicitud', async data => {
+		if (data.rechazar == true) {
 			io.to(data.room).emit('solicitudBack', data)
-		} else if(data.rechazar == false && data.answer == false){
+		} else if (data.rechazar == false && data.answer == false) {
 			io.to(data.room).emit('solicitudBack', data)
 			idFriend = parseInt(data.room.slice(1, 3))
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
@@ -123,90 +123,95 @@ io.on("connection", (socket) => {
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 */
 
-app.post('/verifyUser', async function(req, res){
+app.post('/verifyUser', async function (req, res) {
 	let user
 	try {
 		console.log(req.body)
 		user = await realizarQuery(`SELECT * FROM Users WHERE email = '${req.body.email}'`)
-		if (user.length > 0){
+		if (user.length > 0) {
 			let user = await realizarQuery(`SELECT * FROM Users WHERE email = '${req.body.email}' AND password = '${req.body.password}'`)
-			if (user.length > 0){
-				if(!user[0].photo || esURLValida(user[0].photo) == false){
+			if (user.length > 0) {
+				if (!user[0].photo || esURLValida(user[0].photo) == false) {
 					user[0].photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 				}
-				res.send({user, msg: 1, error: false})
+				res.send({ user, msg: 1, error: false })
 			} else {
-				res.send({msg: -2, error: false})
+				res.send({ msg: -2, error: false })
 			}
 		} else {
-			res.send({msg: -1, error: false})
+			res.send({ msg: -1, error: false })
 		}
-	} catch(e){
-		res.send({msg: e.message, error: true})
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
 function esURLValida(str) {
 	try {
-    	new URL(str)
-    	return true
+		new URL(str)
+		return true
 	} catch (e) {
 		return false
 	}
 }
 
-app.post('/newUser', async function (req, res){
-	try{
+app.post('/newUser', async function (req, res) {
+	try {
 		console.log(req.body)
-		if (!req.body.photo || esURLValida(req.body.photo) == false){
+		if (!req.body.photo || esURLValida(req.body.photo) == false) {
 			req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 		}
-		await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
+		if (!await realizarQuery(`SELECT email FROM Users WHERE email = '${req.body.email}'`)) {
+			await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
 			('${req.body.photo}', '${req.body.name}', '${req.body.email}', '${req.body.password}')`)
-		res.send({msg: 1, error: false})
-	} catch(e){
-		res.send({msg: e.message, error: true})
+			res.send({ msg: 1, error: false })
+		}else{
+			res.send({ msg: -1, error: false })
+		}
+
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/users', async function (req, res){
+app.post('/users', async function (req, res) {
 	try {
 		console.log(req.body)
 		let users = await realizarQuery(`SELECT * FROM Users WHERE id_user <> ${req.body.idLoggued}`)
-		if (users.length > 0){
-			res.send({users, msg: 1, error: false})
+		if (users.length > 0) {
+			res.send({ users, msg: 1, error: false })
 		} else {
-			res.send({msg: 0, error: false})
+			res.send({ msg: 0, error: false })
 		}
-	} catch(e){
-		res.send({msg: -1, error: true})
+	} catch (e) {
+		res.send({ msg: -1, error: true })
 	}
 })
 
-app.post('/deleteUsers', async function (req, res){
+app.post('/deleteUsers', async function (req, res) {
 	try {
 		console.log(req.body)
-		for (let i = 0; i < req.body.idDelete.length; i++){
+		for (let i = 0; i < req.body.idDelete.length; i++) {
 			await realizarQuery(`DELETE FROM Users WHERE id_user = ${req.body.idDelete[i]}`)
 		}
-		res.send({msg: 1, error: false})
-	} catch(e) {
-		res.send({msg: e.message, error: true})
+		res.send({ msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/newFriend', async function(req, res){
-	try{
+app.post('/newFriend', async function (req, res) {
+	try {
 		console.log(req.body)
 		await realizarQuery(`INSERT INTO Friends (id_user, id_friend) VALUES
 			(${req.body.idLoggued}, ${req.body.idFriend})`)
-		res.send({msg: 1, error: false})
-	} catch(e){
-		res.send({msg: e.message, error: true})
+		res.send({ msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/usersFriends', async function(req, res){
+app.post('/usersFriends', async function (req, res) {
 	let userRelation
 	let usersWithRelation = []
 	let usersWithOutRelation = []
@@ -217,25 +222,25 @@ app.post('/usersFriends', async function(req, res){
 			SELECT id_user, id_friend
 			FROM Friends
 			WHERE id_user = ${req.body.idLoggued} OR id_friend = ${req.body.idLoggued}`)
-		for (let i = 0; i < userRelation.length; i++){
-			if (userRelation[i].id_user != req.body.idLoggued){
+		for (let i = 0; i < userRelation.length; i++) {
+			if (userRelation[i].id_user != req.body.idLoggued) {
 				usersWithRelation.push(userRelation[i].id_user)
 			} else {
 				usersWithRelation.push(userRelation[i].id_friend)
 			}
 		}
-		for (let i = 0; i < users.length; i++){
-			if (usersWithRelation.includes(users[i].id_user) == false){
+		for (let i = 0; i < users.length; i++) {
+			if (usersWithRelation.includes(users[i].id_user) == false) {
 				usersWithOutRelation.push(users[i])
 			}
 		}
-		res.send({usersWithOutRelation, msg: 1, error: false})
-	} catch(e){
-		res.send({msg: e.message, error: true})
+		res.send({ usersWithOutRelation, msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/friends', async function(req, res){
+app.post('/friends', async function (req, res) {
 	let userRelations
 	let idUserFriend = []
 	let userFriends = []
@@ -245,67 +250,67 @@ app.post('/friends', async function(req, res){
 			SELECT id_user, id_friend
 			FROM Friends
 			WHERE id_user = ${req.body.idLoggued} OR id_friend = ${req.body.idLoggued}`)
-		for (let i = 0; i < userRelations.length; i++){
-			if (userRelations[i].id_user != req.body.idLoggued){
+		for (let i = 0; i < userRelations.length; i++) {
+			if (userRelations[i].id_user != req.body.idLoggued) {
 				idUserFriend.push(userRelations[i].id_user)
 			} else {
 				idUserFriend.push(userRelations[i].id_friend)
 			}
 		}
-		for (let i = 0; i < idUserFriend.length; i++){
+		for (let i = 0; i < idUserFriend.length; i++) {
 			userFriends = userFriends.concat(await realizarQuery(`
 				SELECT Users.id_user, Users.email, Users.name
 				FROM Users
 				WHERE Users.id_user = ${idUserFriend[i]}`))
 		}
-		res.send({userFriends, msg: 1, error: false})
-	} catch(e){
-		res.send({msg: e.message, error: true})
+		res.send({ userFriends, msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/invitations', async function(req, res){
+app.post('/invitations', async function (req, res) {
 	let fromUsers = []
-	try{
+	try {
 		console.log(req.body)
 		let invitations = await realizarQuery(`SELECT fromUser FROM Requests WHERE toUser = ${req.body.idLoggued}`)
 		console.log(invitations)
-		for (let i = 0; i < invitations.length; i++){
+		for (let i = 0; i < invitations.length; i++) {
 			fromUsers = fromUsers.concat(await realizarQuery(`
 				SELECT email, name, id_user
 				FROM Users
 				WHERE id_user = ${invitations[i].fromUser}`))
 		}
-		res.send({fromUsers, msg: 1, error: false})
-	} catch(e) {
-		res.send({msg: e.message, error: true})
+		res.send({ fromUsers, msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/deleteinvitations', async function(req, res){
+app.post('/deleteinvitations', async function (req, res) {
 	try {
 		console.log(req.body)
 		await realizarQuery(`DELETE FROM Requests WHERE toUser = ${req.body.idLoggued} AND fromUser = ${req.body.from}`)
-		res.send({msg: 1, error: false})
-	} catch(e){
-		res.send({msg: e.message, error: true})
+		res.send({ msg: 1, error: false })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/checkinvitation', async function(req, res){
+app.post('/checkinvitation', async function (req, res) {
 	try {
 		let check = await realizarQuery(`SELECT * FROM Requests WHERE fromUser = ${req.body.from} AND toUser = ${req.body.to}`)
-		if (check.length > 0){
-			res.send({msg: -1, error: false})
+		if (check.length > 0) {
+			res.send({ msg: -1, error: false })
 		} else {
-			res.send({msg: 1, error: false})
+			res.send({ msg: 1, error: false })
 		}
-	} catch(e){
-		res.send({msg: e.message, error: true})
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/friendprofile', async function(req, res){
+app.post('/friendprofile', async function (req, res) {
 	record = []
 	try {
 		let friend = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idFriend}`)
@@ -318,64 +323,64 @@ app.post('/friendprofile', async function(req, res){
 			WHERE UP1.id_user = ${req.body.idLoggued}
 			AND UP2.id_user = ${req.body.idFriend}
 		`);
-		res.send({friend, msg: 1, error: false, record})
-	} catch(e) {
-		res.send({msg: e.message, error: true})
+		res.send({ friend, msg: 1, error: false, record })
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.put('/editProfile', async function(req, res){
+app.put('/editProfile', async function (req, res) {
 	try {
-		if (req.body.name && req.body.photo){
-			if(esURLValida(req.body.photo) == false){
+		if (req.body.name && req.body.photo) {
+			if (esURLValida(req.body.photo) == false) {
 				await realizarQuery(`UPDATE Users
 					SET name='${req.body.name}'
 					WHERE id_user=${req.body.idLoggued}`)
-				res.send({name: req.body.name, msg: 1.1, error: false})
+				res.send({ name: req.body.name, msg: 1.1, error: false })
 			} else {
 				await realizarQuery(`UPDATE Users 
 					SET name='${req.body.name}', photo='${req.body.photo}'
 					WHERE id_user=${req.body.idLoggued}`)
-				res.send({name: req.body.name, photo: req.body.photo, msg: 1, error: false})
+				res.send({ name: req.body.name, photo: req.body.photo, msg: 1, error: false })
 			}
-		} else if(req.body.name && !req.body.photo){
+		} else if (req.body.name && !req.body.photo) {
 			await realizarQuery(`UPDATE Users
 				SET name='${req.body.name}'
 				WHERE id_user=${req.body.idLoggued}`)
-			res.send({name: req.body.name, msg: 2, error: false})
-		} else if(req.body.photo && !req.body.name){
+			res.send({ name: req.body.name, msg: 2, error: false })
+		} else if (req.body.photo && !req.body.name) {
 			await realizarQuery(`UPDATE Users
 				SET photo='${req.body.photo}'
 				WHERE id_user=${req.body.idLoggued}`)
-			res.send({photo: req.body.photo, msg: 3, error: false})
+			res.send({ photo: req.body.photo, msg: 3, error: false })
 		}
-	} catch(e) {
-		res.send({msg: e.message, error: true})
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })
 
-app.post('/user', async function(req, res){
+app.post('/user', async function (req, res) {
 	try {
 		let user = await realizarQuery(`SELECT * FROM Users WHERE id_user=${req.body.idLoggued}`)
-		if (user.length > 0){
-			if (!user[0].photo || esURLValida(user[0].photo) == false){
+		if (user.length > 0) {
+			if (!user[0].photo || esURLValida(user[0].photo) == false) {
 				user[0].photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 			}
-			res.send({user: user[0], msg: 1, error: false})
+			res.send({ user: user[0], msg: 1, error: false })
 		}
-	} catch(e) {
-		res.send({msg: -1, error: false})
+	} catch (e) {
+		res.send({ msg: -1, error: false })
 	}
 })
 
-app.post('/insertGame', async function(req, res){
-	try{
+app.post('/insertGame', async function (req, res) {
+	try {
 		let userWinner = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idWinner}`)
 		userWinner[0].medals = userWinner[0].medals + 30
 		await realizarQuery(`UPDATE Users SET medals = ${userWinner[0].medals} WHERE id_user = ${req.body.idWinner}`)
 		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idPlayer}`)
 		userLose[0].medals = userLose[0].medals - 30
-		if (userLose[0].medals < 0){
+		if (userLose[0].medals < 0) {
 			userLose[0].medals = 0
 		}
 		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idPlayer}`)
@@ -384,15 +389,15 @@ app.post('/insertGame', async function(req, res){
 		let newGame = await realizarQuery(`INSERT INTO Games (date, result) VALUES
 			('${date}', ${req.body.idWinner})`)
 		let idGame = newGame.insertId
-		if (idGame > 0){
+		if (idGame > 0) {
 			await realizarQuery(`INSERT INTO UsersPerGame (id_game, id_user) VALUES
 				(${idGame}, ${req.body.idWinner}),
 				(${idGame}, ${req.body.idPlayer})`)
-			res.send({msg: 1, error: false})
+			res.send({ msg: 1, error: false })
 		} else {
-			res.send({msg: 0, error: false})
+			res.send({ msg: 0, error: false })
 		}
-	} catch(e) {
-		res.send({msg: e.message, error: true})
+	} catch (e) {
+		res.send({ msg: e.message, error: true })
 	}
 })

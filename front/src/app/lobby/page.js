@@ -49,7 +49,7 @@ export default function Lobby() {
             socket.emit('joinRoom', { room: "P" + idLoggued })
         }
     }, [firstRender])
-    
+
     useEffect(() => {
         if (!socket) return
         socket.on('solicitudBack', data => {
@@ -69,7 +69,7 @@ export default function Lobby() {
             }
         })
 
-        socket.on('invitacionBack', data => { 
+        socket.on('invitacionBack', data => {
             if (data.rechazar == false && data.answer == false) {
                 setNameInvitation(data.name)
                 setPlayInvitation(true)
@@ -94,17 +94,17 @@ export default function Lobby() {
         })
     }, [socket])
 
-    async function user(){
+    async function user() {
         const idLoggued = localStorage.getItem("idLoggued")
         let result = await fetch('http://localhost:4000/user', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({idLoggued: idLoggued})
+            body: JSON.stringify({ idLoggued: idLoggued })
         })
         let response = await result.json()
-        if (response.msg == 1){
+        if (response.msg == 1) {
             setName(response.user.name)
             setPhoto(response.user.photo)
             setMedals(response.user.medals)
@@ -240,8 +240,8 @@ export default function Lobby() {
         setInconveniente("Invitacion enviada")
     }
 
-    async function editProfile(){
-        if(!newName && !newPhoto){
+    async function editProfile() {
+        if (!newName && !newPhoto) {
             setInconveniente("Complete el campo del nombre o del mail")
             setShowInconveniente(true)
             return -1
@@ -251,11 +251,11 @@ export default function Lobby() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({idLoggued: idLoggued, name: newName, photo: newPhoto})
+            body: JSON.stringify({ idLoggued: idLoggued, name: newName, photo: newPhoto })
         })
         let response = await result.json()
         console.log(response)
-        if (response.msg == 1){
+        if (response.msg == 1) {
             setName(response.name)
             setPhoto(response.photo)
             setInconveniente("Datos Guardados")
@@ -263,21 +263,21 @@ export default function Lobby() {
             setEditProfile(false)
             setNewName()
             setNewPhoto()
-        } else if(response.msg == 1.1){
+        } else if (response.msg == 1.1) {
             setName(response.name)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
-        } else if(response.msg == 2){
+        } else if (response.msg == 2) {
             setName(response.name)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
             setEditProfile(false)
             setNewName()
             setNewPhoto()
-        } else if(response.msg == 3){
+        } else if (response.msg == 3) {
             setPhoto(response.photo)
             setInconveniente("Datos Guardados")
             setShowInconveniente(true)
@@ -320,8 +320,8 @@ export default function Lobby() {
                                     ))}
                                 </div>
                                 <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>Agregar amigo</button>
-                                <button className="btn cancel" onClick={() =>setShowModalNewFriend(false)}>Cerrar</button>
-                    </>
+                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                            </>
                         ) : (
                             <>
                                 <h3>No hay usuarios para agregar</h3>
@@ -375,7 +375,7 @@ export default function Lobby() {
             )}
 
             {/*---------------------------*/}
-                
+
             {advice2 &&
                 <div className="modal-acepta-solicitud">
                     <h2 className="mensaje-acepta-solicitud">{nameInvitation} aceptó tu solicitud de amistad</h2>
@@ -427,7 +427,7 @@ export default function Lobby() {
                                 });
                                 setPlayInvitation(false);
                                 localStorage.setItem("idPlayer", fromId)
-                                router.push("/game")
+                                router.replace("/game")
                             }}>
                             JUGAR
                         </button>
@@ -452,13 +452,27 @@ export default function Lobby() {
 
             {/*---------------------------*/}
 
-            {modalEditProfile &&
-            <div>
-                <input placeholder="Nuevo nombre" type="text" onChange={(e) => setNewName(e.target.value)}></input>    
-                <input placeholder="Nueva foto" type="text" onChange={(e) => setNewPhoto(e.target.value)}></input>
-                <button onClick={editProfile}> Guardar cambios </button>
-                <button onClick={() => {setNewName(); setNewPhoto(); setEditProfile(false)}}> Cancelar </button>
-            </div>}
+            {modalEditProfile && (
+                <div className="modal-edit-profile" onClick={() => setEditProfile(false)}>
+                    <div className="modal-edit-profile-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Editar perfil</h2>
+                        <input
+                            placeholder="Nuevo nombre"
+                            type="text"
+                            onChange={(e) => setNewName(e.target.value)}
+                        />
+                        <input
+                            placeholder="URL de nueva foto"
+                            type="text"
+                            onChange={(e) => setNewPhoto(e.target.value)}
+                        />
+                        <button onClick={editProfile}>Guardar cambios</button>
+                        <button onClick={() => { setNewName(); setNewPhoto(); setEditProfile(false); }}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
             {/* ACA VAN TODOS LOS MODAL */}
@@ -480,12 +494,9 @@ export default function Lobby() {
                                 <img className="logOut" onClick={() => setShowSeguro(true)} src="https://cdn-icons-png.flaticon.com/512/126/126467.png"></img>
                                 <div className="profile-info">
                                     <div className="username">{name}</div>
-
-                                    <div className="medals-stack">
-                                        <div className="medal">
-                                            <div className="medal-emoji">🎖️</div>
-                                            <div className="medal-count">{medals}</div>
-                                        </div>
+                                    <div className="medal">
+                                        <div className="medal-emoji">🎖️</div>
+                                        <div className="medal-count">{medals}</div>
                                     </div>
                                 </div>
                             </div>
@@ -529,28 +540,43 @@ export default function Lobby() {
                                             </div>
                                             <div className="profile-info">
                                                 <div className="username">{nameFriend}</div>
-                                                <div className="medals-stack">
-                                                    <div className="medal">
-                                                        <div className="medal-emoji">🎖️</div>
-                                                        <div className="medal-count">{medalsFriend}</div>
-                                                    </div>
+                                                <div className="medal">
+                                                    <div className="medal-emoji">🎖️</div>
+                                                    <div className="medal-count">{medalsFriend}</div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="record">
                                             <h3>Historial</h3>
-                                            {record.length > 0 ? 
-                                            <div className="table">
-                                                <table>
-                                                    <thead><tr><th>Fecha</th><th>Ganador</th></tr></thead>
-                                                    <tbody>
-                                                        {record.map(r => (
-                                                        <tr key={r.id_game}><td>{r.date}</td><td>{r.name}</td></tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>:
-                                            <h4>Aun no ha jugado partidas con {nameFriend}</h4>}
+                                            {record.length > 0 ? (
+                                                <>
+                                                    <div className="stats">
+                                                        <p><strong>{name}:</strong> {record.filter(r => r.name === name).length} victorias</p>
+                                                        <p><strong>{nameFriend}:</strong> {record.filter(r => r.name === nameFriend).length} victorias</p>
+                                                    </div>
+
+                                                    <div className="table">
+                                                        <table>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Fecha</th>
+                                                                    <th>Ganador</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {record.map(r => (
+                                                                    <tr key={r.id_game}>
+                                                                        <td>{r.date}</td>
+                                                                        <td>{r.name}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <h4>Aún no ha jugado partidas con {nameFriend}</h4>
+                                            )}
                                         </div>
                                         <div className="friend-actions">
                                             <button
