@@ -9,6 +9,9 @@ export default function register() {
     const [name, setName] = useState("")
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false)
+    const [showInconveniente, setShowInconveniente] = useState(false);
+    const [inconveniente, setInconveniente] = useState("");
+    const [bueno, setBueno] = useState(false);
 
     function iniciarSesion() {
         router.push("/")
@@ -24,71 +27,150 @@ export default function register() {
         let response = await result.json()
         return response
     }
-    async function objNewUser(){
-        if(name == ""){
-            alert("Debe completar el campo del nombre")
-            return -1
-        } else if(email == ""){
-            alert("Debe completar el campo del email")
-            return -1
-        } else if(password == ""){
-            alert("Debe completar el campo de la contraseña")
-            return -1
-        }
-        let obj = {
-            photo: photo,
-            name: name,
-            email: email,
-            password: password
-        }
-        let response = await newUser(obj)
-        if (response.msg == 1){
-            alert("Registro exitoso")
-            router.push("/")
+    async function objNewUser() {
+        if (name == "") {
+            console.log("Debe completar el campo del nombre");
+            setShowInconveniente(true)
+            setInconveniente("Debe completar el campo del nombre")
+            setBueno(false);
+        } else if (email == "") {
+            console.log("Debe completar el campo del email");
+            setShowInconveniente(true)
+            setInconveniente("Debe completar el campo del email")
+            setBueno(false);
+        } else if (password == "") {
+            console.log("Debe completar el campo de la contraseña");
+            setShowInconveniente(true)
+            setInconveniente("Debe completar el campo de la contraseña")
+            setBueno(false);
         } else {
-            alert("Algo ocurrio")
+            let obj = {
+                photo: photo,
+                name: name,
+                email: email,
+                password: password
+            }
+            let response = await newUser(obj)
+            if (response.msg == 1) {
+                console.log("Registro exitoso");
+                setShowInconveniente(true)
+                setInconveniente("Registro exitoso")
+                setBueno(true);
+                router.push("/")
+            } else {
+                console.log("Algo ha ocurrido");
+                setShowInconveniente(true)
+                setInconveniente("Algo ha ocurrido")
+                setBueno(false);
+            }
         }
+
     }
 
     return (
-        <div className={"container"}>
-            <div className={"form"}>
-                <h1 className={"title"}>BATALLA NAVAL</h1>
-                <h2 className={"subTitle"}>Registro</h2>
-                <input
-                    type="text"
-                    className={"input"}
-                    placeholder="Mail"
-                    onChange={e => setEmail(e.target.value)}
-                />
-                <div className="password-container">
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        className="input"
-                        placeholder="Contraseña"
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                    <span onClick={() => setShowPassword(!showPassword)}>
-                        {showPassword ? "💥" : "🛥️"}
-                    </span>
-                </div>
-                <input
-                    type="text"
-                    className={"input"}
-                    placeholder="Foto de perfil (url)"
-                    onChange={e => setPhoto(e.target.value)}
-                />
-                <input 
-                    type="text" 
-                    className={"input"} 
-                    placeholder="Nombre" 
-                    onChange={e => setName(e.target.value)}
-                />
-                <div className={"buttons"}>
-                    <button className={"button"} type="button" onClick={objNewUser}>Registrarse</button>
-                    <a className={"link"} type="button" onClick={iniciarSesion}>Iniciar Sesión</a>
+        <>
+            <div className={"container"}>
+                <img src="/LogoBN.svg"></img>
+                <div className={"form"}>
+                    <h2 className={"subTitle"}>Registro</h2>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Mail"
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="input-container">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            className="input"
+                            placeholder="Contraseña"
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                        <span onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? "🙉" : "🙈"}
+                        </span>
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Foto de perfil (url)"
+                            onChange={e => setPhoto(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            className={"input"}
+                            placeholder="Nombre"
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
+                    <div className={"buttons"}>
+                        <button className={"button"} type="button" onClick={objNewUser}>
+                            Registrarse
+                        </button>
+                        <a className={"link"} type="button" onClick={iniciarSesion}>
+                            Iniciar Sesión
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {showInconveniente && (
+                bueno ? (
+                    <div
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
+                    >
+                        <div
+                            className="conveniente"
+                        >
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarBueno"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className="cuadroCompleto"
+                        onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");
+                        }}
+                    >
+                        <div
+                            className="inconveniente"
+                        >
+                            <h2>{inconveniente}</h2>
+                            <button
+                                className="btn cerrarMalo"
+                                onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )
+
+            )}
+        </>
     )
+
 }
