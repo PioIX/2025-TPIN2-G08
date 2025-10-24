@@ -10,7 +10,7 @@ export default function logIn() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminOption, setShowAdminOption] = useState(false);
-  const [showAdministracion, setShowAdministracion] = useState(true); /*cambiar esto*/
+  const [showAdministracion, setShowAdministracion] = useState(false);
   const [showInconveniente, setShowInconveniente] = useState(false);
   const [inconveniente, setInconveniente] = useState("");
   const [bueno, setBueno] = useState(false);
@@ -127,7 +127,7 @@ export default function logIn() {
       {showAdminOption && (
         <div className="modalAdministracion">
           <button className="btnVolver" onClick={() => setShowAdminOption(false)}>
-            ← Volver
+           ↩
           </button>
           <div className="modalAdmin">
             <h2>¡Bienvenido!</h2>
