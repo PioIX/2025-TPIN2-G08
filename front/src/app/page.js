@@ -10,9 +10,10 @@ export default function logIn() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminOption, setShowAdminOption] = useState(false);
-  const [showAdministracion, setShowAdministracion] = useState(false);
+  const [showAdministracion, setShowAdministracion] = useState(true); /*cambiar esto*/
   const [showInconveniente, setShowInconveniente] = useState(false);
   const [inconveniente, setInconveniente] = useState("");
+  const [bueno, setBueno] = useState(false);
   const [allUsers, setUsers] = useState([]);
   const [deleteId, setDeleteId] = useState([]);
   const { socket, isConnected } = useSocket()
@@ -63,11 +64,13 @@ export default function logIn() {
       console.log("El email ingresado no es válido");
       setShowInconveniente(true)
       setInconveniente("El email ingresado no es válido")
+      setBueno(false)
     } else if (response.msg == -2) {
       /*alert("La contraseña ingresada no es valida")*/
       console.log("La contraseña ingresada no es válida");
       setShowInconveniente(true)
       setInconveniente("La contraseña ingresada no es válida")
+      setBueno(false)
     }
   }
 
@@ -95,13 +98,16 @@ export default function logIn() {
     });
     let response = await result.json();
     if (response.msg == 1) {
-      setShowConveniente(true)
-      setConveniente("Usuarios eliminados con exito")
+      setBueno(true)
+      setShowInconveniente(true)
+      setInconveniente("Usuarios eliminados con exito")
       setDeleteId([]);
       setShowAdministracion(false);
     } else {
       console.log(response.msg);
-      alert("Algo ocurrio");
+      setBueno(false)
+      setShowInconveniente(true)
+      setInconveniente("Algo ocurrio")
     }
   }
 
@@ -145,41 +151,42 @@ export default function logIn() {
       {showAdministracion && (
         <div className="modalAdministracion">
           <button className="btnVolver" onClick={() => setShowAdministracion(false)}>
-            ← Volver
+            Volver
           </button>
           <div className="modalAdmin">
             <h2>Elige el usuario que quiera eliminar</h2>
             {allUsers && allUsers.length > 0 ? (
-              <div className="usersDelete">
+              <div className="user-listDelete">
                 {allUsers.map((user) => {
                   return (
-                    <label className="user-item" key={user.id_user}>
+                    <label className="user-itemDelete" key={user.id_user}>
                       <input
                         type="checkbox"
+                        checked={deleteId.includes(user.id_user)}  // Marca el checkbox si el id está en deleteId
                         onChange={(e) => {
+                          console.log("onChange input");
                           if (e.target.checked) {
                             setDeleteId((prev) => [...prev, user.id_user]);
                           } else {
-                            for (let i = 0; i < deleteId.length; i++) {
-                              if (user.id_user == deleteId[i].id_user) {
-                                setDeleteId([...deleteId.splice(i, 1)]);
-                              }
-                            }
+                            setDeleteId((prev) =>
+                              prev.filter((id) => id !== user.id_user)
+                            );
                           }
                         }}
                       ></input>
-                      <span className="user-name">{user.name}</span>
-                      <span className="user-email"> - {user.email}</span>
+                      <span className="user-nameDelete">{user.name}</span>
+                      <span className="user-emailDelete"> - {user.email}</span>
                     </label>
                   );
                 })}
-                <button className="btn jugar" onClick={objDelete}>
-                  Aceptar
-                </button>
+                
               </div>
             ) : (
-              <h3> No hay usuarios para eliminar </h3>
+              <h3>No hay usuarios para eliminar</h3>
             )}
+            <button className="btn jugar" onClick={objDelete}>
+              Aceptar
+            </button>
             <button
               className="btn admin"
               onClick={() => {
@@ -194,7 +201,31 @@ export default function logIn() {
       )}
 
       {showInconveniente && (
-        <div
+        bueno ? (
+          <div
+          className="cuadroCompleto"
+          onClick={() => {
+            setShowInconveniente(false);
+            setInconveniente("");
+          }}
+        >
+          <div
+            className="conveniente"
+          >
+            <h2>{inconveniente}</h2>
+            <button
+              className="btn cerrarBueno"
+              onClick={() => {
+                setShowInconveniente(false);
+                setInconveniente("");
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+        ) : (
+          <div
           className="cuadroCompleto"
           onClick={() => {
             setShowInconveniente(false);
@@ -206,7 +237,7 @@ export default function logIn() {
           >
             <h2>{inconveniente}</h2>
             <button
-              className="btn cerrar"
+              className="btn cerrarMalo"
               onClick={() => {
                 setShowInconveniente(false);
                 setInconveniente("");
@@ -216,6 +247,8 @@ export default function logIn() {
             </button>
           </div>
         </div>
+        )
+        
       )}
 
 

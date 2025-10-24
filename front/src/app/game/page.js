@@ -20,64 +20,67 @@ export default function Juego() {
   const [medals, setMedals] = useState()
   const [photo, setPhoto] = useState()
   const [friendName, setFriendName] = useState()
-  
-  const cells = [];
-  let posicionLetra = ""
-  for (let i = 0; i < 100; i++) {
-      if(i +1 >= 1 && i+1 <= 10){
+  const [cells, setCells] = useState([])
+  const [position1, setPosition1] = useState()
+  const [position2, setPosition2] = useState()
+
+
+  function positions() {
+    let newCells = []
+    let posicionLetra = ""
+    let posicion
+    let posicionNum
+    let guardoNum
+    let contador = 0
+    for (let i = 0; i < 100; i++) {
+      if (i + 1 >= 1 && i + 1 <= 10) {
         posicionLetra = "A"
-      }else if(i +1 >= 11 && i+1 <= 20){
+      } else if (i + 1 >= 11 && i + 1 <= 20) {
         posicionLetra = "B"
-      }else if(i +1 >= 21 && i+1 <= 30){
+      } else if (i + 1 >= 21 && i + 1 <= 30) {
         posicionLetra = "C"
-      }else if(i +1 >= 31 && i+1 <= 40){
+      } else if (i + 1 >= 31 && i + 1 <= 40) {
         posicionLetra = "D"
-      }else if(i +1 >= 41 && i+1 <= 50){
+      } else if (i + 1 >= 41 && i + 1 <= 50) {
         posicionLetra = "E"
-      }else if(i +1 >= 51 && i+1 <= 60){
+      } else if (i + 1 >= 51 && i + 1 <= 60) {
         posicionLetra = "F"
-      }else if(i +1 >= 61 && i+1 <= 70){
+      } else if (i + 1 >= 61 && i + 1 <= 70) {
         posicionLetra = "G"
-      }else if(i +1 >= 71 && i+1 <= 80){
+      } else if (i + 1 >= 71 && i + 1 <= 80) {
         posicionLetra = "H"
-      }else if(i +1 >= 81 && i+1 <= 90){
+      } else if (i + 1 >= 81 && i + 1 <= 90) {
         posicionLetra = "I"
-      }else if(i +1 >= 91 && i+1 <= 100){
+      } else if (i + 1 >= 91 && i + 1 <= 100) {
         posicionLetra = "J"
       }
-
-      let guardoNum = (i+1).toString()
-      let posicionNum = guardoNum.slice(guardoNum.length -1)
-      let posicion = posicionLetra + posicionNum
-    cells.push(<div className="cell" key={i+1} id={posicionNum}
-    onClick={()=>{
-      if(elegirPosicionBarco2x1){
-        
-      }
-      if(elegirPosicionBarco4x1){
-
-      }
-
+      guardoNum = (i).toString()
+      posicionNum = guardoNum.slice(guardoNum.length - 1)
+      posicion = posicionLetra + posicionNum
+      newCells.push(<div className="cell" key={i + 1} id={posicion}
+        onClick={(e) => {
+          handlePosition(e.target.id)
+        }}>{posicion}</div>);
     }
-    }
-    >{posicion}</div>);
+    setCells(newCells)
   }
 
   useEffect(() => {
     setId(localStorage.getItem("idLoggued"));
     setIdPlayer(localStorage.getItem("idPlayer"))
     user()
+    positions()
     setFirsRender(true);
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-      socket.on("checkRoom", data => {
-        console.log(data);
+    socket.on("checkRoom", data => {
+      console.log(data);
     });
 
     socket.on('neverSurrender', data => {
-      if (data.rendirse == true && data.to == idLoggued){
+      if (data.rendirse == true && data.to == idLoggued) {
         setHeGaveUp(true)
         setFriendName(data.name)
       }
@@ -88,40 +91,59 @@ export default function Juego() {
     if (firstRender) {
       let numIdLoggued = parseInt(idLoggued)
       let numIdPlayer = parseInt(idPlayer)
-      if(numIdLoggued < numIdPlayer){
-        socket.emit("joinRoom", { room: "G" + numIdLoggued + numIdPlayer});
+      if (numIdLoggued < numIdPlayer) {
+        socket.emit("joinRoom", { room: "G" + numIdLoggued + numIdPlayer });
         setRoom("G" + numIdLoggued + numIdPlayer)
       } else {
-        socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued});
+        socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued });
         setRoom("G" + numIdPlayer + numIdLoggued)
       }
     }
   }, [firstRender]);
 
-  async function user(){
+  function handlePosition(posicion) {
+    console.log("entre en el onclick", posicion)
+    console.log("tipoBarco", barcoSeleccionado)
+    console.log("tipoBarco", elegirPosicionBarco2x1)
+    if (elegirPosicionBarco2x1) {
+      console.log("Entre en el if")
+      contador += 1
+      setClicks(contador)
+      if (contador == 1) {
+        setPosition1(posicion)
+      } else if (contador == 2) {
+        setPosition2(posicion)
+      }
+    }
+    if (elegirPosicionBarco4x1) {
+
+    }
+  }
+
+  async function user() {
     const idLoggued = localStorage.getItem("idLoggued")
     let result = await fetch('http://localhost:4000/user', {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({idLoggued: idLoggued})
+      body: JSON.stringify({ idLoggued: idLoggued })
     })
     let response = await result.json()
-    if (response.msg == 1){
+    if (response.msg == 1) {
       setName(response.user.name)
       setPhoto(response.user.photo)
       setMedals(response.user.medals)
     }
   }
 
-  async function insertGame(){
-    let result = await fetch('http://localhost:4000/insertGame',{
+  async function insertGame() {
+    let result = await fetch('http://localhost:4000/insertGame', {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({date: new Date, idWinner: idPlayer, idPlayer: idLoggued})
+      body: JSON.stringify({ date: new Date, idWinner: idPlayer, idPlayer: idLoggued })
     })
     await result.json()
   }
@@ -137,10 +159,11 @@ export default function Juego() {
           <h3>¿Seguro que querés rendirte?</h3>
           <p>Perderás la partida actual</p>
           <div className="popup-botones">
-            <button className="btn-si" onClick={ async () => { 
+            <button className="btn-si" onClick={async () => {
               await insertGame()
-              socket.emit('rendirse', {rendirse: true, room: room, name: name, to: idPlayer})
-              router.replace("/lobby")}}>Rendirse</button>
+              socket.emit('rendirse', { rendirse: true, room: room, name: name, to: idPlayer })
+              router.replace("/lobby")
+            }}>Rendirse</button>
             <button className="btn-no" onClick={() => setRendirse(false)}>Cancelar</button>
           </div>
         </div>
@@ -148,15 +171,15 @@ export default function Juego() {
 
       {/*---------------------------*/}
 
-      {heGaveUp && 
-      <div>
-        <h2>{friendName} se rindio, por lo que ganaste la partida</h2>
-        <div className="medal">
-          <div className="medal-emoji">🎖️</div>
-          <div className="medal-count">+30</div>
-        </div>
-        <button onClick={() => router.push("/lobby")}> OK </button>
-      </div>}
+      {heGaveUp &&
+        <div>
+          <h2>{friendName} se rindio, por lo que ganaste la partida</h2>
+          <div className="medal">
+            <div className="medal-emoji">🎖️</div>
+            <div className="medal-count">+30</div>
+          </div>
+          <button onClick={() => router.push("/lobby")}> OK </button>
+        </div>}
 
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
       {/* ACA VAN TODOS LOS MODAL */}
@@ -165,8 +188,9 @@ export default function Juego() {
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
-
+        
       <div className="game-container">
+        
         <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
         <div className="top-bar">
           <h1 className="game-title">BATALLA NAVAL</h1>
@@ -180,24 +204,24 @@ export default function Juego() {
             </div>
 
             <div className="ship-images">
-              <img 
+              <img
                 onClick={() => {
-                  setElegirPosicionBarco4x1(false); 
-                  setElegirPosicionBarco2x1(true); 
-                  setBarcoSeleccionado('2x1');
-                }} 
-                src="/Barco 2x1.png" 
-                alt="Barco 2x1" 
+                  setElegirPosicionBarco4x1(false);
+                  setElegirPosicionBarco2x1(true);
+                  setBarcoSeleccionado("2x1");
+                }}
+                src="/Barco 2x1.png"
+                alt="Barco 2x1"
                 className={`ship-image2x1 ${barcoSeleccionado === '2x1' ? 'ship-image-selected' : ''}`}
               />
-              <img 
+              <img
                 onClick={() => {
-                  setElegirPosicionBarco4x1(true); 
-                  setElegirPosicionBarco2x1(false); 
-                  setBarcoSeleccionado('4x1');
-                }} 
-                src="/Barco 4x1.png" 
-                alt="Barco 4x1" 
+                  setElegirPosicionBarco4x1(true);
+                  setElegirPosicionBarco2x1(false);
+                  setBarcoSeleccionado("4x1");
+                }}
+                src="/Barco 4x1.png"
+                alt="Barco 4x1"
                 className={`ship-image4x1 ${barcoSeleccionado === '4x1' ? 'ship-image-selected' : ''}`}
               />
             </div>
