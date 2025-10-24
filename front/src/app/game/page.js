@@ -10,9 +10,7 @@ export default function Juego() {
   const [idLoggued, setId] = useState();
   const { socket, isConnected } = useSocket();
   const [firstRender, setFirsRender] = useState(false);
-  const [elegirPosicionBarco2x1, setElegirPosicionBarco2x1] = useState(false);
-  const [elegirPosicionBarco4x1, setElegirPosicionBarco4x1] = useState(false);
-  const [barcoSeleccionado, setBarcoSeleccionado] = useState(null);
+  const [barcoSeleccionado, setBarcoSeleccionado] = useState(0);
   const [idPlayer, setIdPlayer] = useState()
   const [room, setRoom] = useState()
   const [heGaveUp, setHeGaveUp] = useState(false)
@@ -27,6 +25,9 @@ export default function Juego() {
   const [inconveniente, setInconveniente] = useState("");
   const [bueno, setBueno] = useState(false);
 
+  // Barcos:
+  //Barco 2x1 = 1
+  //Barco 4x1 = 2
 
   function positions() {
     let newCells = []
@@ -105,10 +106,8 @@ export default function Juego() {
   }, [firstRender]);
 
   function handlePosition(posicion) {
-    console.log("entre en el onclick", posicion)
-    console.log("tipoBarco", barcoSeleccionado)
-    console.log("tipoBarco", elegirPosicionBarco2x1)
-    if (elegirPosicionBarco2x1) {
+    console.log(barcoSeleccionado)
+    if (barcoSeleccionado > 0 && barcoSeleccionado == 1) {
       console.log("Entre en el if")
       contador += 1
       setClicks(contador)
@@ -118,7 +117,7 @@ export default function Juego() {
         setPosition2(posicion)
       }
     }
-    if (elegirPosicionBarco4x1) {
+    if (barcoSeleccionado > 0 && barcoSeleccionado == 2) {
 
     }
   }
@@ -209,23 +208,19 @@ export default function Juego() {
             <div className="ship-images">
               <img
                 onClick={() => {
-                  setElegirPosicionBarco4x1(false);
-                  setElegirPosicionBarco2x1(true);
-                  setBarcoSeleccionado("2x1");
+                  setBarcoSeleccionado(1);
                 }}
                 src="/Barco 2x1.png"
                 alt="Barco 2x1"
-                className={`ship-image2x1 ${barcoSeleccionado === '2x1' ? 'ship-image-selected' : ''}`}
+                className={`ship-image2x1 ${barcoSeleccionado == 1 ? 'ship-image-selected' : ''}`}
               />
               <img
-                onClick={() => {
-                  setElegirPosicionBarco4x1(true);
-                  setElegirPosicionBarco2x1(false);
-                  setBarcoSeleccionado("4x1");
+                onClick={ () => {
+                  setBarcoSeleccionado(2);
                 }}
                 src="/Barco 4x1.png"
                 alt="Barco 4x1"
-                className={`ship-image4x1 ${barcoSeleccionado === '4x1' ? 'ship-image-selected' : ''}`}
+                className={`ship-image4x1 ${barcoSeleccionado == 2 ? 'ship-image-selected' : ''}`}
               />
             </div>
 
