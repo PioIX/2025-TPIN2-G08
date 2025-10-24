@@ -57,6 +57,11 @@ export default function register() {
                 setInconveniente("Registro exitoso")
                 setBueno(true);
                 router.push("/")
+            }else if(response.msg == -1){
+                console.log("El email ya está registrado");
+                setShowInconveniente(true)
+                setInconveniente("El email ya está registrado")
+                
             } else {
                 console.log("Algo ha ocurrido");
                 setShowInconveniente(true)
