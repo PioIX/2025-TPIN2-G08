@@ -584,41 +584,44 @@ img { display: block; max-width: 100%; height: auto; }
 
 
 /* Fondo oscuro desenfocado */
-.modal-overlay {
-  position: fixed;
+.fondoNewFriend {
+  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  background: transparent; /* Fondo oscuro con algo de transparencia */
+  width: 100%;
+  height: 100%;
 }
 
 /* Caja del modal */
-.modal-new-friend {
-  background: rgba(255, 255, 255, 0.08);
+.modalNewFriend {
+  position: absolute;
+  background: #1e293b;
+  top: 23.35%;
+  right: 16.35%;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  padding: 30px;
+  padding: 0px 30px 30px 30px;
   border-radius: 16px;
-  width: 400px;
-  max-height: 80vh;
+  width: 38.13%;
+  max-height: 59%;
   overflow-y: auto;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  color: white;
-  animation: fadeIn 0.3s ease-out;
   text-align: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.39);
 }
 
 /* Encabezado */
-.modal-new-friend h2 {
+.modalNewFriend h2 {
   font-size: 1.6rem;
-  margin-bottom: 16px;
-  color: #fdf572;
+  color: #ffffff;
 }
 
 /* Lista de usuarios */
@@ -630,16 +633,6 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* Ítem de usuario */
-.user-itemFriends {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
 
 .user-itemFriends {
   display: flex;
@@ -650,7 +643,7 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 8px;
   margin-bottom: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .user-itemFriends:hover {
@@ -678,7 +671,7 @@ img { display: block; max-width: 100%; height: auto; }
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.25s ease;
+  transition: all 0.25s ease;
 }
 
 .btn.confirm {
@@ -743,22 +736,40 @@ img { display: block; max-width: 100%; height: auto; }
   gap: 10px;
 }
 
+.fondoRequests {
+  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+}
+
 /* Modal de invitaciones */
-.requests-modal {
+.modalRequests {
   position: absolute;
-  top: 60px;
-  right: 190px;
-  background: rgba(0, 0, 0, 0.85);
+  top: 5%;
+  right: 2.5%;
+  background: #1e293b;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
   color: white;
-  border-radius: 25px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
   border-top-right-radius: 5px;
   padding: 16px;
   width: 260px;
   min-height: 90px;
   max-height: 500px;
   overflow-y: auto;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.39);
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -766,24 +777,26 @@ img { display: block; max-width: 100%; height: auto; }
   animation: slideIn 0.3s ease forwards;
 }
 
-.requests-modal > div,
-.requests-modal > p {
-  margin: 0;
+.modalRequests div,
+.modalRequests p {
+  margin: 10px;
 }
 
-.requests-modal button.cerrar-requests {
-  align-self: flex-end;
-  margin-top: auto; /* Empuja el botón al final */
+.modalRequests button.cerrarRequests {
   padding: 8px 16px;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 6px;
+  background: #661721;
+  color:#e8f1ff;
+  border: 1px solid #ff3a7c;
+  border-radius: 8px;
   cursor: pointer;
   display: block;
+  transition: all 0.2s ease-in-out;
 }
 
-
+.modalRequests button.cerrarRequests:hover {
+background: #8f2331;
+  box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
+}
 
 /* Animación desde la derecha (suave) */
 @keyframes slideIn {
@@ -940,8 +953,9 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 
+
 /* Modal general (fondo oscuro) */
-.modalSeguro {
+.fondoSeguro {
   position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
   top: 0;
   left: 0;
@@ -957,55 +971,67 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* Contenido del modal con fondo */
-.contenidoSeguro {
-  position: relative;  /* Esto permite mover solo el contenido del modal */
-  bottom: 24%;
-  right: 12.5%;/* Cambiar este valor para mover el modal más arriba o abajo */
-  background: rgba(255, 255, 255, 0.15); /* Fondo translúcido */
+.modalSeguro {
+  position: relative;
+  bottom: 23.5%;
+  right: 13%;
+  background: #1e293b;
   border-radius: 15px;
-  border: 2px solid #3a89ff; /* Borde del modal */
-  padding: 15px 25px; /* Espaciado interno */
-  color: #e8f1ff;
-  text-align: center;
+  padding: 15px 25px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-family: "Segoe UI", sans-serif;
-  width: 200px; /* Tamaño del modal */
-  box-shadow: 0 4px 15px rgba(18, 49, 253, 0.342); /* Sombra suave */
+  font-weight: 600;
+  text-align: center;
+  width: 175px;
+  animation: deslizar 0.2s ease-out;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.384);
 }
 
 /* Estilo para el texto dentro del modal */
-.contenidoSeguro p {
+.modalSeguro p {
   margin: 0 0 6px;
-  font-weight: 600;
-  color: #9be6ff;
 }
 
 /* Estilo para los botones */
 .botonesSeguro {
   display: flex;
   justify-content: space-between;
-  gap: 3px;
 }
 
-.botonesSeguro button {
-  background: #172066;
-  border: 1px solid #3a89ff;
+.botonesSeguroSi {
+  background: #176621;
+  border: 1px solid #3aff93;
   color: #e8f1ff;
   border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.75rem;
+  padding: 5px 22px;
+  font-size: 0.90rem;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s ease-in-out;
 }
 
-.botonesSeguro button:hover {
-  background: #23458f;
-  box-shadow: 0 0 6px rgba(58, 117, 255, 0.5);
+.botonesSeguroSi:hover {
+  background: #238f2c;
+  box-shadow: 0 0 6px rgba(58, 255, 107, 0.5);
 }
 
+.botonesSeguroNo {
+  background: #661721;
+  border: 1px solid #ff3a7c;
+  color: #e8f1ff;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 0.90rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
 
-
-
+.botonesSeguroNo:hover {
+  background: #8f2331;
+  box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
+}
 
 
 
@@ -1505,6 +1531,60 @@ img { display: block; max-width: 100%; height: auto; }
   margin-top: 6px; /* pequeño separador desde el título */
 }
 
+.add-friend-panel {
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 600;
+  text-align: center;
+  gap: 1rem;
+}
+
+.add-friend-panel h2 {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 80%;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-itemFriends {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.6rem;
+  padding: 0.8rem 1rem;
+  width: 100%;
+}
+
+.btn.confirm,
+.btn.cancel {
+  width: 80%;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  border-radius: 0.6rem;
+  padding: 0.8em 0;
+}
+
+.panel-common {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: #0f172a; /* mismo color que el perfil */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+  padding: 2%;
+  box-sizing: border-box;
+}
+
+
+
 /* Panel de perfil (reutilizable para perfil o mensaje de bienvenida) */
 .friend-panel {
   width: 80%;
@@ -1527,7 +1607,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 /* variante para bienvenida */
-.friend-panel.welcome {
+.friend-panel-welcome {
   width: 80%;
   min-height: 35rem;
   max-height: 35rem;
