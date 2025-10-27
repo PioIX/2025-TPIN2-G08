@@ -293,18 +293,55 @@ export default function Lobby() {
             )}
 
             {showInconveniente && (
-                <div className="cuadroCompleto" onClick={() => setShowInconveniente(false)}>
-                    <div className={bueno ? "conveniente" : "inconveniente"}>
-                        <h2>{inconveniente}</h2>
-                        <button
-                            className="btn cerrar"
-                            onClick={() => setShowInconveniente(false)}
-                        >
-                            Cerrar
-                        </button>
-                    </div>
-                </div>
-            )}
+        bueno ? (
+          <div
+          className="cuadroCompleto"
+          onClick={() => {
+            setShowInconveniente(false);
+            setInconveniente("");
+          }}
+        >
+          <div
+            className="conveniente"
+          >
+            <h2>{inconveniente}</h2>
+            <button
+              className="btn cerrarBueno"
+              onClick={() => {
+                setShowInconveniente(false);
+                setInconveniente("");
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+        ) : (
+          <div
+          className="cuadroCompleto"
+          onClick={() => {
+            setShowInconveniente(false);
+            setInconveniente("");
+          }}
+        >
+          <div
+            className="inconveniente"
+          >
+            <h2>{inconveniente}</h2>
+            <button
+              className="btn cerrarMalo"
+              onClick={() => {
+                setShowInconveniente(false);
+                setInconveniente("");
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+        )
+        
+      )}
 
             {/* 🔹 ESTRUCTURA PRINCIPAL */}
             <div className="lobby">
@@ -502,6 +539,9 @@ export default function Lobby() {
                                                 onClick={() => {
                                                     invitar(idFriend);
                                                     setShowFriendProfile(false);
+                                                    setShowInconveniente(true);
+                                                    setInconveniente("Invitación enviada");
+                                                    setBueno(true);
                                                 }}
                                             >
                                                 Jugar
