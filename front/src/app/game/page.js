@@ -19,6 +19,8 @@ export default function Juego() {
   const [photo, setPhoto] = useState()
   const [friendName, setFriendName] = useState()
   const [cells, setCells] = useState([])
+  const [clickedCells, setClickedCells] = useState([])
+  const [disableCells, setDisableCells] = useState(false)
   const [position1, setPosition1] = useState()
   const [position2, setPosition2] = useState()
   const [showInconveniente, setShowInconveniente] = useState(false);
@@ -61,10 +63,16 @@ export default function Juego() {
       guardoNum = (i).toString()
       posicionNum = guardoNum.slice(guardoNum.length - 1)
       posicion = posicionLetra + posicionNum
-      newCells.push(<div className="cell" key={i + 1} id={posicion}
+      newCells.push(<button type="button" className="cell" key={i + 1} id={posicion} disabled={disableCells}
         onClick={(e) => {
-          handlePosition(e.target.id)
-        }}>{posicion}</div>);
+          setClickedCells(
+            (prev) => {
+              let nuevoArray = [...prev]
+              nuevoArray.push(e.target.id)
+              return nuevoArray
+            }
+          )
+        }}>{posicion}</button>);
     }
     setCells(newCells)
   }
@@ -105,17 +113,31 @@ export default function Juego() {
     }
   }, [firstRender]);
 
+  useEffect(() => {
+    console.log(barcoSeleccionado)
+  }, [barcoSeleccionado])
+
+  useEffect(() => {
+    console.log(clickedCells)
+    if(barcoSeleccionado){
+      if (clickedCells.length > 2) {
+      clickedCells.shift()
+        if (clickedCells.length == 2) {
+          let cells = [...clickedCells]
+          setClickedCells(cells)
+          handlePosition(clickedCells)
+        }
+      } 
+    } else {
+      setClickedCells([])
+      alert("Selecciona barco")
+    }
+  }, [clickedCells])
+
   function handlePosition(posicion) {
     console.log(barcoSeleccionado)
     if (barcoSeleccionado > 0 && barcoSeleccionado == 1) {
-      console.log("Entre en el if")
-      contador += 1
-      setClicks(contador)
-      if (contador == 1) {
-        setPosition1(posicion)
-      } else if (contador == 2) {
-        setPosition2(posicion)
-      }
+
     }
     if (barcoSeleccionado > 0 && barcoSeleccionado == 2) {
 
@@ -190,9 +212,9 @@ export default function Juego() {
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ACA VA LA PAGINA PRINCIPAL */}
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
-        
+
       <div className="game-container">
-        
+
         <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
         <div className="top-bar">
           <h1 className="game-title">BATALLA NAVAL</h1>
@@ -215,7 +237,7 @@ export default function Juego() {
                 className={`ship-image2x1 ${barcoSeleccionado == 1 ? 'ship-image-selected' : ''}`}
               />
               <img
-                onClick={ () => {
+                onClick={() => {
                   setBarcoSeleccionado(2);
                 }}
                 src="/Barco 4x1.png"
