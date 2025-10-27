@@ -173,7 +173,7 @@ export default function Juego() {
 
       {heGaveUp &&
         <div>
-          <h2>{friendName} se rindio, por lo que ganaste la partida</h2>
+          <h3>{friendName} se rindio, por lo que ganaste la partida</h3>
           <div className="medal">
             <div className="medal-emoji">🎖️</div>
             <div className="medal-count">+30</div>

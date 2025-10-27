@@ -342,8 +342,8 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 12px;
   flex: 1;
   box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15);
-  min-height: 35rem;
-  max-height: 35rem;
+  min-height: 50vh;
+  max-height: 50vh;
   overflow-y: auto;
 }
 
@@ -1187,7 +1187,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* ======= CONTENEDOR GENERAL ======= */
 .game-container {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   background: url("https://img1.wallspic.com/crops/9/7/9/0/4/140979/140979-crucero_ligero-3840x2160.jpg") no-repeat center center fixed;
   background-size: cover;
@@ -1259,6 +1259,8 @@ img { display: block; max-width: 100%; height: auto; }
   display: flex;
   gap: 80px;
   animation: fadeIn 0.8s ease;
+  max-height: 70%;
+  max-width: 90%;
 }
 
 .board-section {
@@ -1267,6 +1269,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 .board-section h2 {
   color: #fffaa5;
+  margin-right: -20vh;
   margin-bottom: 15px;
   font-size: 1.2rem;
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
@@ -1282,6 +1285,7 @@ img { display: block; max-width: 100%; height: auto; }
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(255, 255, 150, 0.2);
   transition: all 0.3s ease;
+  width: 150%;
 }
 
 .board:hover {
@@ -1289,8 +1293,8 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .cell {
-  width: 42px;
-  height: 42px;
+  width: 100%;
+  height: 30px;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 5px;
@@ -1486,8 +1490,8 @@ img { display: block; max-width: 100%; height: auto; }
 /* Panel de perfil (reutilizable para perfil o mensaje de bienvenida) */
 .friend-panel {
   width: 80%;
-  min-height: 35rem;
-  max-height: 35rem;
+  min-height: 60vh;
+  max-height: 60vh;
   background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
   border: 1px solid rgba(253,245,114,0.12);
   padding: 14px 16px;
@@ -1507,8 +1511,8 @@ img { display: block; max-width: 100%; height: auto; }
 /* variante para bienvenida */
 .friend-panel.welcome {
   width: 80%;
-  min-height: 35rem;
-  max-height: 35rem;
+  min-height: 60vh;
+  max-height: 60vh;
   justify-content: center;
   text-align: center;
 }
@@ -1765,10 +1769,10 @@ img { display: block; max-width: 100%; height: auto; }
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  width: 100%;
 }
 
 .player-board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
