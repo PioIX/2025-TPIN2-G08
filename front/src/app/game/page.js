@@ -101,25 +101,42 @@ export default function Juego() {
   }, [firstRender]);
 
   function changePosition(celda) {
-    const ship = localStorage.getItem("ship")
-    if( ship > 0){
+    let letra
+    let position = []
+    let numero
+    let diferencia
+    if(barcoSeleccionado > 0){
       setClickedCells((prev) => [...prev, celda]);
-      console.log(clickedCells.length)
-      if (ship == 1 && clickedCells.length == 2){
-        setPositionShip1(clickedCells)
-        setClickedCells([])
-      } else if(ship == 2 && clickedCells.length == 2){
-        setPositionShip2(clickedCells)
+      if (barcoSeleccionado == 1 && clickedCells.length == 2){
+        for (let i = 0; i< clickedCells.length; i++){
+          letra = clickedCells[i].slice(0)
+          numero = clickedCells[i].slice(1)
+          if (i == 1){
+            for (let j = 0; j < position.length; j++){
+              diferencia = numero - position[j].slice(1)
+              console.log(diferencia)
+              console.log(position[j].slice(0, 1))
+              console.log(position[j].slice(1, 2))
+              if(letra != position[j].slice(0) && numero != position[j].slice(1)){
+                alert("Pone bien el barco inutil")
+              } else if(diferencia != -1 || diferencia != 0 || diferencia != 1){
+                alert("Pone bien el barco inutil 2")
+              }
+            }
+          } else {
+            position.push(clickedCells[i])
+          }
+        }
+      } else if(barcoSeleccionado == 2 && clickedCells.length == 2){
         setClickedCells([])
       }
     } else {
       alert("Sleccione algun barco")
     }
-    }
+  }
 
   useEffect(()=>{
     console.log(barcoSeleccionado)
-    localStorage.setItem("ship", barcoSeleccionado)
   }, [barcoSeleccionado])
 
   useEffect(() => {
@@ -128,8 +145,6 @@ export default function Juego() {
       let array = [...clickedCells]
       array.shift()
       setClickedCells(array)
-    } else if(clickedCells == 2){
-      setPositionShip(clickedCells)
     }
   }, [clickedCells]);
 
@@ -231,7 +246,12 @@ export default function Juego() {
           <div className="boards">
             <div className="board-section">
               <h2>Tu tablero</h2>
-              <div className="board player-board">{cells}</div>
+              <div className="board player-board">
+                {cells.map((u, index) => 
+                <button key={index} onClick={() => changePosition(u.posicion)} id={u.posicion} className={"cell"}>
+                  {u.posicion}
+                </button>)}
+              </div>
             </div>
 
             <div className="ship-images">
