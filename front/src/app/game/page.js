@@ -20,9 +20,6 @@ export default function Juego() {
   const [friendName, setFriendName] = useState()
   const [cells, setCells] = useState([])
   const [clickedCells, setClickedCells] = useState([])
-  const [disableCells, setDisableCells] = useState(false)
-  const [position1, setPosition1] = useState()
-  const [position2, setPosition2] = useState()
   const [showInconveniente, setShowInconveniente] = useState(false);
   const [inconveniente, setInconveniente] = useState("");
   const [bueno, setBueno] = useState(false);
