@@ -11,15 +11,21 @@ export default function Juego() {
   const { socket, isConnected } = useSocket();
   const [firstRender, setFirsRender] = useState(false);
   const [barcoSeleccionado, setBarcoSeleccionado] = useState(0);
-  const [idPlayer, setIdPlayer] = useState();
-  const [room, setRoom] = useState();
-  const [heGaveUp, setHeGaveUp] = useState(false);
-  const [name, setName] = useState();
-  const [medals, setMedals] = useState();
-  const [photo, setPhoto] = useState();
-  const [friendName, setFriendName] = useState();
-  const [cells, setCells] = useState([]);
-  const [clickedCells, setClickedCells] = useState([]);
+  const [idPlayer, setIdPlayer] = useState()
+  const [room, setRoom] = useState()
+  const [heGaveUp, setHeGaveUp] = useState(false)
+  const [name, setName] = useState()
+  const [medals, setMedals] = useState()
+  const [photo, setPhoto] = useState()
+  const [friendName, setFriendName] = useState()
+  const [cells, setCells] = useState([])
+  const [clickedCells, setClickedCells] = useState([])
+  const [disableCells, setDisableCells] = useState(false)
+  const [position1, setPosition1] = useState()
+  const [position2, setPosition2] = useState()
+  const [showInconveniente, setShowInconveniente] = useState(false);
+  const [inconveniente, setInconveniente] = useState("");
+  const [bueno, setBueno] = useState(false);
 
   // Barcos:
   //Barco 2x1 = 1
@@ -199,7 +205,7 @@ export default function Juego() {
 
       {heGaveUp && (
         <div>
-          <h2>{friendName} se rindio, por lo que ganaste la partida</h2>
+          <h3>{friendName} se rindio, por lo que ganaste la partida</h3>
           <div className="medal">
             <div className="medal-emoji">🎖️</div>
             <div className="medal-count">+30</div>
