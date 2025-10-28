@@ -6,7 +6,7 @@ import { useSocket } from "@/hooks/useSocket";
 export default function Juego() {
   const router = useRouter();
   const [rendirse, setRendirse] = useState(false);
-  const [ship, setShip] = useState(true);
+  const [positionsShips, setPositionsShips] = useState(true);
   const [idLoggued, setId] = useState();
   const { socket, isConnected } = useSocket();
   const [firstRender, setFirsRender] = useState(false);
@@ -20,9 +20,6 @@ export default function Juego() {
   const [friendName, setFriendName] = useState()
   const [cells, setCells] = useState([])
   const [clickedCells, setClickedCells] = useState([])
-  const [disableCells, setDisableCells] = useState(false)
-  const [position1, setPosition1] = useState()
-  const [position2, setPosition2] = useState()
   const [showInconveniente, setShowInconveniente] = useState(false);
   const [inconveniente, setInconveniente] = useState("");
   const [bueno, setBueno] = useState(false);
@@ -32,144 +29,140 @@ export default function Juego() {
   //Barco 4x1 = 2
 
   function positions() {
-    let newCells = []
-    let posicionLetra = ""
-    let posicion
-    let posicionNum
-    let guardoNum
-    let contador = 0
+    let newCells = [];
+    let posicionLetra = "";
+    let posicion;
+    let posicionNum;
+    let guardoNum;
     for (let i = 0; i < 100; i++) {
       if (i + 1 >= 1 && i + 1 <= 10) {
-        posicionLetra = "A"
+        posicionLetra = "A";
       } else if (i + 1 >= 11 && i + 1 <= 20) {
-        posicionLetra = "B"
+        posicionLetra = "B";
       } else if (i + 1 >= 21 && i + 1 <= 30) {
-        posicionLetra = "C"
+        posicionLetra = "C";
       } else if (i + 1 >= 31 && i + 1 <= 40) {
-        posicionLetra = "D"
+        posicionLetra = "D";
       } else if (i + 1 >= 41 && i + 1 <= 50) {
-        posicionLetra = "E"
+        posicionLetra = "E";
       } else if (i + 1 >= 51 && i + 1 <= 60) {
-        posicionLetra = "F"
+        posicionLetra = "F";
       } else if (i + 1 >= 61 && i + 1 <= 70) {
-        posicionLetra = "G"
+        posicionLetra = "G";
       } else if (i + 1 >= 71 && i + 1 <= 80) {
-        posicionLetra = "H"
+        posicionLetra = "H";
       } else if (i + 1 >= 81 && i + 1 <= 90) {
-        posicionLetra = "I"
+        posicionLetra = "I";
       } else if (i + 1 >= 91 && i + 1 <= 100) {
-        posicionLetra = "J"
+        posicionLetra = "J";
       }
-      guardoNum = (i).toString()
-      posicionNum = guardoNum.slice(guardoNum.length - 1)
-      posicion = posicionLetra + posicionNum
-      newCells.push(<button type="button" className="cell" key={i + 1} id={posicion} disabled={disableCells}
-        onClick={(e) => {
-          setClickedCells(
-            (prev) => {
-              let nuevoArray = [...prev]
-              nuevoArray.push(e.target.id)
-              return nuevoArray
-            }
-          )
-        }}>{posicion}</button>);
+      guardoNum = i.toString();
+      posicionNum = guardoNum.slice(guardoNum.length - 1);
+      posicion = posicionLetra + posicionNum;
+      newCells.push({posicion: posicion});
     }
-    setCells(newCells)
+    setCells(newCells);
   }
 
   useEffect(() => {
     setId(localStorage.getItem("idLoggued"));
-    setIdPlayer(localStorage.getItem("idPlayer"))
-    user()
-    positions()
+    setIdPlayer(localStorage.getItem("idPlayer"));
+    user();
+    positions();
     setFirsRender(true);
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("checkRoom", data => {
+    socket.on("checkRoom", (data) => {
       console.log(data);
     });
 
-    socket.on('neverSurrender', data => {
+    socket.on("neverSurrender", (data) => {
       if (data.rendirse == true && data.to == idLoggued) {
-        setHeGaveUp(true)
-        setFriendName(data.name)
+        setHeGaveUp(true);
+        setFriendName(data.name);
       }
-    })
+    });
   }, [socket]);
 
   useEffect(() => {
     if (firstRender) {
-      let numIdLoggued = parseInt(idLoggued)
-      let numIdPlayer = parseInt(idPlayer)
+      let numIdLoggued = parseInt(idLoggued);
+      let numIdPlayer = parseInt(idPlayer);
       if (numIdLoggued < numIdPlayer) {
         socket.emit("joinRoom", { room: "G" + numIdLoggued + numIdPlayer });
-        setRoom("G" + numIdLoggued + numIdPlayer)
+        setRoom("G" + numIdLoggued + numIdPlayer);
       } else {
         socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued });
-        setRoom("G" + numIdPlayer + numIdLoggued)
+        setRoom("G" + numIdPlayer + numIdLoggued);
       }
     }
   }, [firstRender]);
 
-  useEffect(() => {
+  function changePosition(celda) {
+    const ship = localStorage.getItem("ship")
+    if( ship > 0){
+      setClickedCells((prev) => [...prev, celda]);
+      console.log(clickedCells.length)
+      if (ship == 1 && clickedCells.length == 2){
+        setPositionShip1(clickedCells)
+        setClickedCells([])
+      } else if(ship == 2 && clickedCells.length == 2){
+        setPositionShip2(clickedCells)
+        setClickedCells([])
+      }
+    } else {
+      alert("Sleccione algun barco")
+    }
+    }
+
+  useEffect(()=>{
     console.log(barcoSeleccionado)
+    localStorage.setItem("ship", barcoSeleccionado)
   }, [barcoSeleccionado])
 
   useEffect(() => {
-    console.log(clickedCells)
-    if(barcoSeleccionado){
-      if (clickedCells.length > 2) {
-      clickedCells.shift()
-        if (clickedCells.length == 2) {
-          let cells = [...clickedCells]
-          setClickedCells(cells)
-          handlePosition(clickedCells)
-        }
-      } 
-    } else {
-      setClickedCells([])
-      alert("Selecciona barco")
+    console.log(clickedCells);
+    if (clickedCells.length > 2){
+      let array = [...clickedCells]
+      array.shift()
+      setClickedCells(array)
+    } else if(clickedCells == 2){
+      setPositionShip(clickedCells)
     }
-  }, [clickedCells])
-
-  function handlePosition(posicion) {
-    console.log(barcoSeleccionado)
-    if (barcoSeleccionado > 0 && barcoSeleccionado == 1) {
-
-    }
-    if (barcoSeleccionado > 0 && barcoSeleccionado == 2) {
-
-    }
-  }
+  }, [clickedCells]);
 
   async function user() {
-    const idLoggued = localStorage.getItem("idLoggued")
-    let result = await fetch('http://localhost:4000/user', {
+    const idLoggued = localStorage.getItem("idLoggued");
+    let result = await fetch("http://localhost:4000/user", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ idLoggued: idLoggued })
-    })
-    let response = await result.json()
+      body: JSON.stringify({ idLoggued: idLoggued }),
+    });
+    let response = await result.json();
     if (response.msg == 1) {
-      setName(response.user.name)
-      setPhoto(response.user.photo)
-      setMedals(response.user.medals)
+      setName(response.user.name);
+      setPhoto(response.user.photo);
+      setMedals(response.user.medals);
     }
   }
 
   async function insertGame() {
-    let result = await fetch('http://localhost:4000/insertGame', {
+    let result = await fetch("http://localhost:4000/insertGame", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ date: new Date, idWinner: idPlayer, idPlayer: idLoggued })
-    })
-    await result.json()
+      body: JSON.stringify({
+        date: new Date(),
+        idWinner: idPlayer,
+        idPlayer: idLoggued,
+      }),
+    });
+    await result.json();
   }
 
   return (
@@ -183,19 +176,31 @@ export default function Juego() {
           <h3>¿Seguro que querés rendirte?</h3>
           <p>Perderás la partida actual</p>
           <div className="popup-botones">
-            <button className="btn-si" onClick={async () => {
-              await insertGame()
-              socket.emit('rendirse', { rendirse: true, room: room, name: name, to: idPlayer })
-              router.replace("/lobby")
-            }}>Rendirse</button>
-            <button className="btn-no" onClick={() => setRendirse(false)}>Cancelar</button>
+            <button
+              className="btn-si"
+              onClick={async () => {
+                await insertGame();
+                socket.emit("rendirse", {
+                  rendirse: true,
+                  room: room,
+                  name: name,
+                  to: idPlayer,
+                });
+                router.replace("/lobby");
+              }}
+            >
+              Rendirse
+            </button>
+            <button className="btn-no" onClick={() => setRendirse(false)}>
+              Cancelar
+            </button>
           </div>
         </div>
       )}
 
       {/*---------------------------*/}
 
-      {heGaveUp &&
+      {heGaveUp && (
         <div>
           <h3>{friendName} se rindio, por lo que ganaste la partida</h3>
           <div className="medal">
@@ -203,7 +208,8 @@ export default function Juego() {
             <div className="medal-count">+30</div>
           </div>
           <button onClick={() => router.replace("/lobby")}> OK </button>
-        </div>}
+        </div>
+      )}
 
       {/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
       {/* ACA VAN TODOS LOS MODAL */}
@@ -214,13 +220,14 @@ export default function Juego() {
       {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
       <div className="game-container">
-
-        <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
+        <button className="surrender" onClick={() => setRendirse(true)}>
+          🏳️
+        </button>
         <div className="top-bar">
           <h1 className="game-title">BATALLA NAVAL</h1>
         </div>
 
-        {ship ? (
+        {positionsShips ? (
           <div className="boards">
             <div className="board-section">
               <h2>Tu tablero</h2>
@@ -234,7 +241,9 @@ export default function Juego() {
                 }}
                 src="/Barco 2x1.png"
                 alt="Barco 2x1"
-                className={`ship-image2x1 ${barcoSeleccionado == 1 ? 'ship-image-selected' : ''}`}
+                className={`ship-image2x1 ${
+                  barcoSeleccionado == 1 ? "ship-image-selected" : ""
+                }`}
               />
               <img
                 onClick={() => {
@@ -242,12 +251,16 @@ export default function Juego() {
                 }}
                 src="/Barco 4x1.png"
                 alt="Barco 4x1"
-                className={`ship-image4x1 ${barcoSeleccionado == 2 ? 'ship-image-selected' : ''}`}
+                className={`ship-image4x1 ${
+                  barcoSeleccionado == 2 ? "ship-image-selected" : ""
+                }`}
               />
             </div>
 
             <div className="play-button-container">
-              <button className="btn-jugar" onClick={() => setShip(false)}>Jugar</button>
+              <button className="btn-jugar" onClick={() => setPositionsShips(false)}>
+                ¡Listo!
+              </button>
             </div>
           </div>
         ) : (
