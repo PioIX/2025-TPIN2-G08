@@ -113,11 +113,8 @@ export default function Juego() {
           numero = clickedCells[i].slice(1)
           if (i == 1){
             for (let j = 0; j < position.length; j++){
-              diferencia = numero - position[j].slice(1)
-              console.log(diferencia)
-              console.log(position[j].slice(0, 1))
-              console.log(position[j].slice(1, 2))
-              if(letra != position[j].slice(0) && numero != position[j].slice(1)){
+              diferencia = numero - position[j].slice(1, 2)
+              if(letra != position[j].slice(0, 1) && numero != position[j].slice(1, 2)){
                 alert("Pone bien el barco inutil")
               } else if(diferencia != -1 || diferencia != 0 || diferencia != 1){
                 alert("Pone bien el barco inutil 2")
