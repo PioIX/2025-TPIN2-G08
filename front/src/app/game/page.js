@@ -59,7 +59,7 @@ export default function Juego() {
       guardoNum = i.toString();
       posicionNum = guardoNum.slice(guardoNum.length - 1);
       posicion = posicionLetra + posicionNum;
-      newCells.push({posicion: posicion});
+      newCells.push({ posicion: posicion });
     }
     setCells(newCells);
   }
@@ -101,47 +101,57 @@ export default function Juego() {
   }, [firstRender]);
 
   function changePosition(celda) {
-    let letra
-    let position = []
-    let numero
-    let diferencia
-    if(barcoSeleccionado > 0){
+    if (barcoSeleccionado > 0) {
       setClickedCells((prev) => [...prev, celda]);
-      if (barcoSeleccionado == 1 && clickedCells.length == 2){
-        for (let i = 0; i< clickedCells.length; i++){
-          letra = clickedCells[i].slice(0)
-          numero = clickedCells[i].slice(1)
-          if (i == 1){
-            for (let j = 0; j < position.length; j++){
-              diferencia = numero - position[j].slice(1, 2)
-              if(letra != position[j].slice(0, 1) && numero != position[j].slice(1, 2)){
-                alert("Pone bien el barco inutil")
-              } else if(diferencia != -1 || diferencia != 0 || diferencia != 1){
-                alert("Pone bien el barco inutil 2")
-              }
-            }
-          } else {
-            position.push(clickedCells[i])
-          }
-        }
-      } else if(barcoSeleccionado == 2 && clickedCells.length == 2){
-        setClickedCells([])
-      }
     } else {
       alert("Sleccione algun barco")
     }
   }
 
-  useEffect(()=>{
-    console.log(barcoSeleccionado)
+  useEffect(() => {
+    console.log("barcoSelec: ", barcoSeleccionado)
   }, [barcoSeleccionado])
 
   useEffect(() => {
+    let letra
+    let position = []
+    let numero
+    let diferencia
+    let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
     console.log(clickedCells);
-    if (clickedCells.length > 2){
+    if (clickedCells.length > 2) {
       let array = [...clickedCells]
       array.shift()
       setClickedCells(array)
+    }
+    if (barcoSeleccionado === 1 && clickedCells.length == 2) {
+      for (let i = 0; i < clickedCells.length; i++) {
+        letra = clickedCells[i].slice(0, 1)
+        numero = clickedCells[i].slice(1, 2)
+
+        if (i == 1) {
+          for (let j = 0; j < position.length; j++) {
+            diferencia = numero - position[j].slice(1, 2)
+
+            if (letra != position[j].slice(0, 1) && numero != position[j].slice(1, 2)) {
+              alert("Intento el barco en diagonal")
+            } else if (diferencia != -1 && diferencia != 0 && diferencia != 1) {
+              alert("Intento")
+            } else {
+              for (let i = 0; i < letras.length; i++) {
+                
+              }
+              if (position[j].slice(0, 1)) {
+
+              }
+            }
+          }
+        } else {
+          position.push(clickedCells[i])
+        }
+      }
+    } else if (barcoSeleccionado == 2 && clickedCells.length == 2) {
+      setClickedCells([])
     }
   }, [clickedCells]);
 
@@ -244,10 +254,10 @@ export default function Juego() {
             <div className="board-section">
               <h2>Tu tablero</h2>
               <div className="board player-board">
-                {cells.map((u, index) => 
-                <button key={index} onClick={() => changePosition(u.posicion)} id={u.posicion} className={"cell"}>
-                  {u.posicion}
-                </button>)}
+                {cells.map((u, index) =>
+                  <button key={index} onClick={() => changePosition(u.posicion)} id={u.posicion} className={"cell"}>
+                    {u.posicion}
+                  </button>)}
               </div>
             </div>
 
@@ -258,9 +268,8 @@ export default function Juego() {
                 }}
                 src="/Barco 2x1.png"
                 alt="Barco 2x1"
-                className={`ship-image2x1 ${
-                  barcoSeleccionado == 1 ? "ship-image-selected" : ""
-                }`}
+                className={`ship-image2x1 ${barcoSeleccionado == 1 ? "ship-image-selected" : ""
+                  }`}
               />
               <img
                 onClick={() => {
@@ -268,9 +277,8 @@ export default function Juego() {
                 }}
                 src="/Barco 4x1.png"
                 alt="Barco 4x1"
-                className={`ship-image4x1 ${
-                  barcoSeleccionado == 2 ? "ship-image-selected" : ""
-                }`}
+                className={`ship-image4x1 ${barcoSeleccionado == 2 ? "ship-image-selected" : ""
+                  }`}
               />
             </div>
 
