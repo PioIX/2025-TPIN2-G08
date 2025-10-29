@@ -29,6 +29,7 @@ export default function Juego() {
 	const SIGASIGA = 0
 	const VALIDAR_BARCO_HORIZONTAL = 1
 	const BARCO_VERTICAL = 2
+	const BARCO_HORIZONTAL = 3
 
 	// Barcos:
 	//Barco 2x1 = 1
@@ -119,146 +120,107 @@ export default function Juego() {
 	}, [barcoSeleccionado])
 
 	useEffect(() => {
-		
-		
 		let respuestaValidaciones;
 		let letra
-		let position = []
 		let numero
-		let diferencia
-		let badPosition = false
-		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 		console.log(clickedCells);
 		if (clickedCells.length > 2) {
 			let array = [...clickedCells]
 			array.shift()
 			setClickedCells(array)
 		}
-		if (barcoSeleccionado === 1 && clickedCells.length == 2) {
-			for (let i = 0; i < clickedCells.length; i++) {
-				letra = clickedCells[i].slice(0, 1)
-				numero = clickedCells[i].slice(1, 2)
-				if (i == 1) {
-
-					respuestaValidaciones = validarDiagonal(position[0].slice(0, 1), position[0].slice(1, 2), letra, numero)
-
-					if (respuestaValidaciones == SIGASIGA) {
-						validarVertical(position[0].slice(0, 1), position[0].slice(1, 2), letra, numero)
-					}
-
-					/*
-					for (let j = 0; j < position.length; j++) {
-					  diferencia = numero - position[j].slice(1, 2)
-					  if (letra != position[j].slice(0, 1) && numero != position[j].slice(1, 2)) {
-						alert("Intento el barco en diagonal")
-					  } else if (diferencia != -1 && diferencia != 0 && diferencia != 1) {
-						alert("Intento")
-					  } else {
-						console.log(letras)
-						console.log(position[j].slice(0, 1))
-						for (let k = 0; i < letras.length; i++) {
-						  if (letras[k] != position[j].slice(0, 1)){
-							console.log("for letras")
-							if (letra != letras[k + 1] || letra != letras[k - 1]){
-							  console.log("if validacion")
-							  badPosition = true
-							}
-						  }
-						}
-						if (badPosition) {
-						  alert("Ponga el barco bien")
-						} else {
-						  setPosition1(clickedCells)
-						}
-					  }
-					}
-					  */
+		if (barcoSeleccionado == 1 && clickedCells.length == 2) {
+			letra = clickedCells[1].slice(0, 1)
+			numero = clickedCells[1].slice(1, 2)
+			respuestaValidaciones = validarDiagonal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
+			if (respuestaValidaciones == SIGASIGA) {
+				respuestaValidaciones = validarVertical(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
+				if (respuestaValidaciones == BARCO_VERTICAL) {
+					alert("Barco 2x1 en vertical")
 				} else {
-					position.push(clickedCells[i])
+					respuestaValidaciones = validarHorizontal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
+					if (respuestaValidaciones == BARCO_HORIZONTAL) {
+						alert("Barco 2x1 horizontal")
+					} else {
+						alert("casillas distantes")
+					}
 				}
+			} else {
+				alert("No puede poner el barco en diagonal")
 			}
 		} else if (barcoSeleccionado == 2 && clickedCells.length == 2) {
-			setClickedCells([])
+
 		}
+			
 	}, [clickedCells]);
 
-	useEffect(() => {
-		console.log(position1)
-	}, [position1])
-
-	function validarHorizontal(celda) {
-
-		return false
+	function validarHorizontal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
+		let respuesta = ERROR
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
+		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
+		if (letraPrimerCelda == letraSegundaCelda) {
+			if ((numeroPrimerCelda == 0 && numeroSegundaCelda == 1) ||
+				(numeroPrimerCelda == 8 && numeroSegundaCelda == 9) ||
+				(numeroPrimerCelda == 9 && numeroSegundaCelda == 8) ||
+				(numeroPrimerCelda == 1 && numeroSegundaCelda == 0)) {
+				respuesta = BARCO_HORIZONTAL
+			} else {
+				for (let i = 1; i < 8; i++){
+					if (i == numeroPrimerCelda){
+						if (numeroSegundaCelda == i+1 || numeroSegundaCelda == i-1){
+							respuesta = BARCO_HORIZONTAL
+						}
+					}
+				}
+			}
+		}
+		return respuesta
 	}
 
 	function validarDiagonal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
 		let respuesta = ERROR
-
-		letra = String(letra).toUpperCase()
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
-
 		if (letraPrimerCelda != letraSegundaCelda && numeroPrimerCelda != numeroSegundaCelda) {
 			respuesta = ERROR
 		} else {
 			respuesta = SIGASIGA
 		}
-
 		return respuesta
 	}
 
-	function validarVertical(letraPrimerCelda, numeroPrimerCelda, letra, numero) {
-
+	function validarVertical(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
 		let respuesta = ERROR
 		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-		letra = String(letra).toUpperCase()
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
-
-		console.log("Primer celda", letraPrimerCelda, numeroPrimerCelda)
-		console.log("Ultima Celda", letra, numero)
-
-		if (numeroPrimerCelda == numero) {
-
-			if (letraPrimerCelda != letra) {
-
-				if ((letras[0] == letraPrimerCelda && letras[1] == letra) || (letras[1] == letraPrimerCelda && letras[0] == letra)
-					|| (letras[9] == letraPrimerCelda && letras[8] == letra) || (letras[8] == letraPrimerCelda && letras[9] == letra)) {
+		if (numeroPrimerCelda == numeroSegundaCelda) {
+			if (letraPrimerCelda != letraSegundaCelda) {
+				if ((letras[0] == letraPrimerCelda && letras[1] == letraSegundaCelda) || (letras[1] == letraPrimerCelda && letras[0] == letraSegundaCelda)
+					|| (letras[9] == letraPrimerCelda && letras[8] == letraSegundaCelda) || (letras[8] == letraPrimerCelda && letras[9] == letraSegundaCelda)) {
 					console.log("HOLA")
-					respuesta = BARCO_VERTICAL //El barco puede estar ahi
+					respuesta = BARCO_VERTICAL
 				} else {
-
 					for (let i = 2; i < letras.length - 2; i++) {
-						console.log("Letra: ", letras[i])
-
 						if (letras[i] == letraPrimerCelda) {
-							if (letra == letras[i - 1] || letra == letras[i + 1]) {
-								resultado = BARCO_VERTICAL
+							if (letraSegundaCelda == letras[i - 1] || letraSegundaCelda == letras[i + 1]) {
+								respuesta = BARCO_VERTICAL
 							}
 						}
-
 					}
-
-					if (resultado != BARCO_VERTICAL) {
-						resultado = VALIDAR_BARCO_HORIZONTAL
+					if (respuesta != BARCO_VERTICAL) {
+						respuesta = VALIDAR_BARCO_HORIZONTAL
 					}
-
 				}
-
-				/*
-				for (let i=0; i<letras.length; i++) {
-		
-		
-				}
-				*/
 			} else {
-				respuesta = VALIDAR_BARCO_HORIZONTAL //Puede ser horizontal
+				respuesta = VALIDAR_BARCO_HORIZONTAL
 			}
-
-
 		} else {
-			respuesta = VALIDAR_BARCO_HORIZONTAL // 1 es que puede ser horizontal
+			respuesta = VALIDAR_BARCO_HORIZONTAL
 		}
 		return respuesta
 	}
+
 	async function user() {
 		const idLoggued = localStorage.getItem("idLoggued");
 		let result = await fetch("http://localhost:4000/user", {
