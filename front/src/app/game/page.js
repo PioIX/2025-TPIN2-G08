@@ -10,30 +10,32 @@ export default function Juego() {
 	const [idLoggued, setId] = useState();
 	const { socket, isConnected } = useSocket();
 	const [firstRender, setFirsRender] = useState(false);
-	const [barcoSeleccionado, setBarcoSeleccionado] = useState(0);
-	const [idPlayer, setIdPlayer] = useState()
-	const [room, setRoom] = useState()
-	const [heGaveUp, setHeGaveUp] = useState(false)
-	const [name, setName] = useState()
-	const [medals, setMedals] = useState()
-	const [photo, setPhoto] = useState()
-	const [friendName, setFriendName] = useState()
-	const [cells, setCells] = useState([])
-	const [clickedCells, setClickedCells] = useState([])
+	const [shipSelected, setShipSelected] = useState(0);
+	const [idPlayer, setIdPlayer] = useState();
+	const [room, setRoom] = useState();
+	const [heGaveUp, setHeGaveUp] = useState(false);
+	const [name, setName] = useState();
+	const [medals, setMedals] = useState();
+	const [photo, setPhoto] = useState();
+	const [friendName, setFriendName] = useState();
+	const [cells, setCells] = useState([]);
+	const [clickedCells, setClickedCells] = useState([]);
 	const [showInconveniente, setShowInconveniente] = useState(false);
 	const [inconveniente, setInconveniente] = useState("");
 	const [bueno, setBueno] = useState(false);
-	const [position1, setPosition1] = useState()
 
-	const ERROR = -1
-	const SIGASIGA = 0
-	const VALIDAR_BARCO_HORIZONTAL = 1
-	const BARCO_VERTICAL = 2
-	const BARCO_HORIZONTAL = 3
+	const ERROR = -2 // El usuario selecciono la misma casilla 2 veces
+	const ERROR2 = -1; // El usuario intento ubicar el barco diagonalmente
+	const SIGASIGA = 0; // Las casillas son validas respecto al barco seleccionado
+	const VALIDAR_BARCO_HORIZONTAL = 1; // El barco no esta puesto verticalmente por lo que hay que verificar que sea horizontal
+	const BARCO_VERTICAL = 2; // El barco esta puesto verticalmente
+	const BARCO_HORIZONTAL = 3; // El barco esta puesto horizontalmente
 
 	// Barcos:
 	//Barco 2x1 = 1
-	//Barco 4x1 = 2
+	//Barco 3x1 = 2
+	//Barco 4x1 = 3
+	//Barco 5x1 = 4
 
 	function positions() {
 		let newCells = [];
@@ -66,7 +68,7 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			newCells.push({ posicion: posicion });
+			newCells.push({ posicion: posicion, ship: false });
 		}
 		setCells(newCells);
 	}
@@ -107,118 +109,180 @@ export default function Juego() {
 		}
 	}, [firstRender]);
 
+	useEffect(() => {
+		console.log("barcoSelec: ", shipSelected);
+	}, [shipSelected]);
+
 	function changePosition(celda) {
-		if (barcoSeleccionado > 0) {
+		if (shipSelected > 0) {
 			setClickedCells((prev) => [...prev, celda]);
 		} else {
-			alert("Sleccione algun barco")
+			alert("Sleccione algun barco");
 		}
 	}
-
-	useEffect(() => {
-		console.log("barcoSelec: ", barcoSeleccionado)
-	}, [barcoSeleccionado])
 
 	useEffect(() => {
 		let respuestaValidaciones;
-		let letra
-		let numero
+		let letra;
+		let numero;
 		console.log(clickedCells);
 		if (clickedCells.length > 2) {
-			let array = [...clickedCells]
-			array.shift()
-			setClickedCells(array)
+			let array = [...clickedCells];
+			array.shift();
+			setClickedCells(array);
 		}
-		if (barcoSeleccionado == 1 && clickedCells.length == 2) {
-			letra = clickedCells[1].slice(0, 1)
-			numero = clickedCells[1].slice(1, 2)
-			respuestaValidaciones = validarDiagonal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
+		if (clickedCells.length == 2) {
+			letra = clickedCells[1].slice(0, 1);
+			numero = clickedCells[1].slice(1, 2);
+			respuestaValidaciones = validarDiagonalYMismaCasilla(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero);
 			if (respuestaValidaciones == SIGASIGA) {
-				respuestaValidaciones = validarVertical(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
-				if (respuestaValidaciones == BARCO_VERTICAL) {
-					alert("Barco 2x1 en vertical")
-				} else {
-					respuestaValidaciones = validarHorizontal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero)
-					if (respuestaValidaciones == BARCO_HORIZONTAL) {
-						alert("Barco 2x1 horizontal")
+				respuestaValidaciones = validarVertical(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero, shipSelected);
+				if (respuestaValidaciones != BARCO_VERTICAL) {
+					respuestaValidaciones = validarHorizontal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero, shipSelected);
+					if (respuestaValidaciones != BARCO_HORIZONTAL) {
+						setInconveniente("Las casillas son muy distantes o no cumplen con el largo del barco");
+						setShowInconveniente(true)
 					} else {
-						alert("casillas distantes")
+						/*for(let i = 0; i < cells.length; i++){
+							if(clickedCells[0] == cells[i].posicion){
+								cells[i].ship = true
+							} else if(clickedCells[1] == cells[i].posicion){
+								cells[i].ship = true
+							}
+						}*/
+						//Este for hace que setee en la celda que hay un barco
 					}
+				} else {
+					/*for(let i = 0; i < cells.length; i++){
+						if(clickedCells[0] == cells[i].posicion){
+							cells[i].ship = true
+						} else if(clickedCells[1] == cells[i].posicion){
+							cells[i].ship = true
+						}
+					}*/
+					//Este for hace que setee en la celda que hay un barco
 				}
+			} else if(respuestaValidaciones == ERROR){
+				setInconveniente("Seleccione 2 casillas distintas")
+				setShowInconveniente(true)
 			} else {
-				alert("No puede poner el barco en diagonal")
+				setInconveniente("No puede posicionar el barco en diagonal")
+				setShowInconveniente(true)
 			}
-		} else if (barcoSeleccionado == 2 && clickedCells.length == 2) {
-
 		}
-			
 	}, [clickedCells]);
 
-	function validarHorizontal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
-		let respuesta = ERROR
-		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
-		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
-		if (letraPrimerCelda == letraSegundaCelda) {
-			if ((numeroPrimerCelda == 0 && numeroSegundaCelda == 1) ||
-				(numeroPrimerCelda == 8 && numeroSegundaCelda == 9) ||
-				(numeroPrimerCelda == 9 && numeroSegundaCelda == 8) ||
-				(numeroPrimerCelda == 1 && numeroSegundaCelda == 0)) {
-				respuesta = BARCO_HORIZONTAL
-			} else {
-				for (let i = 1; i < 8; i++){
-					if (i == numeroPrimerCelda){
-						if (numeroSegundaCelda == i+1 || numeroSegundaCelda == i-1){
-							respuesta = BARCO_HORIZONTAL
-						}
+	function validarHorizontal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda, shipSelected) {
+		let respuesta = ERROR;
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
+		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
+		if(shipSelected == 1){
+			for (let i = 0; i < 9; i++) {
+				if (i == numeroPrimerCelda) {
+					if (numeroSegundaCelda == i + 1 || numeroSegundaCelda == i - 1) {
+						respuesta = BARCO_HORIZONTAL;
+					}
+				}
+			}
+		} else if(shipSelected == 2){
+			for (let i = 0; i < 9; i++) {
+				if (i == numeroPrimerCelda) {
+					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
+						respuesta = BARCO_HORIZONTAL;
+					}
+				}
+			}
+		} else if(shipSelected == 3){
+			for (let i = 0; i < 9; i++) {
+				if (i == numeroPrimerCelda) {
+					if (numeroSegundaCelda == i + 3 || numeroSegundaCelda == i - 3) {
+						respuesta = BARCO_HORIZONTAL;
+					}
+				}
+			}
+		} else if(shipSelected == 4){
+			for (let i = 0; i < 9; i++) {
+				if (i == numeroPrimerCelda) {
+					if (numeroSegundaCelda == i + 4 || numeroSegundaCelda == i - 4) {
+						respuesta = BARCO_HORIZONTAL;
 					}
 				}
 			}
 		}
-		return respuesta
+		return respuesta;
 	}
 
-	function validarDiagonal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
-		let respuesta = ERROR
-		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
-		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
+	function validarDiagonalYMismaCasilla(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
+		let respuesta = ERROR2;
+		let celda1 = letraPrimerCelda + numeroPrimerCelda
+		let celda2 = letraSegundaCelda + numeroSegundaCelda
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
+		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
 		if (letraPrimerCelda != letraSegundaCelda && numeroPrimerCelda != numeroSegundaCelda) {
-			respuesta = ERROR
+			respuesta = ERROR2;
+		} else if( celda1 == celda2){
+			respuesta = ERROR;
 		} else {
 			respuesta = SIGASIGA
 		}
-		return respuesta
+		return respuesta;
 	}
 
-	function validarVertical(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda) {
-		let respuesta = ERROR
-		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-		letraSegundaCelda = String(letraSegundaCelda).toUpperCase()
-		letraPrimerCelda = String(letraPrimerCelda).toUpperCase()
-		if (numeroPrimerCelda == numeroSegundaCelda) {
-			if (letraPrimerCelda != letraSegundaCelda) {
-				if ((letras[0] == letraPrimerCelda && letras[1] == letraSegundaCelda) || (letras[1] == letraPrimerCelda && letras[0] == letraSegundaCelda)
-					|| (letras[9] == letraPrimerCelda && letras[8] == letraSegundaCelda) || (letras[8] == letraPrimerCelda && letras[9] == letraSegundaCelda)) {
-					console.log("HOLA")
-					respuesta = BARCO_VERTICAL
-				} else {
-					for (let i = 2; i < letras.length - 2; i++) {
-						if (letras[i] == letraPrimerCelda) {
-							if (letraSegundaCelda == letras[i - 1] || letraSegundaCelda == letras[i + 1]) {
-								respuesta = BARCO_VERTICAL
-							}
+	function validarVertical(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda, shipSelected) {
+		let respuesta = ERROR;
+		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
+		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
+		if ((numeroPrimerCelda == numeroSegundaCelda) && (letraPrimerCelda != letraSegundaCelda)) {
+			if (shipSelected == 1) {
+				for (let i = 0; i < letras.length; i++) {
+					if (letras[i] == letraPrimerCelda) {
+						if (letraSegundaCelda == letras[i - 1] || letraSegundaCelda == letras[i + 1]) {
+							respuesta = BARCO_VERTICAL;
 						}
 					}
-					if (respuesta != BARCO_VERTICAL) {
-						respuesta = VALIDAR_BARCO_HORIZONTAL
+				}
+				if (respuesta != BARCO_VERTICAL) {
+					respuesta = VALIDAR_BARCO_HORIZONTAL;
+				}
+			} else if (shipSelected == 2){
+				for (let i = 0; i < letras.length; i++){
+					if (letras[i] == letraPrimerCelda){
+						if(letraSegundaCelda == letras[i-2] || letraSegundaCelda == letras[i+2]){
+							respuesta = BARCO_VERTICAL
+						}
 					}
 				}
-			} else {
-				respuesta = VALIDAR_BARCO_HORIZONTAL
+				if(respuesta != BARCO_VERTICAL){
+					respuesta = VALIDAR_BARCO_HORIZONTAL
+				}
+			} else if(shipSelected == 3){
+				for (let i = 0; i < letras.length; i++){
+					if (letras[i] == letraPrimerCelda){
+						if(letraSegundaCelda == letras[i-3] || letraSegundaCelda == letras[i+3]){
+							respuesta = BARCO_VERTICAL
+						}
+					}
+				}
+				if(respuesta != BARCO_VERTICAL){
+					respuesta = VALIDAR_BARCO_HORIZONTAL
+				}
+			} else if(shipSelected == 4){
+				for (let i = 0; i < letras.length; i++){
+					if (letras[i] == letraPrimerCelda){
+						if(letraSegundaCelda == letras[i-4] || letraSegundaCelda == letras[i+4]){
+							respuesta = BARCO_VERTICAL
+						}
+					}
+				}
+				if(respuesta != BARCO_VERTICAL){
+					respuesta = VALIDAR_BARCO_HORIZONTAL
+				}
 			}
 		} else {
-			respuesta = VALIDAR_BARCO_HORIZONTAL
+			respuesta = VALIDAR_BARCO_HORIZONTAL;
 		}
-		return respuesta
+		return respuesta;
 	}
 
 	async function user() {
@@ -244,11 +308,7 @@ export default function Juego() {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				date: new Date(),
-				idWinner: idPlayer,
-				idPlayer: idLoggued,
-			}),
+			body: JSON.stringify({date: new Date(), idWinner: idPlayer, idPlayer: idLoggued}),
 		});
 		await result.json();
 	}
@@ -264,19 +324,9 @@ export default function Juego() {
 					<h3>¿Seguro que querés rendirte?</h3>
 					<p>Perderás la partida actual</p>
 					<div className="popup-botones">
-						<button
-							className="btn-si"
-							onClick={async () => {
-								await insertGame();
-								socket.emit("rendirse", {
-									rendirse: true,
-									room: room,
-									name: name,
-									to: idPlayer,
-								});
-								router.replace("/lobby");
-							}}
-						>
+						<button className="btn-si" onClick={async () => {await insertGame();
+							socket.emit("rendirse", {rendirse: true, room: room, name: name, to: idPlayer});
+							router.replace("/lobby");}}>
 							Rendirse
 						</button>
 						<button className="btn-no" onClick={() => setRendirse(false)}>
@@ -299,6 +349,38 @@ export default function Juego() {
 				</div>
 			)}
 
+			{/*---------------------------*/}
+
+			{showInconveniente && (
+                bueno ? (
+                    <div className="cuadroCompleto"onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");}}>
+                        <div className="conveniente">
+                            <h2>{inconveniente}</h2>
+                            <button className="btn cerrarBueno" onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");}}>
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="cuadroCompleto" onClick={() => {
+                            setShowInconveniente(false);
+                            setInconveniente("");}}>
+                        <div className="inconveniente">
+                            <h2>{inconveniente}</h2>
+                            <button className="btn cerrarMalo" onClick={() => {
+                                    setShowInconveniente(false);
+                                    setInconveniente("");}}>
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )
+			)}
+
 			{/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
 			{/* ACA VAN TODOS LOS MODAL */}
 			{/* ACA VAN TODOS LOS MODAL */}
@@ -308,9 +390,7 @@ export default function Juego() {
 			{/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
 			<div className="game-container">
-				<button className="surrender" onClick={() => setRendirse(true)}>
-					🏳️
-				</button>
+				<button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
 				<div className="top-bar">
 					<h1 className="game-title">BATALLA NAVAL</h1>
 				</div>
@@ -320,34 +400,19 @@ export default function Juego() {
 						<div className="board-section">
 							<h2>Tu tablero</h2>
 							<div className="board player-board">
-								{cells.map((u, index) =>
+								{cells.map((u, index) => (
 									<button key={index} onClick={() => changePosition(u.posicion)} id={u.posicion} className={"cell"}>
 										{u.posicion}
-									</button>)}
+									</button>
+								))}
 							</div>
 						</div>
-
 						<div className="ship-images">
-							<img
-								onClick={() => {
-									setBarcoSeleccionado(1);
-								}}
-								src="/Barco 2x1.png"
-								alt="Barco 2x1"
-								className={`ship-image2x1 ${barcoSeleccionado == 1 ? "ship-image-selected" : ""
-									}`}
-							/>
-							<img
-								onClick={() => {
-									setBarcoSeleccionado(2);
-								}}
-								src="/Barco 4x1.png"
-								alt="Barco 4x1"
-								className={`ship-image4x1 ${barcoSeleccionado == 2 ? "ship-image-selected" : ""
-									}`}
-							/>
+							<img onClick={() => {setShipSelected(1);}} src="/Barco 2x1.png" alt="Barco 2x1"
+							className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`}/>
+							<img onClick={() => {setShipSelected(2);}} src="/Barco 4x1.png" alt="Barco 4x1"
+							className={`ship-image4x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`}/>
 						</div>
-
 						<div className="play-button-container">
 							<button className="btn-jugar" onClick={() => setPositionsShips(false)}>
 								¡Listo!
@@ -360,7 +425,6 @@ export default function Juego() {
 							<h2>Tu tablero</h2>
 							<div className="board player-board">{cells}</div>
 						</div>
-
 						<div className="board-section">
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{cells}</div>
