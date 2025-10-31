@@ -23,9 +23,11 @@ export default function Juego() {
 	const [showInconveniente, setShowInconveniente] = useState(false);
 	const [inconveniente, setInconveniente] = useState("");
 	const [bueno, setBueno] = useState(false);
+	const [posible, setPosible] = useState(false)
 
-	const ERROR = -2 // El usuario selecciono la misma casilla 2 veces
-	const ERROR2 = -1; // El usuario intento ubicar el barco diagonalmente
+	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
+	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
+	const ERROR3 = -1 // Intento poner un barco donde habia ya puesto otro
 	const SIGASIGA = 0; // Las casillas son validas respecto al barco seleccionado
 	const VALIDAR_BARCO_HORIZONTAL = 1; // El barco no esta puesto verticalmente por lo que hay que verificar que sea horizontal
 	const BARCO_VERTICAL = 2; // El barco esta puesto verticalmente
@@ -68,7 +70,7 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			newCells.push({ posicion: posicion, ship: false });
+			newCells.push({ posicion: posicion, ship: false, typeOfShip: null});
 		}
 		setCells(newCells);
 	}
@@ -109,15 +111,13 @@ export default function Juego() {
 		}
 	}, [firstRender]);
 
-	useEffect(() => {
-		console.log("barcoSelec: ", shipSelected);
-	}, [shipSelected]);
-
 	function changePosition(celda) {
 		if (shipSelected > 0) {
 			setClickedCells((prev) => [...prev, celda]);
 		} else {
-			alert("Sleccione algun barco");
+			setInconveniente("Seleccione algun barco")
+			setBueno(true)
+			setShowInconveniente(true)
 		}
 	}
 
@@ -140,32 +140,21 @@ export default function Juego() {
 				if (respuestaValidaciones != BARCO_VERTICAL) {
 					respuestaValidaciones = validarHorizontal(clickedCells[0].slice(0, 1), clickedCells[0].slice(1, 2), letra, numero, shipSelected);
 					if (respuestaValidaciones != BARCO_HORIZONTAL) {
+						setClickedCells([])
 						setInconveniente("Las casillas son muy distantes o no cumplen con el largo del barco");
 						setShowInconveniente(true)
 					} else {
-						/*for(let i = 0; i < cells.length; i++){
-							if(clickedCells[0] == cells[i].posicion){
-								cells[i].ship = true
-							} else if(clickedCells[1] == cells[i].posicion){
-								cells[i].ship = true
-							}
-						}*/
-						//Este for hace que setee en la celda que hay un barco
+						setPosible(true)
 					}
 				} else {
-					/*for(let i = 0; i < cells.length; i++){
-						if(clickedCells[0] == cells[i].posicion){
-							cells[i].ship = true
-						} else if(clickedCells[1] == cells[i].posicion){
-							cells[i].ship = true
-						}
-					}*/
-					//Este for hace que setee en la celda que hay un barco
+					setPosible(true)
 				}
 			} else if(respuestaValidaciones == ERROR){
+				setClickedCells([])
 				setInconveniente("Seleccione 2 casillas distintas")
 				setShowInconveniente(true)
 			} else {
+				setClickedCells([])
 				setInconveniente("No puede posicionar el barco en diagonal")
 				setShowInconveniente(true)
 			}
@@ -313,6 +302,45 @@ export default function Juego() {
 		await result.json();
 	}
 
+	function setShips(){
+		setClickedCells([])
+		setPosible(false)
+		let respuestaValidaciones
+		respuestaValidaciones = validarCeldasRepetidas()
+		if(respuestaValidaciones == ERROR3){
+			setInconveniente("Ya hay en esa casilla un barco")
+			setShowInconveniente(true)
+		} else {
+			for (let i = 0; i < cells.length; i++){
+				if (cells[i].posicion == clickedCells[0]){
+					cells[i].ship = true
+					cells[i].typeOfShip = shipSelected
+				} else if(cells[i].posicion == clickedCells[1]){
+					cells[i].ship = true
+					cells[i].typeOfShip = shipSelected
+				}
+			}
+			setCells(cells)
+		}
+		console.log(cells)
+	}
+
+	function validarCeldasRepetidas(){
+		let respuesta
+		for (let i = 0; i < cells.length; i++){
+			if(cells[i].posicion == clickedCells[0]){
+				if(cells[i].ship == true){
+					respuesta = ERROR3
+				}
+			} else if(cells[i].posicion == clickedCells[1]){
+				if(cells[i].ship == true){
+					respuesta = ERROR3
+				}
+			}
+		}
+		return respuesta
+	}
+
 	return (
 		<>
 			{/* ACA VAN TODOS LOS MODAL */}
@@ -408,15 +436,15 @@ export default function Juego() {
 							</div>
 						</div>
 						<div className="ship-images">
-							<img onClick={() => {setShipSelected(1);}} src="/Barco 2x1.png" alt="Barco 2x1"
+							<img onClick={() => {setShipSelected(1); setClickedCells([]); setPosible(false)}} src="/Barco 2x1.png" alt="Barco 2x1"
 							className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`}/>
-							<img onClick={() => {setShipSelected(2);}} src="/Barco 4x1.png" alt="Barco 4x1"
+							<img onClick={() => { setShipSelected(3); setClickedCells([]); setPosible(false) }} src="/Barco 4x1.png" alt="Barco 4x1"
 							className={`ship-image4x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`}/>
 						</div>
 						<div className="play-button-container">
-							<button className="btn-jugar" onClick={() => setPositionsShips(false)}>
-								¡Listo!
-							</button>
+							{posible &&
+								<button onClick={setShips}> Listo </button>
+							}
 						</div>
 					</div>
 				) : (
