@@ -303,30 +303,41 @@ export default function Juego() {
 	}
 
 	function setShips(){
+		setClickedCells([])
+		setPosible(false)
 		let respuestaValidaciones
 		respuestaValidaciones = validarCeldasRepetidas()
-		for (let i = 0; i < cells.length; i++){
-			if (cells[i].posicion == clickedCells[0]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
-			} else if(cells[i].posicion == clickedCells[1]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
+		if(respuestaValidaciones == ERROR3){
+			setInconveniente("Ya hay en esa casilla un barco")
+			setShowInconveniente(true)
+		} else {
+			for (let i = 0; i < cells.length; i++){
+				if (cells[i].posicion == clickedCells[0]){
+					cells[i].ship = true
+					cells[i].typeOfShip = shipSelected
+				} else if(cells[i].posicion == clickedCells[1]){
+					cells[i].ship = true
+					cells[i].typeOfShip = shipSelected
+				}
 			}
+			setCells(cells)
 		}
 		console.log(cells)
-		setCells(cells)
 	}
 
 	function validarCeldasRepetidas(){
 		let respuesta
-		let celdasConBarco = []
 		for (let i = 0; i < cells.length; i++){
-			if(cells[i].ship == true){
-				
+			if(cells[i].posicion == clickedCells[0]){
+				if(cells[i].ship == true){
+					respuesta = ERROR3
+				}
+			} else if(cells[i].posicion == clickedCells[1]){
+				if(cells[i].ship == true){
+					respuesta = ERROR3
+				}
 			}
 		}
-
 		return respuesta
 	}
 
