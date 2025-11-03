@@ -24,6 +24,7 @@ export default function Juego() {
 	const [inconveniente, setInconveniente] = useState("");
 	const [bueno, setBueno] = useState(false);
 	const [posible, setPosible] = useState(false)
+	const [alreadyPlacedShips, setAlreadyPlacedShips] = useState([])
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -131,6 +132,12 @@ export default function Juego() {
 			array.shift();
 			setClickedCells(array);
 		}
+		respuestaValidaciones = validarCeldasRepetidas()
+		if(respuestaValidaciones == ERROR3){
+			setClickedCells([])
+			setInconveniente("Ya hay en esa casilla un barco")
+			setShowInconveniente(true)
+		}
 		if (clickedCells.length == 2) {
 			letra = clickedCells[1].slice(0, 1);
 			numero = clickedCells[1].slice(1, 2);
@@ -144,10 +151,18 @@ export default function Juego() {
 						setInconveniente("Las casillas son muy distantes o no cumplen con el largo del barco");
 						setShowInconveniente(true)
 					} else {
-						setPosible(true)
+						if (alreadyPlacedShips.length == 1) {
+							setPosible(false)
+						} else {
+							setPosible(true)
+						}
 					}
 				} else {
-					setPosible(true)
+					if (alreadyPlacedShips.length == 1) {
+						setPosible(false)
+					} else {
+						setPosible(true)
+					}
 				}
 			} else if(respuestaValidaciones == ERROR){
 				setClickedCells([])
@@ -305,25 +320,29 @@ export default function Juego() {
 	function setShips(){
 		setClickedCells([])
 		setPosible(false)
-		let respuestaValidaciones
-		respuestaValidaciones = validarCeldasRepetidas()
-		if(respuestaValidaciones == ERROR3){
-			setInconveniente("Ya hay en esa casilla un barco")
-			setShowInconveniente(true)
-		} else {
-			for (let i = 0; i < cells.length; i++){
-				if (cells[i].posicion == clickedCells[0]){
-					cells[i].ship = true
-					cells[i].typeOfShip = shipSelected
-				} else if(cells[i].posicion == clickedCells[1]){
-					cells[i].ship = true
-					cells[i].typeOfShip = shipSelected
-				}
+		for (let i = 0; i < cells.length; i++){
+			if (cells[i].posicion == clickedCells[0]){
+				cells[i].ship = true
+				cells[i].typeOfShip = shipSelected
+			} else if(cells[i].posicion == clickedCells[1]){
+				cells[i].ship = true
+				cells[i].typeOfShip = shipSelected
 			}
-			setCells(cells)
 		}
+		setCells(cells)
+		let array =[...alreadyPlacedShips]
+		array.push(shipSelected)
+		setAlreadyPlacedShips(array)
+		setShipSelected(0)
 		console.log(cells)
+		console.log(alreadyPlacedShips)
 	}
+
+	useEffect(() => {
+		if(alreadyPlacedShips.length == 2){
+			setPositionsShips(false)
+		}
+	}, [alreadyPlacedShips]);
 
 	function validarCeldasRepetidas(){
 		let respuesta
@@ -442,8 +461,10 @@ export default function Juego() {
 							className={`ship-image4x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`}/>
 						</div>
 						<div className="play-button-container">
-							{posible &&
+							{posible ?
 								<button onClick={setShips}> Listo </button>
+							: alreadyPlacedShips.length == 1 && clickedCells.length == 2 &&
+								<button onClick={setShips}> Empezar partida </button>
 							}
 						</div>
 					</div>
@@ -451,11 +472,23 @@ export default function Juego() {
 					<div className="boards">
 						<div className="board-section">
 							<h2>Tu tablero</h2>
-							<div className="board player-board">{cells}</div>
+							<div className="board player-board">{
+								cells.map((c, index) => (
+									<div key={index} id={c.posicion} className={"cell"}>
+										{c.posicion}
+									</div>
+								))}
+							</div>
 						</div>
 						<div className="board-section">
 							<h2>Tablero enemigo</h2>
-							<div className="board enemy-board">{cells}</div>
+							<div className="board enemy-board">{
+								cells.map((c, index) => (
+									<div key={index} id={c.posicion} className={"cell"}>
+										{c.posicion}
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				)}
