@@ -346,21 +346,46 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {requests && (
-                <div className="requests-modal">
-                    {invitationsUser.length > 0 ? (
-                        invitationsUser.map(u => (
-                            <div key={u.id_user}>
-                                Invitación de {u.name}
-                                <button className="tilde" onClick={() => { newFriend(u.id_user); setRequests(false) }}>✔</button>
-                                <button className="cruz" onClick={() => { let rechazar = true; deleteInvitations(u.id_user, rechazar) }}>✖</button>
+                <div className="notif-overlay" onClick={() => setRequests(false)}>
+                    <div className="notif-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="notif-title">Solicitudes de amistad</h2>
+
+                        {invitationsUser.length > 0 ? (
+                            <div className="notif-list">
+                                {invitationsUser.map(u => (
+                                    <div key={u.id_user} className="notif-card">
+                                        <div className="notif-info">
+                                            <img
+                                                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                                alt="User avatar"
+                                                className="notif-avatar"
+                                            />
+                                            <span className="notif-name">{u.name}</span>
+                                        </div>
+                                        <div className="notif-actions">
+                                            <button
+                                                className="notif-btn accept"
+                                                onClick={() => { newFriend(u.id_user); setRequests(false); }}>
+                                                ✔
+                                            </button>
+                                            <button
+                                                className="notif-btn reject"
+                                                onClick={() => { let rechazar = true; deleteInvitations(u.id_user, rechazar); }}>
+                                                ✖
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))
-                    ) : (
-                        <p>No hay nuevas invitaciones</p>
-                    )}
-                    <button className="cerrar-requests" onClick={() => setRequests(false)}>Cerrar</button>
+                        ) : (
+                            <p className="notif-empty">No hay nuevas invitaciones</p>
+                        )}
+
+                        <button className="notif-close" onClick={() => setRequests(false)}>Cerrar</button>
+                    </div>
                 </div>
             )}
+
 
             {/*---------------------------*/}
 
@@ -374,10 +399,11 @@ export default function Lobby() {
             {/*---------------------------*/}
 
             {showSeguro && (
-                <div className="modalSeguro" onClick={() => setShowSeguro(false)}>
-                    <div className="contenidoSeguro" onClick={(e) => e.stopPropagation()}>
-                        <p>¿Cerrar sesión?</p>
-                        <div className="botonesSeguro">
+                <div className="modal-logout" onClick={() => setShowSeguro(false)}>
+                    <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Cerrar Sesión</h2>
+                        <p>¿Estas seguro?</p>
+                        <div className="modal-logout-buttons">
                             <button onClick={() => router.replace("/")}>Sí</button>
                             <button onClick={() => setShowSeguro(false)}>No</button>
                         </div>
