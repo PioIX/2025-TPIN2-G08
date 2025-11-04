@@ -25,6 +25,14 @@ export default function Juego() {
 	const [bueno, setBueno] = useState(false);
 	const [posible, setPosible] = useState(false)
 	const [alreadyPlacedShips, setAlreadyPlacedShips] = useState([])
+	const [verticalHorizontal, setVerticalHorizontal] = useState("")
+	const [otherReady, setOtherReady] = useState(false)
+	const [ready, setReady] = useState(false)
+	const [isDisabled, setIsDisabled] = useState(false)
+	const [isDisabled2, setIsDisabled2] = useState(false)
+	const [isDisabled3, setIsDisabled3] = useState(false)
+	const [isDisabled4, setIsDisabled4] = useState(false)
+	const [isDisabled5, setIsDisabled5] = useState(false)
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -37,8 +45,9 @@ export default function Juego() {
 	// Barcos:
 	//Barco 2x1 = 1
 	//Barco 3x1 = 2
-	//Barco 4x1 = 3
-	//Barco 5x1 = 4
+	//Barco 3x1 = 3
+	//Barco 4x1 = 4
+	//Barco 5x1 = 5
 
 	function positions() {
 		let newCells = [];
@@ -86,16 +95,22 @@ export default function Juego() {
 
 	useEffect(() => {
 		if (!socket) return;
-		socket.on("checkRoom", (data) => {
+		socket.on("checkRoom", data => {
 			console.log(data);
 		});
 
-		socket.on("neverSurrender", (data) => {
+		socket.on("neverSurrender", data => {
 			if (data.rendirse == true && data.to == idLoggued) {
 				setHeGaveUp(true);
 				setFriendName(data.name);
 			}
 		});
+
+		socket.on('ready', data => {
+			if (data.ready == true && data.from != idLoggued){
+				setOtherReady(true)
+			}
+		})
 	}, [socket]);
 
 	useEffect(() => {
@@ -151,6 +166,7 @@ export default function Juego() {
 						setInconveniente("Las casillas son muy distantes o no cumplen con el largo del barco");
 						setShowInconveniente(true)
 					} else {
+						setVerticalHorizontal("horizontal")
 						if (alreadyPlacedShips.length == 1) {
 							setPosible(false)
 						} else {
@@ -158,6 +174,7 @@ export default function Juego() {
 						}
 					}
 				} else {
+					setVerticalHorizontal("vertical")
 					if (alreadyPlacedShips.length == 1) {
 						setPosible(false)
 					} else {
@@ -188,7 +205,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 2){
+		} else if(shipSelected == 2 || shipSelected == 3){
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
@@ -196,7 +213,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 3){
+		} else if(shipSelected == 4){
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 3 || numeroSegundaCelda == i - 3) {
@@ -204,7 +221,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 4){
+		} else if(shipSelected == 5){
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 4 || numeroSegundaCelda == i - 4) {
@@ -249,7 +266,7 @@ export default function Juego() {
 				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL;
 				}
-			} else if (shipSelected == 2){
+			} else if (shipSelected == 2 || shipSelected == 3){
 				for (let i = 0; i < letras.length; i++){
 					if (letras[i] == letraPrimerCelda){
 						if(letraSegundaCelda == letras[i-2] || letraSegundaCelda == letras[i+2]){
@@ -260,7 +277,7 @@ export default function Juego() {
 				if(respuesta != BARCO_VERTICAL){
 					respuesta = VALIDAR_BARCO_HORIZONTAL
 				}
-			} else if(shipSelected == 3){
+			} else if(shipSelected == 4){
 				for (let i = 0; i < letras.length; i++){
 					if (letras[i] == letraPrimerCelda){
 						if(letraSegundaCelda == letras[i-3] || letraSegundaCelda == letras[i+3]){
@@ -271,7 +288,7 @@ export default function Juego() {
 				if(respuesta != BARCO_VERTICAL){
 					respuesta = VALIDAR_BARCO_HORIZONTAL
 				}
-			} else if(shipSelected == 4){
+			} else if(shipSelected == 5){
 				for (let i = 0; i < letras.length; i++){
 					if (letras[i] == letraPrimerCelda){
 						if(letraSegundaCelda == letras[i-4] || letraSegundaCelda == letras[i+4]){
@@ -320,22 +337,57 @@ export default function Juego() {
 	function setShips(){
 		setClickedCells([])
 		setPosible(false)
-		for (let i = 0; i < cells.length; i++){
-			if (cells[i].posicion == clickedCells[0]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
-			} else if(cells[i].posicion == clickedCells[1]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
-			}
+		if (verticalHorizontal == "vertical"){
+			confirmPositionVertical()
+		} else if(verticalHorizontal == "horizontal"){
+			confirmPositionHorizontal()
+		}
+		if(shipSelected == 1){
+			setIsDisabled(true)
+		} else if(shipSelected == 2){
+			setIsDisabled2(true)
+		} else if(shipSelected == 3){
+			setIsDisabled3(true)
+		} else if(shipSelected == 4){
+			setIsDisabled4(true)
+		} else {
+			setIsDisabled5(true)
 		}
 		setCells(cells)
 		let array =[...alreadyPlacedShips]
 		array.push(shipSelected)
 		setAlreadyPlacedShips(array)
 		setShipSelected(0)
-		console.log(cells)
-		console.log(alreadyPlacedShips)
+	}
+
+	function confirmPositionVertical(){
+		let cantidadDeCasillas = 0
+		for (let i = 0; i < cells.length; i++){
+			if(cells[i].posicion == clickedCells[0]){
+				cells[i].ship = true
+				cells[i].typeOfShip = shipSelected
+				for(let j = 0; j < shipSelected; j++){
+					cantidadDeCasillas += 10
+					cells[i + cantidadDeCasillas].ship = true
+					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
+				}
+			}
+		}
+	}
+
+	function confirmPositionHorizontal(){
+		let cantidadDeCasillas = 0
+		for(let i = 0; i< cells.length; i ++){
+			if(cells[i].posicion == clickedCells[0]){
+				cells[i].ship = true
+				cells[i].typeOfShip = shipSelected
+				for(let j = 0; j< shipSelected; j++){
+					cantidadDeCasillas += 1
+					cells[i + cantidadDeCasillas].ship = true
+					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
+				}
+			}
+		}
 	}
 
 	useEffect(() => {
@@ -360,6 +412,10 @@ export default function Juego() {
 		return respuesta
 	}
 
+	function atack(posicionAtacar){
+		socket.emit('atack', {celda: posicionAtacar, from: idLoggued})
+	}
+
 	return (
 		<>
 			{/* ACA VAN TODOS LOS MODAL */}
@@ -380,19 +436,6 @@ export default function Juego() {
 							Cancelar
 						</button>
 					</div>
-				</div>
-			)}
-
-			{/*---------------------------*/}
-
-			{heGaveUp && (
-				<div>
-					<h3>{friendName} se rindio, por lo que ganaste la partida</h3>
-					<div className="medal">
-						<div className="medal-emoji">🎖️</div>
-						<div className="medal-count">+30</div>
-					</div>
-					<button onClick={() => router.replace("/lobby")}> OK </button>
 				</div>
 			)}
 
@@ -442,7 +485,7 @@ export default function Juego() {
 					<h1 className="game-title">BATALLA NAVAL</h1>
 				</div>
 
-				{positionsShips ? (
+				{positionsShips == true && ready == false ? (
 					<div className="boards">
 						<div className="board-section">
 							<h2>Tu tablero</h2>
@@ -455,20 +498,32 @@ export default function Juego() {
 							</div>
 						</div>
 						<div className="ship-images">
-							<img onClick={() => {setShipSelected(1); setClickedCells([]); setPosible(false)}} src="/Barco 2x1.png" alt="Barco 2x1"
-							className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`}/>
-							<img onClick={() => { setShipSelected(3); setClickedCells([]); setPosible(false) }} src="/Barco 4x1.png" alt="Barco 4x1"
-							className={`ship-image4x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`}/>
+							<button onClick={() => {setShipSelected(1); setClickedCells([]); setPosible(false)}} disabled={isDisabled}>
+								<img src="/Barco 2x1.png" alt="Barco 2x1"
+								className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`}/>
+							</button>
+							<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4}>
+								<img src="/Barco 4x1.png" alt="Barco 4x1"
+								className={`ship-image4x1 ${shipSelected == 4 ? "ship-image-selected" : ""}`}/>
+							</button>
 						</div>
 						<div className="play-button-container">
 							{posible ?
 								<button onClick={setShips}> Listo </button>
 							: alreadyPlacedShips.length == 1 && clickedCells.length == 2 &&
-								<button onClick={setShips}> Empezar partida </button>
+								<button onClick={() => {
+									setShips()
+									socket.emit('match', {ready: true, to: room, from: idLoggued})
+									setReady(true)
+								}}> Empezar partida </button>
 							}
 						</div>
 					</div>
-				) : (
+				) : positionsShips == false && ready == true ? (
+					<div>
+						<h2>Esperando al otro jugador...</h2>
+					</div>
+				) : positionsShips == false && ready == true && otherReady == true ? (
 					<div className="boards">
 						<div className="board-section">
 							<h2>Tu tablero</h2>
@@ -484,12 +539,21 @@ export default function Juego() {
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{
 								cells.map((c, index) => (
-									<div key={index} id={c.posicion} className={"cell"}>
+									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"}>
 										{c.posicion}
-									</div>
+									</button>
 								))}
 							</div>
 						</div>
+					</div>
+				) : positionsShips == false && heGaveUp == true &&(
+					<div>
+						<h3>{friendName} se rindio, por lo que ganaste la partida</h3>
+						<div className="medal">
+							<div className="medal-emoji">🎖️</div>
+							<div className="medal-count">+30</div>
+						</div>
+						<button onClick={() => router.replace("/lobby")}> OK </button>
 					</div>
 				)}
 			</div>

@@ -116,6 +116,10 @@ io.on("connection", (socket) => {
 	socket.on('rendirse', data => {
 		io.to(data.room).emit('neverSurrender', data)
 	})
+
+	socket.on('match', data =>{
+		io.to(data.to).emit('ready', data)
+	})
 });
 /*
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
