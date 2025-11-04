@@ -2157,3 +2157,245 @@ background: #8f2331;
 .stats p {
   margin: 0;
 }
+
+
+/* === MODAL CAMPANITA (arriba a la derecha, fondo negro) === */
+.notif-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent; /* ya no oscurece toda la pantalla */
+  pointer-events: none; /* permite hacer click fuera */
+  z-index: 200;
+}
+
+.notif-modal {
+  position: absolute;
+  top: 100px; /* distancia desde el borde superior */
+  right: 100px; /* distancia desde el borde derecho */
+  background: rgba(0, 0, 0, 0.92); /* fondo negro semitransparente */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  border-top-right-radius: 0.3rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  width: 340px;
+  max-height: 70vh;
+  overflow-y: auto;
+  color: #f1f5f9;
+  text-align: center;
+  padding: 1.2rem;
+  pointer-events: all; /* vuelve interactivo solo el modal */
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Título */
+.notif-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(63, 143, 255, 0.6);
+}
+
+/* Lista */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.notif-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.8rem;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.notif-card:hover {
+  background: rgba(63, 143, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.notif-info {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.notif-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  object-fit: cover;
+}
+
+.notif-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Botones aceptar/rechazar */
+.notif-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.notif-btn.accept {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+.notif-btn.accept:hover {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+.notif-btn.reject {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.notif-btn.reject:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+.notif-empty {
+  color: #94a3b8;
+  font-style: italic;
+  margin: 1.2rem 0;
+}
+
+.notif-close {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #eb1f1f, #ff3f3f);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notif-close:hover {
+  background: linear-gradient(135deg, #ff3f3f, #fa6060);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* === MODAL CERRAR SESIÓN === */
+.modal-logout {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+.modal-logout-content {
+  background: #111827; /* gris azulado oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.2rem;
+  width: 360px;
+  padding: 2rem;
+  text-align: center;
+  color: #f8fafc;
+  box-shadow: 0 0 25px rgba(63, 143, 255, 0.25);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.modal-logout-content p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(63, 143, 255, 0.2);
+}
+.modal-logout-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e62828;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(63, 143, 255, 0.2);
+}
+
+.modal-logout-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.modal-logout-buttons button {
+  min-width: 110px;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 0.6rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Botón "Sí" — cierre de sesión */
+.modal-logout-buttons button:first-child {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+}
+
+.modal-logout-buttons button:first-child:hover {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  transform: scale(1.05);
+}
+
+/* Botón "No" — cancelar */
+.modal-logout-buttons button:last-child {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+}
+
+.modal-logout-buttons button:last-child:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.03);
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
