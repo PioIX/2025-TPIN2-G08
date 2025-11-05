@@ -2399,3 +2399,121 @@ background: #8f2331;
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+.popup-gave-up {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: radial-gradient(circle at top, rgba(25,45,90,.9), rgba(5,10,25,.95));
+  backdrop-filter: blur(8px);
+  animation: fadeIn .4s ease;
+  z-index: 1000;
+}
+
+.gaveUp-popup-container {
+  background: linear-gradient(145deg,#101b38,#0a122a);
+  border: 2px solid rgba(255,255,255,.15);
+  border-radius: 20px;
+  padding: 32px 40px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 25px rgba(255,215,0,.35);
+  animation: scaleIn .4s ease;
+}
+
+.gaveUp-popup-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255,230,120,.8);
+  margin-bottom: 12px;
+}
+
+.gaveUp-popup-message {
+  font-size: 1.1rem;
+  color: #dce3ff;
+  margin-bottom: 24px;
+}
+
+.gaveUp-popup-medal-container {
+  margin-bottom: 28px;
+}
+
+.gaveUp-medal {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle,#ffd700,#ffb700);
+  color: #222;
+  box-shadow: 0 0 18px rgba(255,215,0,.5);
+  animation: float 2s ease-in-out infinite;
+}
+
+.gaveUp-medal-emoji {
+  font-size: 2rem;
+}
+
+.gaveUp-medal-count {
+  font-size: .9rem;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.gaveUp-popup-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.gaveUp-popup-button {
+  background: linear-gradient(90deg,#3c9cff,#1f65ff);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 25px;
+  cursor: pointer;
+  transition: .25s ease;
+  box-shadow: 0 0 10px rgba(63,136,255,.4);
+}
+
+.gaveUp-popup-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg,#1f65ff,#3c9cff);
+  box-shadow: 0 0 20px rgba(63,136,255,.6);
+}
+
+@keyframes fadeIn {
+  from {opacity:0;}
+  to {opacity:1;}
+}
+
+@keyframes scaleIn {
+  from {transform:scale(.8);opacity:0;}
+  to {transform:scale(1);opacity:1;}
+}
+
+@keyframes float {
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+
+.welcome-image{
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  align-self: center;
+}
+.welcome-message{
+  color: #e0e7ff;
+  text-align: center;
+  margin-top: 30px;
+}

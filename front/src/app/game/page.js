@@ -36,6 +36,7 @@ export default function Juego() {
 	const [cellsAtacked, setCellsAtacked] = useState()
 	const [touched, setTouched] = useState(false)
 	const [water, setWater] = useState(false)
+	const [yaSeRindio, setYaSeRindio] = useState(false)
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -83,7 +84,7 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			newCells.push({ posicion: posicion, ship: false, typeOfShip: null});
+			newCells.push({ posicion: posicion, ship: false, typeOfShip: null });
 		}
 		setCells(newCells);
 	}
@@ -105,18 +106,19 @@ export default function Juego() {
 		socket.on("neverSurrender", data => {
 			if (data.rendirse == true && data.to == idLoggued) {
 				setHeGaveUp(true);
+				setYaSeRindio(true);
 				setFriendName(data.name);
 			}
 		});
 
 		socket.on('ready', data => {
-			if (data.ready == true && data.from != idLoggued){
+			if (data.ready == true && data.from != idLoggued) {
 				setOtherReady(true)
 			}
 		})
 
 		socket.on('atackBack', data => {
-			if(data.to == idLoggued){
+			if (data.to == idLoggued) {
 				setCellsAtacked(data.celda)
 				atackedCells()
 			}
@@ -158,7 +160,7 @@ export default function Juego() {
 			setClickedCells(array);
 		}
 		respuestaValidaciones = validarCeldasRepetidas()
-		if(respuestaValidaciones == ERROR3){
+		if (respuestaValidaciones == ERROR3) {
 			setClickedCells([])
 			setInconveniente("Ya hay en esa casilla un barco")
 			setShowInconveniente(true)
@@ -191,7 +193,7 @@ export default function Juego() {
 						setPosible(true)
 					}
 				}
-			} else if(respuestaValidaciones == ERROR){
+			} else if (respuestaValidaciones == ERROR) {
 				setClickedCells([])
 				setInconveniente("Seleccione 2 casillas distintas")
 				setShowInconveniente(true)
@@ -207,7 +209,7 @@ export default function Juego() {
 		let respuesta = ERROR;
 		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
-		if(shipSelected == 1){
+		if (shipSelected == 1) {
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 1 || numeroSegundaCelda == i - 1) {
@@ -215,7 +217,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 2 || shipSelected == 3){
+		} else if (shipSelected == 2 || shipSelected == 3) {
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
@@ -223,7 +225,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 4){
+		} else if (shipSelected == 4) {
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 3 || numeroSegundaCelda == i - 3) {
@@ -231,7 +233,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 5){
+		} else if (shipSelected == 5) {
 			for (let i = 0; i < 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 4 || numeroSegundaCelda == i - 4) {
@@ -251,7 +253,7 @@ export default function Juego() {
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
 		if (letraPrimerCelda != letraSegundaCelda && numeroPrimerCelda != numeroSegundaCelda) {
 			respuesta = ERROR2;
-		} else if( celda1 == celda2){
+		} else if (celda1 == celda2) {
 			respuesta = ERROR;
 		} else {
 			respuesta = SIGASIGA
@@ -276,37 +278,37 @@ export default function Juego() {
 				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL;
 				}
-			} else if (shipSelected == 2 || shipSelected == 3){
-				for (let i = 0; i < letras.length; i++){
-					if (letras[i] == letraPrimerCelda){
-						if(letraSegundaCelda == letras[i-2] || letraSegundaCelda == letras[i+2]){
+			} else if (shipSelected == 2 || shipSelected == 3) {
+				for (let i = 0; i < letras.length; i++) {
+					if (letras[i] == letraPrimerCelda) {
+						if (letraSegundaCelda == letras[i - 2] || letraSegundaCelda == letras[i + 2]) {
 							respuesta = BARCO_VERTICAL
 						}
 					}
 				}
-				if(respuesta != BARCO_VERTICAL){
+				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL
 				}
-			} else if(shipSelected == 4){
-				for (let i = 0; i < letras.length; i++){
-					if (letras[i] == letraPrimerCelda){
-						if(letraSegundaCelda == letras[i-3] || letraSegundaCelda == letras[i+3]){
+			} else if (shipSelected == 4) {
+				for (let i = 0; i < letras.length; i++) {
+					if (letras[i] == letraPrimerCelda) {
+						if (letraSegundaCelda == letras[i - 3] || letraSegundaCelda == letras[i + 3]) {
 							respuesta = BARCO_VERTICAL
 						}
 					}
 				}
-				if(respuesta != BARCO_VERTICAL){
+				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL
 				}
-			} else if(shipSelected == 5){
-				for (let i = 0; i < letras.length; i++){
-					if (letras[i] == letraPrimerCelda){
-						if(letraSegundaCelda == letras[i-4] || letraSegundaCelda == letras[i+4]){
+			} else if (shipSelected == 5) {
+				for (let i = 0; i < letras.length; i++) {
+					if (letras[i] == letraPrimerCelda) {
+						if (letraSegundaCelda == letras[i - 4] || letraSegundaCelda == letras[i + 4]) {
 							respuesta = BARCO_VERTICAL
 						}
 					}
 				}
-				if(respuesta != BARCO_VERTICAL){
+				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL
 				}
 			}
@@ -339,44 +341,44 @@ export default function Juego() {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({date: new Date(), idWinner: idPlayer, idPlayer: idLoggued}),
+			body: JSON.stringify({ date: new Date(), idWinner: idPlayer, idPlayer: idLoggued }),
 		});
 		await result.json();
 	}
 
-	function setShips(){
+	function setShips() {
 		setClickedCells([])
 		setPosible(false)
-		if (verticalHorizontal == "vertical"){
+		if (verticalHorizontal == "vertical") {
 			confirmPositionVertical()
-		} else if(verticalHorizontal == "horizontal"){
+		} else if (verticalHorizontal == "horizontal") {
 			confirmPositionHorizontal()
 		}
-		if(shipSelected == 1){
+		if (shipSelected == 1) {
 			setIsDisabled(true)
-		} else if(shipSelected == 2){
+		} else if (shipSelected == 2) {
 			setIsDisabled2(true)
-		} else if(shipSelected == 3){
+		} else if (shipSelected == 3) {
 			setIsDisabled3(true)
-		} else if(shipSelected == 4){
+		} else if (shipSelected == 4) {
 			setIsDisabled4(true)
 		} else {
 			setIsDisabled5(true)
 		}
 		setCells(cells)
-		let array =[...alreadyPlacedShips]
+		let array = [...alreadyPlacedShips]
 		array.push(shipSelected)
 		setAlreadyPlacedShips(array)
 		setShipSelected(0)
 	}
 
-	function confirmPositionVertical(){
+	function confirmPositionVertical() {
 		let cantidadDeCasillas = 0
-		for (let i = 0; i < cells.length; i++){
-			if(cells[i].posicion == clickedCells[0]){
+		for (let i = 0; i < cells.length; i++) {
+			if (cells[i].posicion == clickedCells[0]) {
 				cells[i].ship = true
 				cells[i].typeOfShip = shipSelected
-				for(let j = 0; j < shipSelected; j++){
+				for (let j = 0; j < shipSelected; j++) {
 					cantidadDeCasillas += 10
 					cells[i + cantidadDeCasillas].ship = true
 					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
@@ -385,13 +387,13 @@ export default function Juego() {
 		}
 	}
 
-	function confirmPositionHorizontal(){
+	function confirmPositionHorizontal() {
 		let cantidadDeCasillas = 0
-		for(let i = 0; i< cells.length; i ++){
-			if(cells[i].posicion == clickedCells[0]){
+		for (let i = 0; i < cells.length; i++) {
+			if (cells[i].posicion == clickedCells[0]) {
 				cells[i].ship = true
 				cells[i].typeOfShip = shipSelected
-				for(let j = 0; j< shipSelected; j++){
+				for (let j = 0; j < shipSelected; j++) {
 					cantidadDeCasillas += 1
 					cells[i + cantidadDeCasillas].ship = true
 					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
@@ -401,20 +403,20 @@ export default function Juego() {
 	}
 
 	useEffect(() => {
-		if(alreadyPlacedShips.length == 2){
+		if (alreadyPlacedShips.length == 2) {
 			setPositionsShips(false)
 		}
 	}, [alreadyPlacedShips]);
 
-	function validarCeldasRepetidas(){
+	function validarCeldasRepetidas() {
 		let respuesta
-		for (let i = 0; i < cells.length; i++){
-			if(cells[i].posicion == clickedCells[0]){
-				if(cells[i].ship == true){
+		for (let i = 0; i < cells.length; i++) {
+			if (cells[i].posicion == clickedCells[0]) {
+				if (cells[i].ship == true) {
 					respuesta = ERROR3
 				}
-			} else if(cells[i].posicion == clickedCells[1]){
-				if(cells[i].ship == true){
+			} else if (cells[i].posicion == clickedCells[1]) {
+				if (cells[i].ship == true) {
 					respuesta = ERROR3
 				}
 			}
@@ -422,14 +424,14 @@ export default function Juego() {
 		return respuesta
 	}
 
-	function atack(posicionAtacar){
-		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer})
+	function atack(posicionAtacar) {
+		socket.emit('atack', { celda: posicionAtacar, from: idLoggued, to: idPlayer })
 	}
 
-	function atackedCells(){
-		for(let i = 0; i < cells.length; i++){
-			if(cells[i].posicion == cellsAtacked){
-				if(cells[i].ship){
+	function atackedCells() {
+		for (let i = 0; i < cells.length; i++) {
+			if (cells[i].posicion == cellsAtacked) {
+				if (cells[i].ship) {
 					setTouched(true)
 				}
 			}
@@ -447,9 +449,11 @@ export default function Juego() {
 					<h3>¿Seguro que querés rendirte?</h3>
 					<p>Perderás la partida actual</p>
 					<div className="popup-botones">
-						<button className="btn-si" onClick={async () => {await insertGame();
-							socket.emit("rendirse", {rendirse: true, room: room, name: name, to: idPlayer});
-							router.replace("/lobby");}}>
+						<button className="btn-si" onClick={async () => {
+							await insertGame();
+							socket.emit("rendirse", { rendirse: true, room: room, name: name, to: idPlayer });
+							router.replace("/lobby");
+						}}>
 							Rendirse
 						</button>
 						<button className="btn-no" onClick={() => setRendirse(false)}>
@@ -461,47 +465,64 @@ export default function Juego() {
 
 			{/*---------------------------*/}
 
-			{heGaveUp &&
-				<div>
-					<h3>{friendName} se rindio, por lo que ganaste la partida</h3>
-					<div className="medal">
-						<div className="medal-emoji">🎖️</div>
-						<div className="medal-count">+30</div>
+			{heGaveUp && (
+				<div className="popup-gave-up">
+					<div className="popup-gave-up-container">
+						<h2 className="gaveUp-popup-title">¡Victoria!</h2>
+						<p className="gaveUp-popup-message">{friendName} se rindió, ¡ganaste la partida!</p>
+
+						<div className="gaveUp-popup-medal-container">
+							<div className="gaveUp-medal">
+								<div className="gaveUp-medal-emoji">🎖️</div>
+								
+							</div>
+							<div className="gaveUp-medal-count">+30 Medallas</div>
+						</div>
+
+						<div className="gaveUp-popup-buttons">
+							<button className="gaveUp-popup-button" onClick={() => router.replace("/lobby")}>
+								Volver al Lobby
+							</button>
+						</div>
 					</div>
-					<button onClick={() => router.replace("/lobby")}> OK </button>
 				</div>
-			}
+			)}
+
 
 			{/*---------------------------*/}
 
 			{showInconveniente && (
-                bueno ? (
-                    <div className="cuadroCompleto"onClick={() => {
-                            setShowInconveniente(false);
-                            setInconveniente("");}}>
-                        <div className="conveniente">
-                            <h2>{inconveniente}</h2>
-                            <button className="btn cerrarBueno" onClick={() => {
-                                    setShowInconveniente(false);
-                                    setInconveniente("");}}>
-                                Cerrar
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="cuadroCompleto" onClick={() => {
-                            setShowInconveniente(false);
-                            setInconveniente("");}}>
-                        <div className="inconveniente">
-                            <h2>{inconveniente}</h2>
-                            <button className="btn cerrarMalo" onClick={() => {
-                                    setShowInconveniente(false);
-                                    setInconveniente("");}}>
-                                Cerrar
-                            </button>
-                        </div>
-                    </div>
-                )
+				bueno ? (
+					<div className="cuadroCompleto" onClick={() => {
+						setShowInconveniente(false);
+						setInconveniente("");
+					}}>
+						<div className="conveniente">
+							<h2>{inconveniente}</h2>
+							<button className="btn cerrarBueno" onClick={() => {
+								setShowInconveniente(false);
+								setInconveniente("");
+							}}>
+								Cerrar
+							</button>
+						</div>
+					</div>
+				) : (
+					<div className="cuadroCompleto" onClick={() => {
+						setShowInconveniente(false);
+						setInconveniente("");
+					}}>
+						<div className="inconveniente">
+							<h2>{inconveniente}</h2>
+							<button className="btn cerrarMalo" onClick={() => {
+								setShowInconveniente(false);
+								setInconveniente("");
+							}}>
+								Cerrar
+							</button>
+						</div>
+					</div>
+				)
 			)}
 
 			{/* ⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆⬆*/}
@@ -513,7 +534,8 @@ export default function Juego() {
 			{/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
 			<div className="game-container">
-				<button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>
+				{!yaSeRindio && <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button> }
+				
 				<div className="top-bar">
 					<h1 className="game-title">BATALLA NAVAL</h1>
 				</div>
@@ -531,22 +553,22 @@ export default function Juego() {
 							</div>
 						</div>
 						<div className="ship-images">
-							<button onClick={() => {setShipSelected(1); setClickedCells([]); setPosible(false)}} disabled={isDisabled}>
+							<button onClick={() => { setShipSelected(1); setClickedCells([]); setPosible(false) }} disabled={isDisabled}>
 								<img src="/Barco 2x1.png" alt="Barco 2x1"
-								className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`}/>
+									className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`} />
 							</button>
 							<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4}>
 								<img src="/Barco 4x1.png" alt="Barco 4x1"
-								className={`ship-image4x1 ${shipSelected == 4 ? "ship-image-selected" : ""}`}/>
+									className={`ship-image4x1 ${shipSelected == 4 ? "ship-image-selected" : ""}`} />
 							</button>
 						</div>
 						<div className="play-button-container">
 							{posible ?
 								<button onClick={setShips}> Listo </button>
-							: alreadyPlacedShips.length == 1 && clickedCells.length == 2 &&
+								: alreadyPlacedShips.length == 1 && clickedCells.length == 2 &&
 								<button onClick={() => {
 									setShips()
-									socket.emit('match', {ready: true, to: room, from: idLoggued})
+									socket.emit('match', { ready: true, to: room, from: idLoggued })
 									setReady(true)
 								}}> Empezar partida </button>
 							}
