@@ -656,8 +656,13 @@ export default function Lobby() {
                                     </div>
                                 ) : (
                                     <div className="friend-panel welcome">
-                                        <h2>Bienvenido!</h2>
-                                        <p>Selecciona un amigo para ver su perfil</p>
+                                        <img
+                                                src="https://image.tmdb.org/t/p/original/4ysbFXKIYWqhvkxH8BCUMrDp3En.jpg"
+                                                alt="Bienvenido"
+                                                className="welcome-image"
+                                            />
+                                        <h2 className="welcome-message">¡Bienvenido {name}!</h2>
+                      
                                     </div>
                                 )}
                             </div>
