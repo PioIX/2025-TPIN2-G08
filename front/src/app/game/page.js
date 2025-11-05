@@ -83,7 +83,7 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			newCells.push({ posicion: posicion, ship: false, typeOfShip: null});
+			newCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null});
 		}
 		setCells(newCells);
 	}
@@ -118,6 +118,7 @@ export default function Juego() {
 		socket.on('atackBack', data => {
 			if(data.to == idLoggued){
 				setCellsAtacked(data.celda)
+				console.log(data)
 				atackedCells()
 			}
 		})
@@ -208,7 +209,7 @@ export default function Juego() {
 		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
 		if(shipSelected == 1){
-			for (let i = 0; i < 9; i++) {
+			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 1 || numeroSegundaCelda == i - 1) {
 						respuesta = BARCO_HORIZONTAL;
@@ -216,7 +217,7 @@ export default function Juego() {
 				}
 			}
 		} else if(shipSelected == 2 || shipSelected == 3){
-			for (let i = 0; i < 9; i++) {
+			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
 						respuesta = BARCO_HORIZONTAL;
@@ -224,7 +225,7 @@ export default function Juego() {
 				}
 			}
 		} else if(shipSelected == 4){
-			for (let i = 0; i < 9; i++) {
+			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 3 || numeroSegundaCelda == i - 3) {
 						respuesta = BARCO_HORIZONTAL;
@@ -232,7 +233,7 @@ export default function Juego() {
 				}
 			}
 		} else if(shipSelected == 5){
-			for (let i = 0; i < 9; i++) {
+			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 4 || numeroSegundaCelda == i - 4) {
 						respuesta = BARCO_HORIZONTAL;
@@ -423,15 +424,16 @@ export default function Juego() {
 	}
 
 	function atack(posicionAtacar){
-		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer})
+		console.log("Ataque")
+		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room})
 	}
 
 	function atackedCells(){
 		for(let i = 0; i < cells.length; i++){
 			if(cells[i].posicion == cellsAtacked){
-				if(cells[i].ship){
-					setTouched(true)
-				}
+				cells[i].touched = true
+			} else {
+				cells[i].touched = false
 			}
 		}
 	}
@@ -562,7 +564,7 @@ export default function Juego() {
 							<h2>Tu tablero</h2>
 							<div className="board player-board">{
 								cells.map((c, index) => (
-									<div key={index} id={c.posicion} className={"cell"} disabled={true}>
+									<div key={index} id={c.posicion} className={"cell"}>
 										{c.posicion}
 									</div>
 								))}
@@ -572,8 +574,13 @@ export default function Juego() {
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{
 								cells.map((c, index) => (
-									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"}>
+									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null}>
 										{c.posicion}
+										{c.touched == false && c.touched != null ?
+											<img src="https://em-content.zobj.net/source/joypixels/257/water-wave_1f30a.png"></img>
+										: c.touched == true && c.touched != null &&
+											<img src="https://illustoon.com/photo/1975.png"></img>
+										}
 									</button>
 								))}
 							</div>
