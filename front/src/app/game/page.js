@@ -33,6 +33,9 @@ export default function Juego() {
 	const [isDisabled3, setIsDisabled3] = useState(false)
 	const [isDisabled4, setIsDisabled4] = useState(false)
 	const [isDisabled5, setIsDisabled5] = useState(false)
+	const [cellsAtacked, setCellsAtacked] = useState()
+	const [touched, setTouched] = useState(false)
+	const [water, setWater] = useState(false)
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -109,6 +112,13 @@ export default function Juego() {
 		socket.on('ready', data => {
 			if (data.ready == true && data.from != idLoggued){
 				setOtherReady(true)
+			}
+		})
+
+		socket.on('atackBack', data => {
+			if(data.to == idLoggued){
+				setCellsAtacked(data.celda)
+				atackedCells()
 			}
 		})
 	}, [socket]);
@@ -413,7 +423,17 @@ export default function Juego() {
 	}
 
 	function atack(posicionAtacar){
-		socket.emit('atack', {celda: posicionAtacar, from: idLoggued})
+		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer})
+	}
+
+	function atackedCells(){
+		for(let i = 0; i < cells.length; i++){
+			if(cells[i].posicion == cellsAtacked){
+				if(cells[i].ship){
+					setTouched(true)
+				}
+			}
+		}
 	}
 
 	return (
@@ -438,6 +458,19 @@ export default function Juego() {
 					</div>
 				</div>
 			)}
+
+			{/*---------------------------*/}
+
+			{heGaveUp &&
+				<div>
+					<h3>{friendName} se rindio, por lo que ganaste la partida</h3>
+					<div className="medal">
+						<div className="medal-emoji">🎖️</div>
+						<div className="medal-count">+30</div>
+					</div>
+					<button onClick={() => router.replace("/lobby")}> OK </button>
+				</div>
+			}
 
 			{/*---------------------------*/}
 
@@ -519,17 +552,17 @@ export default function Juego() {
 							}
 						</div>
 					</div>
-				) : positionsShips == false && ready == true ? (
+				) : positionsShips == false && ready == true && otherReady == false ? (
 					<div>
 						<h2>Esperando al otro jugador...</h2>
 					</div>
-				) : positionsShips == false && ready == true && otherReady == true ? (
+				) : positionsShips == false && ready == true && otherReady == true && (
 					<div className="boards">
 						<div className="board-section">
 							<h2>Tu tablero</h2>
 							<div className="board player-board">{
 								cells.map((c, index) => (
-									<div key={index} id={c.posicion} className={"cell"}>
+									<div key={index} id={c.posicion} className={"cell"} disabled={true}>
 										{c.posicion}
 									</div>
 								))}
@@ -545,15 +578,6 @@ export default function Juego() {
 								))}
 							</div>
 						</div>
-					</div>
-				) : positionsShips == false && heGaveUp == true &&(
-					<div>
-						<h3>{friendName} se rindio, por lo que ganaste la partida</h3>
-						<div className="medal">
-							<div className="medal-emoji">🎖️</div>
-							<div className="medal-count">+30</div>
-						</div>
-						<button onClick={() => router.replace("/lobby")}> OK </button>
 					</div>
 				)}
 			</div>
