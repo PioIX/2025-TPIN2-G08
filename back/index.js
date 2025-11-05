@@ -117,8 +117,12 @@ io.on("connection", (socket) => {
 		io.to(data.room).emit('neverSurrender', data)
 	})
 
-	socket.on('match', data =>{
+	socket.on('match', data => {
 		io.to(data.to).emit('ready', data)
+	})
+
+	socket.on('atack', data => {
+		io.to(data.room).emit('atackBack', data)
 	})
 });
 /*
