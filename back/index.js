@@ -122,6 +122,7 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on('atack', data => {
+		console.log(data)
 		io.to(data.room).emit('atackBack', data)
 	})
 });
