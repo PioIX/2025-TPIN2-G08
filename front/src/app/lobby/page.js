@@ -323,20 +323,30 @@ export default function Lobby() {
                                                     }
                                                 }}
                                             />
-                                            <div>
+                                            <div className="user-info">
                                                 <div className="user-nameFriends">{user.name}</div>
                                                 <div className="user-emailFriends">{user.email}</div>
                                             </div>
                                         </label>
                                     ))}
                                 </div>
-                                <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>Agregar amigo</button>
-                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                                <div className="modal-buttons">
+                                    <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>
+                                        Enviar Solicitud
+                                    </button>
+                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                        Cancelar
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <>
                                 <h3>No hay usuarios para agregar</h3>
-                                <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>Cerrar</button>
+                                <div className="modal-buttons">
+                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                        Cerrar
+                                    </button>
+                                </div>
                             </>
                         )}
                     </div>
@@ -657,12 +667,12 @@ export default function Lobby() {
                                 ) : (
                                     <div className="friend-panel welcome">
                                         <img
-                                                src="https://image.tmdb.org/t/p/original/4ysbFXKIYWqhvkxH8BCUMrDp3En.jpg"
-                                                alt="Bienvenido"
-                                                className="welcome-image"
-                                            />
+                                            src="https://image.tmdb.org/t/p/original/4ysbFXKIYWqhvkxH8BCUMrDp3En.jpg"
+                                            alt="Bienvenido"
+                                            className="welcome-image"
+                                        />
                                         <h2 className="welcome-message">¡Bienvenido {name}!</h2>
-                      
+
                                     </div>
                                 )}
                             </div>
