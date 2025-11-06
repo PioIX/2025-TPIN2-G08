@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-		io.to(req.session.room).emit('checkRoom', { msg: "Unidos a la room " + req.session.room });
+		io.to(req.session.room).emit('checkRoom', { room: req.session.room});
 	});
 
 	socket.on('disconnect', () => {
@@ -124,6 +124,11 @@ io.on("connection", (socket) => {
 	socket.on('atack', data => {
 		console.log(data)
 		io.to(data.room).emit('atackBack', data)
+	})
+
+	socket.on('touched/notTouched', data => {
+		console.log(data)
+		io.to(data.room).emit('answerAtack', data)
 	})
 });
 /*
