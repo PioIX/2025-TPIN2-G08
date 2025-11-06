@@ -2517,3 +2517,232 @@ background: #8f2331;
   text-align: center;
   margin-top: 30px;
 }
+
+/* Modal de Enviar Solicitud de Amistad - Estilo azul oscuro */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-new-friend {
+  background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
+  border: 1px solid rgba(253,245,114,0.12);
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-new-friend h2 {
+  color: #fdf572;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.modal-new-friend h3 {
+  color: #fdf572;
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+  max-height: 300px;
+  overflow-y: auto;
+  width: 100%;
+  align-items: center;
+}
+
+/* Scrollbar personalizado */
+.user-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.user-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.user-list::-webkit-scrollbar-thumb {
+  background: rgba(253, 245, 114, 0.3);
+  border-radius: 10px;
+}
+
+.user-itemFriends {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  border: 1px solid rgba(253, 245, 114, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.user-itemFriends:hover {
+  background: rgba(253, 245, 114, 0.15);
+  border-color: rgba(253, 245, 114, 0.4);
+  transform: translateY(-2px);
+}
+
+.user-itemFriends input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(253, 245, 114, 0.5);
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.user-itemFriends input[type="checkbox"]:checked {
+  background: #fdf572;
+  border-color: #fdf572;
+}
+
+.user-itemFriends input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #061827;
+  font-size: 14px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
+}
+
+.user-nameFriends {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  width: 100%;
+}
+
+.user-emailFriends {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-style: italic;
+  text-align: left;
+  width: 100%;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  min-width: 140px;
+  text-align: center;
+}
+
+.btn.confirm {
+  background-color: #f3f186ce;
+  color: #061827;
+  border: 2px solid #f3f186ce;
+}
+
+.btn.confirm:hover {
+  background-color: #e4e009ce;
+  border-color: #ffffff;
+  color: #061827;
+  box-shadow: 0 0 8px #ffffff;
+  transform: scale(1.05);
+}
+
+.btn.cancel {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn.cancel:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .modal-new-friend {
+    margin: 20px;
+    padding: 20px;
+    width: calc(100% - 40px);
+  }
+  
+  .modal-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .user-itemFriends {
+    padding: 12px;
+    max-width: 100%;
+  }
+  
+  .btn {
+    min-width: auto;
+    width: 100%;
+    max-width: 200px;
+  }
+}
