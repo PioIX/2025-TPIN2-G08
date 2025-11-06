@@ -113,6 +113,10 @@ export default function Juego() {
 			}
 		});
 
+		socket.on('firstTurn', data =>{
+			console.log(data)
+		})
+
 		socket.on('ready', data => {
 			if (data.ready == true && data.from != idLoggued) {
 				setOtherReady(true)
@@ -153,6 +157,7 @@ export default function Juego() {
 				socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued });
 				setRoom("G" + numIdPlayer + numIdLoggued);
 			}
+			socket.emit('startMatch', {idPlayer1: idLoggued, idPlayer2: idPlayer, room: room})
 		}
 	}, [firstRender]);
 
@@ -629,7 +634,7 @@ export default function Juego() {
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{
 								cellsEnemy.map((c, index) => (
-									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno != idLoggued}>
+									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null /*|| turno != idLoggued*/}>
 										{c.touched == null ?
 											c.posicion
 										: c.touched == false && c.touched != null ?
@@ -641,11 +646,11 @@ export default function Juego() {
 								))}
 							</div>
 						</div>
-						{turno == idLoggued ?
+						{/*turno == idLoggued ?
 							<h3> Es tu turno, puedes atacar </h3>
 						: 
 							<h3>Turno del rival</h3>
-						}
+						*/}
 					</div>
 				)}
 			</div>
