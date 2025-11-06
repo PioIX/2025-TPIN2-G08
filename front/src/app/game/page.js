@@ -33,9 +33,8 @@ export default function Juego() {
 	const [isDisabled3, setIsDisabled3] = useState(false)
 	const [isDisabled4, setIsDisabled4] = useState(false)
 	const [isDisabled5, setIsDisabled5] = useState(false)
-	const [cellsAtacked, setCellsAtacked] = useState()
-	const [touched, setTouched] = useState(false)
-	const [water, setWater] = useState(false)
+	const [turno, setTurno] = useState(0)
+	const [cellsEnemy, setCellsEnemy] = useState([])
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -53,7 +52,8 @@ export default function Juego() {
 	//Barco 5x1 = 5
 
 	function positions() {
-		let newCells = [];
+		let myCells = [];
+		let enemyCells = [];
 		let posicionLetra = "";
 		let posicion;
 		let posicionNum;
@@ -83,9 +83,11 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			newCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null});
+			myCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null});
+			enemyCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null})
 		}
-		setCells(newCells);
+		setCells(myCells);
+		setCellsEnemy(enemyCells)
 	}
 
 	useEffect(() => {
@@ -99,7 +101,7 @@ export default function Juego() {
 	useEffect(() => {
 		if (!socket) return;
 		socket.on("checkRoom", data => {
-			console.log(data);
+			setRoom(data.room)
 		});
 
 		socket.on("neverSurrender", data => {
@@ -117,9 +119,23 @@ export default function Juego() {
 
 		socket.on('atackBack', data => {
 			if(data.to == idLoggued){
-				setCellsAtacked(data.celda)
-				console.log(data)
-				atackedCells()
+				atackedCells(data.celda, data.room)
+			}
+		})
+
+		socket.on('answerAtack', data => {
+			if(data.to == idLoggued){
+				let prevCells = [...cellsEnemy]
+				for(let i = 0; i < prevCells.length; i++){
+					if(prevCells[i].posicion == data.cellsAtacked){
+						if(data.touched){
+							prevCells[i].touched = true
+						} else {
+							prevCells[i].touched = false
+						}
+					}
+				}
+				setCellsEnemy(prevCells)
 			}
 		})
 	}, [socket]);
@@ -373,32 +389,36 @@ export default function Juego() {
 
 	function confirmPositionVertical(){
 		let cantidadDeCasillas = 0
-		for (let i = 0; i < cells.length; i++){
-			if(cells[i].posicion == clickedCells[0]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
+		let prevCells = [...cells]
+		for (let i = 0; i < prevCells.length; i++){
+			if(prevCells[i].posicion == clickedCells[0]){
+				prevCells[i].ship = true
+				prevCells[i].typeOfShip = shipSelected
 				for(let j = 0; j < shipSelected; j++){
 					cantidadDeCasillas += 10
-					cells[i + cantidadDeCasillas].ship = true
-					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
+					prevCells[i + cantidadDeCasillas].ship = true
+					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 				}
 			}
 		}
+		setCells(prevCells)
 	}
 
 	function confirmPositionHorizontal(){
 		let cantidadDeCasillas = 0
-		for(let i = 0; i< cells.length; i ++){
-			if(cells[i].posicion == clickedCells[0]){
-				cells[i].ship = true
-				cells[i].typeOfShip = shipSelected
+		let prevCells = [...cells]
+		for(let i = 0; i< prevCells.length; i ++){
+			if(prevCells[i].posicion == clickedCells[0]){
+				prevCells[i].ship = true
+				prevCells[i].typeOfShip = shipSelected
 				for(let j = 0; j< shipSelected; j++){
 					cantidadDeCasillas += 1
-					cells[i + cantidadDeCasillas].ship = true
-					cells[i + cantidadDeCasillas].typeOfShip = shipSelected
+					prevCells[i + cantidadDeCasillas].ship = true
+					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 				}
 			}
 		}
+		setCells(prevCells)
 	}
 
 	useEffect(() => {
@@ -428,14 +448,21 @@ export default function Juego() {
 		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room})
 	}
 
-	function atackedCells(){
-		for(let i = 0; i < cells.length; i++){
-			if(cells[i].posicion == cellsAtacked){
-				cells[i].touched = true
-			} else {
-				cells[i].touched = false
-			}
+	function atackedCells(atackedCell, room){
+		let touched = false
+		let prevCells =[...cells]
+		for(let i = 0; i < prevCells.length; i++){
+			if(prevCells[i].posicion == atackedCell){
+				if(prevCells[i].ship == true){
+					prevCells[i].touched = true
+					touched = true
+				} else {
+					prevCells[i].touched = false
+				}
+			} 
 		}
+		setCells(prevCells)
+		socket.emit('touched/notTouched', {from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell})
 	}
 
 	return (
@@ -565,7 +592,13 @@ export default function Juego() {
 							<div className="board player-board">{
 								cells.map((c, index) => (
 									<div key={index} id={c.posicion} className={"cell"}>
-										{c.posicion}
+										{c.touched == null ?
+											c.posicion
+										: c.touched == false && c.touched != null ?
+											<img src="https://em-content.zobj.net/source/joypixels/257/water-wave_1f30a.png"></img>
+										: c.touched == true && c.touched != null &&
+											<img src="https://illustoon.com/photo/1975.png"></img>
+										}
 									</div>
 								))}
 							</div>
@@ -573,10 +606,11 @@ export default function Juego() {
 						<div className="board-section">
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{
-								cells.map((c, index) => (
-									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null}>
-										{c.posicion}
-										{c.touched == false && c.touched != null ?
+								cellsEnemy.map((c, index) => (
+									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno != idLoggued}>
+										{c.touched == null ?
+											c.posicion
+										: c.touched == false && c.touched != null ?
 											<img src="https://em-content.zobj.net/source/joypixels/257/water-wave_1f30a.png"></img>
 										: c.touched == true && c.touched != null &&
 											<img src="https://illustoon.com/photo/1975.png"></img>
@@ -585,6 +619,11 @@ export default function Juego() {
 								))}
 							</div>
 						</div>
+						{turno == idLoggued ?
+							<h3> Es tu turno, puedes atacar </h3>
+						: 
+							<h3>Turno del rival</h3>
+						}
 					</div>
 				)}
 			</div>
