@@ -33,7 +33,7 @@ export default function Juego() {
 	const [isDisabled3, setIsDisabled3] = useState(false)
 	const [isDisabled4, setIsDisabled4] = useState(false)
 	const [isDisabled5, setIsDisabled5] = useState(false)
-	const [turno, setTurno] = useState(0)
+	const [turno, setTurno] = useState(false)
 	const [cellsEnemy, setCellsEnemy] = useState([])
 	const [yaSeRindio, setYaSeRindio] = useState(false)
 
@@ -102,6 +102,7 @@ export default function Juego() {
 	useEffect(() => {
 		if (!socket) return;
 		socket.on("checkRoom", data => {
+			console.log(data)
 			setRoom(data.room)
 		});
 
@@ -113,8 +114,11 @@ export default function Juego() {
 			}
 		});
 
-		socket.on('firstTurn', data =>{
-			console.log(data)
+		socket.on('firstTurn', data => {
+			if(data.firstTurn == idLoggued){
+				console.log("Mi turno")
+				setTurno(true)
+			}
 		})
 
 		socket.on('ready', data => {
@@ -148,29 +152,32 @@ export default function Juego() {
 
 	useEffect(() => {
 		if (firstRender) {
+			let room
 			let numIdLoggued = parseInt(idLoggued);
 			let numIdPlayer = parseInt(idPlayer);
 			if (numIdLoggued < numIdPlayer) {
-				socket.emit("joinRoom", { room: "G" + numIdLoggued + numIdPlayer });
+				room = "G" + numIdLoggued + numIdPlayer
+				socket.emit("joinRoom", { room: room });
 				setRoom("G" + numIdLoggued + numIdPlayer);
 			} else {
-				socket.emit("joinRoom", { room: "G" + numIdPlayer + numIdLoggued });
+				room = "G" + numIdPlayer + numIdLoggued
+				socket.emit("joinRoom", { room: room});
 				setRoom("G" + numIdPlayer + numIdLoggued);
 			}
-			socket.emit('startMatch', {idPlayer1: idLoggued, idPlayer2: idPlayer, room: room})
 		}
 	}, [firstRender]);
 
-	function changePosition(celda) {
-		if (shipSelected > 0) {
-			setClickedCells((prev) => [...prev, celda]);
-		} else {
-			setInconveniente("Seleccione algun barco")
-			setBueno(true)
-			setShowInconveniente(true)
+	useEffect(() => {
+		console.log("Entre al useEffect")
+		if(ready && otherReady){
+			console.log("Ambos listos")
+			if(idLoggued < idPlayer){
+				console.log("Emit1")
+				socket.emit('startMatch', {room: room, idPlayer1: idLoggued, idPlayer2: idPlayer})
+			}
 		}
-	}
-
+	}, [ready, otherReady])
+	
 	useEffect(() => {
 		let respuestaValidaciones;
 		let letra;
@@ -226,6 +233,16 @@ export default function Juego() {
 			}
 		}
 	}, [clickedCells]);
+	
+	function changePosition(celda) {
+		if (shipSelected > 0) {
+			setClickedCells((prev) => [...prev, celda]);
+		} else {
+			setInconveniente("Seleccione algun barco")
+			setBueno(true)
+			setShowInconveniente(true)
+		}
+	}
 
 	function validarHorizontal(letraPrimerCelda, numeroPrimerCelda, letraSegundaCelda, numeroSegundaCelda, shipSelected) {
 		let respuesta = ERROR;
@@ -634,7 +651,7 @@ export default function Juego() {
 							<h2>Tablero enemigo</h2>
 							<div className="board enemy-board">{
 								cellsEnemy.map((c, index) => (
-									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null /*|| turno != idLoggued*/}>
+									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
 										{c.touched == null ?
 											c.posicion
 										: c.touched == false && c.touched != null ?
@@ -646,11 +663,11 @@ export default function Juego() {
 								))}
 							</div>
 						</div>
-						{/*turno == idLoggued ?
+						{turno ?
 							<h3> Es tu turno, puedes atacar </h3>
 						: 
 							<h3>Turno del rival</h3>
-						*/}
+						}
 					</div>
 				)}
 			</div>

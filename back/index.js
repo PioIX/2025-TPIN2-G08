@@ -132,28 +132,22 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on('startMatch', data => {
-		let firstTurn = tirarMoneda(data.idPlayer1, data.idPlayer2)
+		let firstTurn 
+		let random = Math.random()
+		if(random < 0.5){
+			firstTurn = data.idPlayer1
+		} else {
+			firstTurn = data.idPlayer2
+		}
+		console.log(firstTurn)
 		io.to(data.room).emit('firstTurn', {firstTurn: firstTurn})
 	})
-});
+})
 /*
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 	A PARTIR DE ACÁ LOS PEDIDOS HTTP (GET, POST, PUT, DELETE)
 */
-
-function tirarMoneda(idPlayer1, idPlayer2) {
-    let random = Math.random()
-	while (random == 0,5){
-		random = Math.random()
-	}
-	if(random < 0,5){
-		return idPlayer1
-	} else {
-		return idPlayer2
-	}
-}
-
 
 app.post('/verifyUser', async function (req, res) {
 	let user
