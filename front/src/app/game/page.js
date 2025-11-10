@@ -115,6 +115,7 @@ export default function Juego() {
 		});
 
 		socket.on('firstTurn', data => {
+			console.log(data)
 			if(data.firstTurn == idLoggued){
 				console.log("Mi turno")
 				setTurno(true)
@@ -142,6 +143,7 @@ export default function Juego() {
 							prevCells[i].touched = true
 						} else {
 							prevCells[i].touched = false
+							setTurno(true)
 						}
 					}
 				}
@@ -168,11 +170,9 @@ export default function Juego() {
 	}, [firstRender]);
 
 	useEffect(() => {
-		console.log("Entre al useEffect")
 		if(ready && otherReady){
 			console.log("Ambos listos")
 			if(idLoggued < idPlayer){
-				console.log("Emit1")
 				socket.emit('startMatch', {room: room, idPlayer1: idLoggued, idPlayer2: idPlayer})
 			}
 		}
@@ -470,6 +470,7 @@ export default function Juego() {
 	function atack(posicionAtacar){
 		console.log("Ataque")
 		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room})
+		setTurno(false)
 	}
 
 	function atackedCells(atackedCell, room){
