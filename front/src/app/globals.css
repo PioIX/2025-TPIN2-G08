@@ -1,17 +1,21 @@
-:root{
+:root {
   /* Base: 1rem = 16px. Si quieres otra escala, cambia aquí (ej: 62.5% -> 1rem = 10px) */
   font-size: 100%;
   --radius: 12px;
   --main-yellow: #fdf572;
-  --panel-bg: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
+  --panel-bg: linear-gradient(180deg, rgba(6, 20, 33, 0.96), rgba(12, 30, 50, 0.94));
 }
 
 /* Reset / normalize ligero */
 *,
 *::before,
-*::after{ box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html,body,#__next {
+html,
+body,
+#__next {
   height: 100%;
 }
 
@@ -20,7 +24,8 @@ html {
   font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 100%; /* 16px */
+  font-size: 100%;
+  /* 16px */
   line-height: 1.4;
 }
 
@@ -47,11 +52,23 @@ textarea {
 }
 
 /* Links y listas */
-a { color: inherit; text-decoration: none; }
-ul { margin: 0; padding: 0; list-style: none; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
 /* Imágenes: consistencia */
-img { display: block; max-width: 100%; height: auto; }
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
 /* Helpers para usar rem: (ejemplo rápido de conversión)
    1rem = 16px, por ejemplo 24px = 1.5rem, 12px = 0.75rem
@@ -198,9 +215,11 @@ img { display: block; max-width: 100%; height: auto; }
   padding-right: 40px;
 }
 
-.input-container input::-ms-reveal, .input-container input::-webkit-input-placeholder {
+.input-container input::-ms-reveal,
+.input-container input::-webkit-input-placeholder {
   display: none;
 }
+
 .input-container span {
   position: absolute;
   right: 12px;
@@ -216,7 +235,8 @@ img { display: block; max-width: 100%; height: auto; }
 
 .input-container span:hover {
   opacity: 1;
-  transform: translateY(-50%) scale(1.1); /* 👈 combina ambas transformaciones */
+  transform: translateY(-50%) scale(1.1);
+  /* 👈 combina ambas transformaciones */
 }
 
 /* --- CONTENEDOR GENERAL --- */
@@ -444,7 +464,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Título */
 .modalAdmin h2 {
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 1.4rem;
   margin-bottom: 20px;
   margin-top: -5px;
@@ -540,7 +560,7 @@ img { display: block; max-width: 100%; height: auto; }
   height: 18px;
   border: 2px solid #ffffff;
   border-radius: 5px;
-  transition:all 0,7s ease;
+  transition: all 0, 7s ease;
 }
 
 .user-itemDelete input[type="checkbox"]:checked {
@@ -588,7 +608,8 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Fondo oscuro desenfocado */
 .fondoNewFriend {
-  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
+  position: fixed;
+  /* Usamos fixed para que cubra toda la pantalla */
   top: 0;
   left: 0;
   right: 0;
@@ -597,7 +618,8 @@ img { display: block; max-width: 100%; height: auto; }
   display: flex;
   justify-content: center;
   align-items: center;
-  background: transparent; /* Fondo oscuro con algo de transparencia */
+  background: transparent;
+  /* Fondo oscuro con algo de transparencia */
   width: 100%;
   height: 100%;
 }
@@ -740,7 +762,8 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .fondoRequests {
-  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
+  position: fixed;
+  /* Usamos fixed para que cubra toda la pantalla */
   top: 0;
   left: 0;
   right: 0;
@@ -788,7 +811,7 @@ img { display: block; max-width: 100%; height: auto; }
 .modalRequests button.cerrarRequests {
   padding: 8px 16px;
   background: #661721;
-  color:#e8f1ff;
+  color: #e8f1ff;
   border: 1px solid #ff3a7c;
   border-radius: 8px;
   cursor: pointer;
@@ -797,7 +820,7 @@ img { display: block; max-width: 100%; height: auto; }
 }
 
 .modalRequests button.cerrarRequests:hover {
-background: #8f2331;
+  background: #8f2331;
   box-shadow: 0 0 8px rgba(255, 58, 117, 0.5);
 }
 
@@ -840,8 +863,9 @@ background: #8f2331;
   justify-content: center;
   align-items: flex-start;
   z-index: 9999;
-  background: rgba(0, 0, 0, 0.1); /* capa mínima para detectar clics afuera */
-  backdrop-filter: blur(3px); 
+  background: rgba(0, 0, 0, 0.1);
+  /* capa mínima para detectar clics afuera */
+  backdrop-filter: blur(3px);
 }
 
 .inconveniente {
@@ -926,6 +950,7 @@ background: #8f2331;
     transform: translateY(-40px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -959,7 +984,8 @@ background: #8f2331;
 
 /* Modal general (fondo oscuro) */
 .fondoSeguro {
-  position: fixed;  /* Usamos fixed para que cubra toda la pantalla */
+  position: fixed;
+  /* Usamos fixed para que cubra toda la pantalla */
   top: 0;
   left: 0;
   right: 0;
@@ -968,7 +994,8 @@ background: #8f2331;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: transparent; /* Fondo oscuro con algo de transparencia */
+  background: transparent;
+  /* Fondo oscuro con algo de transparencia */
   width: 100%;
   height: 100%;
 }
@@ -1040,7 +1067,8 @@ background: #8f2331;
 
 
 .tilde {
-  background-color: #28a745; /* verde agradable */
+  background-color: #28a745;
+  /* verde agradable */
   color: white;
   border: none;
   padding: 8px 14px;
@@ -1051,12 +1079,15 @@ background: #8f2331;
   box-shadow: 0 2px 5px rgba(40, 167, 69, 0.5);
   transition: background-color 0.3s ease;
 }
+
 .tilde:hover {
-  background-color: #218838; /* verde oscuro al hover */
+  background-color: #218838;
+  /* verde oscuro al hover */
 }
 
 .cruz {
-  background-color: #dc3545; /* rojo fuerte */
+  background-color: #dc3545;
+  /* rojo fuerte */
   color: white;
   border: none;
   padding: 8px 14px;
@@ -1067,8 +1098,10 @@ background: #8f2331;
   box-shadow: 0 2px 5px rgba(220, 53, 69, 0.5);
   transition: background-color 0.3s ease;
 }
+
 .cruz:hover {
-  background-color: #c82333; /* rojo oscuro al hover */
+  background-color: #c82333;
+  /* rojo oscuro al hover */
 }
 
 .cerrar-requests {
@@ -1081,14 +1114,15 @@ background: #8f2331;
   font-weight: 600;
   box-shadow: 0 2px 5px rgba(52, 58, 64, 0.6);
   transition: background-color 0.3s ease;
-  
+
 }
+
 .cerrar-requests:hover {
   background-color: #23272b;
 }
 
-.circulo-notificacion{
-    position: absolute;
+.circulo-notificacion {
+  position: absolute;
   top: 5px;
   right: 12px;
   color: #ccc;
@@ -1103,7 +1137,8 @@ background: #8f2331;
   transition: all 0.2s ease;
   z-index: 5;
 }
-.circulo-notificacion:hover{
+
+.circulo-notificacion:hover {
   transform: scale(1.2);
 }
 
@@ -1249,7 +1284,7 @@ background: #8f2331;
   font-family: "Poppins", sans-serif;
   color: #fdf572;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .game-container::before {
@@ -1266,7 +1301,7 @@ background: #8f2331;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;     
+  align-items: center;
   padding: 20px 60px;
   position: relative;
 }
@@ -1275,7 +1310,7 @@ background: #8f2331;
   font-size: 2.4rem;
   color: #fffaa5;
   text-shadow: 0 0 10px rgba(255, 255, 140, 0.7),
-               0 0 25px rgba(255, 255, 140, 0.5);
+    0 0 25px rgba(255, 255, 140, 0.5);
   letter-spacing: 2px;
 }
 
@@ -1295,67 +1330,6 @@ background: #8f2331;
 .exit-btn:hover {
   background: #cfc874;
   transform: scale(1.05);
-}
-
-/* ======= SECCIÓN DE TABLEROS ======= */
-.boards {
-  position: relative;
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  padding: 40px 50px;
-  display: flex;
-  gap: 80px;
-  animation: fadeIn 0.8s ease;
-  max-height: 70%;
-  max-width: 90%;
-}
-
-.board-section {
-  text-align: center;
-}
-
-.board-section h2 {
-  color: #fffaa5;
-  margin-right: -20vh;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-}
-
-.board {
-  display: grid;
-  grid-template-columns: repeat(10, 42px);
-  grid-template-rows: repeat(10, 42px);
-  gap: 3px;
-  background: rgba(5, 30, 45, 0.7);
-  border: 2px solid #fdf572;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(255, 255, 150, 0.2);
-  transition: all 0.3s ease;
-  width: 150%;
-}
-
-.board:hover {
-  box-shadow: 0 0 25px rgba(255, 255, 180, 0.4);
-}
-
-.cell {
-  width: 100%;
-  height: 30px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-  transition: all 0.25s;
-}
-
-.cell:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
-  cursor: pointer;
 }
 
 /* ======= BARRA INFERIOR ======= */
@@ -1392,7 +1366,8 @@ background: #8f2331;
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255, 60, 60, 0.8); /* rojo translúcido */
+  background: rgba(255, 60, 60, 0.8);
+  /* rojo translúcido */
   color: #fff;
   border: 2px solid rgba(255, 255, 255, 0.6);
   border-radius: 50%;
@@ -1443,14 +1418,14 @@ background: #8f2331;
 .popup-rendicion h3 {
   font-size: 1.1rem;
   margin-bottom: 8px;
-  text-shadow: 0 0 5px rgba(0,0,0,0.7);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
 .popup-rendicion p {
   font-size: 0.9rem;
   margin-bottom: 15px;
   color: #f3f186ce;
-  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Botones */
@@ -1474,8 +1449,9 @@ background: #8f2331;
 .btn-si {
   background: rgba(243, 57, 57, 0.85);
   color: white;
-  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
+
 .btn-si:hover {
   background: rgba(200, 40, 40, 0.9);
   transform: scale(1.05);
@@ -1486,8 +1462,9 @@ background: #8f2331;
   background: rgba(89, 206, 66, 0.85);
   color: rgb(255, 255, 255);
   font-weight: bold;
-  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
+
 .btn-no:hover {
   background: rgba(55, 189, 14, 0.9);
   transform: scale(1.05);
@@ -1495,28 +1472,29 @@ background: #8f2331;
 
 
 .friend-button {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    background: rgba(255, 255, 255, 0.05);
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    text-align: left;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin: 0;
-    margin-bottom: 8px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0;
+  margin-bottom: 8px;
 }
 
 .friend-button:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .friend-button:hover {
-    background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15);
 }
+
 .friends li {
   margin: 0;
   padding: 0;
@@ -1532,10 +1510,13 @@ background: #8f2331;
 /* contenedor donde se mostrará el panel (centra el "modal" en el espacio del antiguo board) */
 .panel-center {
   display: flex;
-  align-items: flex-start; /* arranca justo debajo del título */
+  align-items: flex-start;
+  /* arranca justo debajo del título */
   justify-content: center;
-  padding: 8px; /* menos padding vertical */
-  margin-top: 6px; /* pequeño separador desde el título */
+  padding: 8px;
+  /* menos padding vertical */
+  margin-top: 6px;
+  /* pequeño separador desde el título */
 }
 
 .add-friend-panel {
@@ -1583,7 +1564,8 @@ background: #8f2331;
   width: 100%;
   height: 100%;
   border-radius: 1rem;
-  background: #0f172a; /* mismo color que el perfil */
+  background: #0f172a;
+  /* mismo color que el perfil */
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
   padding: 2%;
@@ -1598,12 +1580,12 @@ background: #8f2331;
   min-height: 60vh;
   max-height: 60vh;
 
-  background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
-  border: 1px solid rgba(253,245,114,0.12);
+  background: linear-gradient(180deg, rgba(6, 20, 33, 0.96), rgba(12, 30, 50, 0.94));
+  border: 1px solid rgba(253, 245, 114, 0.12);
   padding: 14px 16px;
   border-radius: 12px;
   color: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1636,7 +1618,11 @@ background: #8f2331;
   padding: 6px;
   border-radius: 6px;
 }
-.friend-panel .close-panel:hover { color: #fff; transform: scale(1.05); }
+
+.friend-panel .close-panel:hover {
+  color: #fff;
+  transform: scale(1.05);
+}
 
 /* Encabezado: avatar + texto en fila */
 .friend-profile-header {
@@ -1674,6 +1660,7 @@ background: #8f2331;
   margin: 0;
   line-height: 1.05;
 }
+
 .friend-email {
   font-size: 0.82rem;
   color: #dfe7ffcc;
@@ -1690,7 +1677,7 @@ background: #8f2331;
 }
 
 .stat-item {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   padding: 8px 10px;
   border-radius: 10px;
   display: flex;
@@ -1744,22 +1731,38 @@ background: #8f2331;
 }
 
 .friend-actions .cancel {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .friend-actions .cancel:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.10);
 }
 
 /* Ajustes responsivos para pantallas pequeñas */
 @media (max-width: 420px) {
-  .friend-profile-header { gap: 10px; }
-  .friend-avatar-wrapper { width: 60px; height: 60px; }
-  .friend-avatar { width: 54px; height: 54px; }
-  .friend-panel { padding: 12px; }
-  .title-right { font-size: 1.9rem; }
+  .friend-profile-header {
+    gap: 10px;
+  }
+
+  .friend-avatar-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .friend-avatar {
+    width: 54px;
+    height: 54px;
+  }
+
+  .friend-panel {
+    padding: 12px;
+  }
+
+  .title-right {
+    font-size: 1.9rem;
+  }
 }
 
 .modal-play-invitation {
@@ -1790,6 +1793,7 @@ background: #8f2331;
     opacity: 0;
     transform: translate(-50%, -46%);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%);
@@ -1896,13 +1900,15 @@ background: #8f2331;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  width: 20%; /* Puedes ajustar el ancho */
+  width: 20%;
+  /* Puedes ajustar el ancho */
 }
 
 .ship-image2x1 {
   width: 50%;
   margin-bottom: 10px;
 }
+
 .ship-image4x1 {
   width: 80%;
   margin-bottom: 10px;
@@ -1936,7 +1942,8 @@ background: #8f2331;
   cursor: pointer;
 }
 
-.ship-image2x1, .ship-image4x1 {
+.ship-image2x1,
+.ship-image4x1 {
   cursor: pointer;
   border: 2px solid transparent;
   transition: border 0.3s ease;
@@ -1944,14 +1951,15 @@ background: #8f2331;
 
 .ship-image-selected {
   border: 2px solid yellow;
-   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
 }
 
 .record {
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 6px;
-  scrollbar-width: thin; /* Firefox */
+  scrollbar-width: thin;
+  /* Firefox */
   scrollbar-color: #3f8fff #0d1b3b;
 }
 
@@ -1972,6 +1980,7 @@ background: #8f2331;
 .record::-webkit-scrollbar-track {
   background: #0d1b3b;
 }
+
 /* Fondo oscuro translúcido detrás del modal */
 .modal-edit-profile {
   position: fixed;
@@ -2005,7 +2014,8 @@ background: #8f2331;
   margin-bottom: 20px;
   font-size: 1.5rem;
   letter-spacing: 1px;
-  color: #fdf572; /* dorado suave */
+  color: #fdf572;
+  /* dorado suave */
   text-shadow: 0 0 10px rgba(253, 245, 114, 0.3);
 }
 
@@ -2070,6 +2080,7 @@ background: #8f2331;
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -2115,6 +2126,7 @@ background: #8f2331;
 .record tbody tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.05);
 }
+
 .record tbody tr:hover {
   background: rgba(60, 90, 160, 0.4);
   transition: 0.3s;
@@ -2131,6 +2143,7 @@ background: #8f2331;
 .record:last-child {
   margin-bottom: 16px;
 }
+
 /* Agrega espacio entre el historial y el botón Jugar */
 .friend-actions {
   margin-top: 24px;
@@ -2146,6 +2159,7 @@ background: #8f2331;
   margin-top: 12px;
   margin-bottom: 12px;
 }
+
 .stats {
   display: flex;
   justify-content: space-around;
@@ -2169,16 +2183,21 @@ background: #8f2331;
   left: 0;
   width: 100%;
   height: 100%;
-  background: transparent; /* ya no oscurece toda la pantalla */
-  pointer-events: none; /* permite hacer click fuera */
+  background: transparent;
+  /* ya no oscurece toda la pantalla */
+  pointer-events: none;
+  /* permite hacer click fuera */
   z-index: 200;
 }
 
 .notif-modal {
   position: absolute;
-  top: 100px; /* distancia desde el borde superior */
-  right: 100px; /* distancia desde el borde derecho */
-  background: rgba(0, 0, 0, 0.92); /* fondo negro semitransparente */
+  top: 100px;
+  /* distancia desde el borde superior */
+  right: 100px;
+  /* distancia desde el borde derecho */
+  background: rgba(0, 0, 0, 0.92);
+  /* fondo negro semitransparente */
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 1rem;
   border-top-right-radius: 0.3rem;
@@ -2189,7 +2208,8 @@ background: #8f2331;
   color: #f1f5f9;
   text-align: center;
   padding: 1.2rem;
-  pointer-events: all; /* vuelve interactivo solo el modal */
+  pointer-events: all;
+  /* vuelve interactivo solo el modal */
   animation: slideDown 0.3s ease-out;
 }
 
@@ -2306,11 +2326,13 @@ background: #8f2331;
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 /* === MODAL CERRAR SESIÓN === */
 .modal-logout {
   position: fixed;
@@ -2326,7 +2348,8 @@ background: #8f2331;
 }
 
 .modal-logout-content {
-  background: #111827; /* gris azulado oscuro */
+  background: #111827;
+  /* gris azulado oscuro */
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.2rem;
   width: 360px;
@@ -2344,6 +2367,7 @@ background: #8f2331;
   margin-bottom: 1.5rem;
   text-shadow: 0 0 10px rgba(63, 143, 255, 0.2);
 }
+
 .modal-logout-content h2 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -2394,13 +2418,25 @@ background: #8f2331;
 
 /* Animaciones suaves */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .popup-gave-up {
@@ -2410,22 +2446,22 @@ background: #8f2331;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: radial-gradient(circle at top, rgba(25,45,90,.9), rgba(5,10,25,.95));
+  background: radial-gradient(circle at top, rgba(25, 45, 90, .9), rgba(5, 10, 25, .95));
   backdrop-filter: blur(8px);
   animation: fadeIn .4s ease;
   z-index: 1000;
 }
 
 .gaveUp-popup-container {
-  background: linear-gradient(145deg,#101b38,#0a122a);
-  border: 2px solid rgba(255,255,255,.15);
+  background: linear-gradient(145deg, #101b38, #0a122a);
+  border: 2px solid rgba(255, 255, 255, .15);
   border-radius: 20px;
   padding: 32px 40px;
   width: 90%;
   max-width: 420px;
   text-align: center;
   color: #fff;
-  box-shadow: 0 0 25px rgba(255,215,0,.35);
+  box-shadow: 0 0 25px rgba(255, 215, 0, .35);
   animation: scaleIn .4s ease;
 }
 
@@ -2433,7 +2469,7 @@ background: #8f2331;
   font-size: 2.2rem;
   font-weight: 800;
   color: #ffd700;
-  text-shadow: 0 0 8px rgba(255,230,120,.8);
+  text-shadow: 0 0 8px rgba(255, 230, 120, .8);
   margin-bottom: 12px;
 }
 
@@ -2455,9 +2491,9 @@ background: #8f2331;
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle,#ffd700,#ffb700);
+  background: radial-gradient(circle, #ffd700, #ffb700);
   color: #222;
-  box-shadow: 0 0 18px rgba(255,215,0,.5);
+  box-shadow: 0 0 18px rgba(255, 215, 0, .5);
   animation: float 2s ease-in-out infinite;
 }
 
@@ -2477,7 +2513,7 @@ background: #8f2331;
 }
 
 .gaveUp-popup-button {
-  background: linear-gradient(90deg,#3c9cff,#1f65ff);
+  background: linear-gradient(90deg, #3c9cff, #1f65ff);
   color: #fff;
   font-weight: 700;
   border: none;
@@ -2485,37 +2521,58 @@ background: #8f2331;
   padding: 12px 25px;
   cursor: pointer;
   transition: .25s ease;
-  box-shadow: 0 0 10px rgba(63,136,255,.4);
+  box-shadow: 0 0 10px rgba(63, 136, 255, .4);
 }
 
 .gaveUp-popup-button:hover {
   transform: scale(1.05);
-  background: linear-gradient(90deg,#1f65ff,#3c9cff);
-  box-shadow: 0 0 20px rgba(63,136,255,.6);
+  background: linear-gradient(90deg, #1f65ff, #3c9cff);
+  box-shadow: 0 0 20px rgba(63, 136, 255, .6);
 }
 
 @keyframes fadeIn {
-  from {opacity:0;}
-  to {opacity:1;}
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from {transform:scale(.8);opacity:0;}
-  to {transform:scale(1);opacity:1;}
+  from {
+    transform: scale(.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes float {
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-6px);}
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
-.welcome-image{
+.welcome-image {
+  margin-top: 10%;
   width: 100%;
   height: 100%;
   border-radius: 15px;
   align-self: center;
 }
-.welcome-message{
+
+.welcome-message {
   color: #e0e7ff;
   text-align: center;
   margin-top: 30px;
@@ -2536,8 +2593,8 @@ background: #8f2331;
 }
 
 .modal-new-friend {
-  background: linear-gradient(180deg, rgba(6,20,33,0.96), rgba(12,30,50,0.94));
-  border: 1px solid rgba(253,245,114,0.12);
+  background: linear-gradient(180deg, rgba(6, 20, 33, 0.96), rgba(12, 30, 50, 0.94));
+  border: 1px solid rgba(253, 245, 114, 0.12);
   border-radius: 20px;
   padding: 30px;
   width: 90%;
@@ -2732,20 +2789,469 @@ background: #8f2331;
     padding: 20px;
     width: calc(100% - 40px);
   }
-  
+
   .modal-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .user-itemFriends {
     padding: 12px;
     max-width: 100%;
   }
-  
+
   .btn {
     min-width: auto;
     width: 100%;
     max-width: 200px;
   }
+}
+
+:root {
+  --cell-size: clamp(2rem, 3.2vw, 3rem);
+  --panel-bg: linear-gradient(180deg, rgba(6, 20, 33, 0.96), rgba(12, 30, 50, 0.94));
+  --accent: #3f8fff;
+  --gold: #fdf572;
+}
+
+/* Layout principal de la pantalla de juego */
+.game-main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 12px auto 40px;
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 18px;
+  align-items: start;
+  z-index: 2;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Asides */
+.game-aside {
+  background: rgba(9, 44, 58, 0.6);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 240px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  color: #e6f2ff;
+}
+
+/* Info card (avatar + datos) */
+.info-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.aside-avatar {
+  width: 56px;
+  height: 56px;
+  padding: 3px;
+  border-radius: 12px;
+}
+
+.info-card .avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #061827;
+}
+
+/* player meta */
+.player-name {
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.player-medals {
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+/* Panel central */
+.game-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Tableros */
+.boards {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: center;
+}
+
+.board-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* tablero: cuadrícula con celdas adaptativas (cuadradas) */
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, var(--cell-size));
+  grid-template-rows: repeat(10, var(--cell-size));
+  gap: 6px;
+  background: rgba(5, 30, 45, 0.75);
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(253, 245, 114, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* celdas: botones cuadrados, centrados */
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  color: #dfefff;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-weight: 700;
+  font-size: .9rem;
+  transition: transform .14s ease, background .14s ease;
+}
+
+.cell:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+/* imágenes dentro de celdas */
+.cell img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+/* layout para cuando hay ambos tableros (duelo) */
+.duel-boards {
+  align-items: flex-start;
+}
+
+/* indicador de turno */
+.turn-indicator {
+  border-radius: 12px;
+  color: rgb(255, 72, 0);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ship selector en aside */
+.ship-images-col {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.ship-btn {
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.ship-btn img {
+  width: 100px;
+  height: auto;
+  display: block;
+}
+
+.ship-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(63, 143, 255, 0.08);
+  transform: translateY(-4px);
+}
+
+/* play button styled */
+.aside-play .btn.jugar {
+  background: linear-gradient(135deg, #1f6feb, #3f8fff);
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(63, 143, 255, 0.12);
+}
+
+.aside-play .btn.jugar:hover {
+  transform: translateY(-3px);
+}
+
+/* record card */
+.card-record {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.record-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+/* mensaje central */
+.message-panel {
+  padding: 20px;
+  background: var(--panel-bg);
+  border-radius: 12px;
+  color: #e8f1ff;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* responsivo: en pantallas pequeñas convertir a una columna */
+@media (max-width: 920px) {
+  .game-main {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .game-aside {
+    order: 2;
+  }
+
+  .game-panel {
+    order: 1;
+  }
+
+  .board {
+    gap: 4px;
+  }
+}
+
+/* pequeños refinamientos visuales */
+.game-title {
+  letter-spacing: 2px;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+}
+
+/* Ajustes para modo duelo: ocultar panel de colocar barcos y centrar los dos tableros */
+.game-main.duel-mode {
+  grid-template-columns: 1fr;
+  /* toda la anchura para la columna central (tableros) */
+  align-items: start;
+  gap: 20px;
+}
+
+.game-main.duel-mode .left-aside {
+  display: none;
+  /* quita el cuadrado "Colocar barcos" */
+}
+
+.game-main.duel-mode .game-panel {
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 6px;
+  /* aparece justo debajo del título */
+}
+
+/* asegura que ambos tableros estén centrados en la columna central */
+.game-main.duel-mode .boards {
+  width: min(860px, 100%);
+  max-width: 1100px;
+  margin: 0 auto;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 36px);
+}
+
+.this-turn {
+  margin: 0 0 6px;
+  color: #ff4b4b;
+  font-weight: 700;
+  font-size: 1500;
+  animation: glowRed 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowRed {
+  from {
+    color: #ff4b4b;
+    text-shadow: 0 0 6px #ff4b4b;
+  }
+
+  to {
+    color: #ff7878;
+    text-shadow: 0 0 14px #ff7878;
+  }
+}
+
+.no-turn {
+  margin: 0 0 6px;
+  font-size: 1500;
+  color: var(--gold);
+}
+
+/* estilo cuando marcás una casilla al colocar barcos */
+.cell-selected {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(253, 245, 114, 0.14), rgba(255, 255, 255, 0.02));
+  box-shadow: 0 8px 20px rgba(253, 245, 114, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  transform: translateY(-3px) scale(1.02);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+/* opcional: estilo distinto para segunda casilla seleccionada */
+.cell-selected+.cell-selected {
+  outline: 2px solid rgba(63, 143, 255, 0.12);
+}
+
+/* Ship segment rendering: la misma imagen se escal y posiciona para cubrir los N segmentos */
+.ship-segment {
+  /* imagen sin repetir y escala en función de la longitud (N * ancho de celda) */
+  background-repeat: no-repeat;
+  /* ancho = N * cell, alto = 1 cell -- usamos porcentajes para evitar problemas de unidades */
+  background-size: calc(var(--ship-length) * 100%) 100%;
+  /* movemos la imagen para mostrar solo el segmento correcto (porcentaje relativo al propio cell) */
+  background-position: calc(var(--ship-index) * -100%) 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* fondo rojizo suave detrás de la imagen para hacer visible el barco */
+  background-color: rgba(200, 40, 40, 0.12);
+  /* si la imagen tiene transparencia, mezclar ligeramente con el fondo */
+  background-blend-mode: overlay;
+  border: 1px solid rgba(200, 40, 40, 0.18);
+  box-shadow: 0 6px 18px rgba(200, 40, 40, 0.06);
+  border-radius: 8px;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+/* vertical orientation: misma lógica pero rotada (alto = N * cell) */
+.ship-segment[data-orient="vertical"] {
+  background-size: 100% calc(var(--ship-length) * 100%);
+  background-position: 0 calc(var(--ship-index) * -100%);
+}
+
+/* contenido por encima (agua/impacto) no tapa el fondo */
+.ship-segment img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Si quieres evitar que en mobile la imagen se vea muy grande, puedes limitar cell-size en media queries */
+@media (max-width: 420px) {
+  :root {
+    --cell-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+}
+
+/* variables específicas del grid (board) */
+.board {
+  --board-padding: 12px;
+  --gap: 6px;
+  position: relative;
+  /* necesario para overlays absolutos */
+  overflow: visible;
+}
+
+/* casilla con barco: fondo rojizo suave */
+.cell-ship {
+  background-color: rgba(200, 40, 40, 0.12) !important;
+  border: 1px solid rgba(200, 40, 40, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 6px 18px rgba(200, 40, 40, 0.04);
+}
+
+/* envoltorio del contenido de la celda para controlar la pila */
+.cell-content {
+  position: relative;
+  z-index: 3;
+  /* encima del overlay para mostrar impacto/número */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* overlay de la imagen del barco que ocupa N celdas */
+.ship-overlay {
+  position: absolute;
+  z-index: 2;
+  /* debajo del contenido de las celdas (impacto/agua) */
+  pointer-events: none;
+  overflow: visible;
+  /* permitimos que la imagen rotada/extendida no se corte */
+  border-radius: 6px;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.4));
+  transform-origin: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ship-overlay-img {
+  width: 300%;
+  height: 300%;
+  object-fit: contain;
+  /* mostrar la imagen completa dentro del contenedor */
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  border-radius: 6px;
+  max-width: none;
+  max-height: none;
+}
+
+/* actualizar gap variable para compatibilidad */
+:root {
+  --gap: 6px;
+}
+
+
+/* Desactivar efectos hover en MI tablero cuando ya está en modo duelo (no afecta al tablero enemigo) */
+.game-main.duel-mode .player-board .cell:hover,
+.game-main.duel-mode .player-board .cell:active {
+  transform: none !important;
+  box-shadow: none !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)) !important;
+  cursor: default !important;
+  transition: none !important;
+}
+
+/* mantener accesibilidad (clicks) pero sin indicador hover */
+.game-main.duel-mode .player-board .cell {
+  pointer-events: auto;
+  /* conserva clicks/funcionalidad */
+}
+
+.game-main.duel-mode .player-board .cell-selected {
+  transform: none;
 }
