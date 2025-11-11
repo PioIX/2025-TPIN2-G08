@@ -18,6 +18,8 @@ export default function Juego() {
 	const [medals, setMedals] = useState();
 	const [photo, setPhoto] = useState();
 	const [friendName, setFriendName] = useState();
+	const [friendMedals, setFriendMedals] = useState();
+	const [friendPhoto, setFriendPhoto] = useState()
 	const [cells, setCells] = useState([]);
 	const [clickedCells, setClickedCells] = useState([]);
 	const [showInconveniente, setShowInconveniente] = useState(false);
@@ -28,9 +30,9 @@ export default function Juego() {
 	const [verticalHorizontal, setVerticalHorizontal] = useState("")
 	const [otherReady, setOtherReady] = useState(false)
 	const [ready, setReady] = useState(false)
-	const [isDisabled, setIsDisabled] = useState(false)
 	const [isDisabled2, setIsDisabled2] = useState(false)
 	const [isDisabled3, setIsDisabled3] = useState(false)
+	const [isDisabled32, setIsDisabled32] = useState(false)
 	const [isDisabled4, setIsDisabled4] = useState(false)
 	const [isDisabled5, setIsDisabled5] = useState(false)
 	const [turno, setTurno] = useState(false)
@@ -104,7 +106,8 @@ export default function Juego() {
 	useEffect(() => {
 		setId(localStorage.getItem("idLoggued"));
 		setIdPlayer(localStorage.getItem("idPlayer"));
-		user();
+		userLoggued();
+		userFriend();
 		positions();
 		setFirsRender(true);
 	}, []);
@@ -120,14 +123,11 @@ export default function Juego() {
 			if (data.rendirse == true && data.to == idLoggued) {
 				setHeGaveUp(true);
 				setYaSeRindio(true);
-				setFriendName(data.name);
 			}
 		});
 
 		socket.on('firstTurn', data => {
-			console.log(data)
 			if (data.firstTurn == idLoggued) {
-				console.log("Mi turno")
 				setTurno(true)
 			}
 		})
@@ -146,6 +146,7 @@ export default function Juego() {
 
 		socket.on('answerAtack', async data => {
 			if (data.to == idLoggued) {
+				console.log("State barcos hundidos: ", shipsSunk)
 				console.log(data)
 				let prevCells = [...cellsEnemy]
 				let prevShipsSunk = [...shipsSunk]
@@ -156,6 +157,7 @@ export default function Juego() {
 							prevCells[i].typeOfShip = data.typeOfShip
 							prevCells[i].ship = true
 							if (data.hundido) {
+								console.log("Se hundio")
 								for (let j = 0; j < prevCells.length; j++) {
 									if (prevCells[j].typeOfShip == data.typeOfShip) {
 										prevCells[j].hundido = true
@@ -200,7 +202,6 @@ export default function Juego() {
 
 	useEffect(() => {
 		if (ready && otherReady) {
-			console.log("Ambos listos")
 			if (idLoggued < idPlayer) {
 				socket.emit('startMatch', { room: room, idPlayer1: idLoggued, idPlayer2: idPlayer })
 			}
@@ -211,7 +212,6 @@ export default function Juego() {
 		let respuestaValidaciones;
 		let letra;
 		let numero;
-		console.log(clickedCells);
 		if (clickedCells.length > 2) {
 			let array = [...clickedCells];
 			array.shift();
@@ -255,10 +255,12 @@ export default function Juego() {
 				setClickedCells([])
 				setInconveniente("Seleccione 2 casillas distintas")
 				setShowInconveniente(true)
+				setPosible(false)
 			} else {
 				setClickedCells([])
 				setInconveniente("No puede posicionar el barco en diagonal")
 				setShowInconveniente(true)
+				setPosible(false)
 			}
 		}
 	}, [clickedCells]);
@@ -386,7 +388,7 @@ export default function Juego() {
 		return respuesta;
 	}
 
-	async function user() {
+	async function userLoggued() {
 		const idLoggued = localStorage.getItem("idLoggued");
 		let result = await fetch("http://localhost:4000/user", {
 			method: "POST",
@@ -400,6 +402,23 @@ export default function Juego() {
 			setName(response.user.name);
 			setPhoto(response.user.photo);
 			setMedals(response.user.medals);
+		}
+	}
+
+	async function userFriend(){
+		const idUserFriend = localStorage.getItem("idPlayer");
+		let result = await fetch("http://localhost:4000/userFriend", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ idFriend: idUserFriend }),
+		});
+		let response = await result.json();
+		if (response.msg == 1) {
+			setFriendName(response.userFriend.name);
+			setFriendPhoto(response.userFriend.photo);
+			setFriendMedals(response.userFriend.medals);
 		}
 	}
 
@@ -424,9 +443,11 @@ export default function Juego() {
 		}
 		if (shipSelected == 2) {
 			setIsDisabled2(true)
-		} else if (shipSelected == 3 || shipSelected == 3.1) {
+		} else if (shipSelected == 3){
 			setIsDisabled3(true)
-		} else if (shipSelected == 4) {
+		} else if (shipSelected == 3.1) {
+			setIsDisabled32(true)
+		} else if(shipSelected == 4){
 			setIsDisabled4(true)
 		} else {
 			setIsDisabled5(true)
@@ -484,15 +505,12 @@ export default function Juego() {
 			if (prevCells[i].posicion == clickedCells[0]) {
 				numeroPrimerCelda = parseInt(prevCells[i].posicion.slice(1, 2))
 				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
-				console.log("Primer celda: ", numeroPrimerCelda)
-				console.log("Segunda celda: ", numeroSegundaCelda)
 				if (numeroPrimerCelda < numeroSegundaCelda) {
 					for (let j = 0; j < shipSelected; j++) {
 						prevCells[i + cantidadDeCasillas].ship = true
 						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
-						console.log(prevCells[i])
 						prevCells[i + cantidadDeCasillas].shipIndex = j;
 						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
 						prevCells[i + cantidadDeCasillas].shipOrientation = "horizontal";
@@ -538,11 +556,6 @@ export default function Juego() {
 		return respuesta
 	}
 
-	function atack(posicionAtacar) {
-		console.log("Ataque")
-		socket.emit('atack', { celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room })
-	}
-
 	function atackedCells(atackedCell, room) {
 		let hundido = false
 		let touched = false
@@ -573,7 +586,6 @@ export default function Juego() {
 				}
 			}
 		}
-		console.log(prevShipsLost)
 		setShipsLost(prevShipsLost)
 		setCells(prevCells)
 		socket.emit('touched/notTouched', { from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip })
@@ -581,12 +593,12 @@ export default function Juego() {
 
 	function checkHundido(posicionBarco) {
 		let barcoHundido = false
-		if (posicionBarco.typeOfShip == 1) {
+		if (posicionBarco.typeOfShip == 2) {
 			if (posicionBarco.timesTouched == 2) {
 				posicionBarco.hundido = true
 				barcoHundido = true
 			}
-		} else if (posicionBarco.typeOfShip == 2 || posicionBarco.typeOfShip == 3) {
+		} else if (posicionBarco.typeOfShip == 3 || posicionBarco.typeOfShip == 3.1) {
 			if (posicionBarco.timesTouched == 3) {
 				posicionBarco.hundido = true
 				barcoHundido = true
@@ -751,7 +763,7 @@ export default function Juego() {
 						<aside className="game-aside left-aside">
 							<div className="info-card">
 								<div className="avatar-wrapper aside-avatar">
-									<img src={photo || "/default-avatar.png"} alt="avatar" className="avatar" />
+									<img src={photo} alt="avatar" className="avatar" />
 								</div>
 								<div className="player-meta">
 									<div className="player-name">{name || "Tú"}</div>
@@ -864,8 +876,8 @@ export default function Juego() {
 												<div key={index} id={c.posicion} className={`cell ${isSelected ? "cell-selected" : ""} ${hasShip ? "cell-ship" : ""}`}>
 													<span className="cell-content">
 														{c.touched == null ? c.posicion
-															: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
-																: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+														: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+														: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
 													</span>
 												</div>
 											);
@@ -875,30 +887,30 @@ export default function Juego() {
 
 								<section className="board-section">
 									{turno ?
-										<h2 className="no-turn"> Rival</h2>
-										: <h2 className="this-turn">Rival</h2>}
+										<h2 className="no-turn"> {friendName}</h2>
+										: <h2 className="this-turn">{friendName}</h2>}
 									<div className="board enemy-board">
 										{cellsEnemy.map((c, index) => (
-											<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
+											<button onClick={() => socket.emit('atack', { celda: c.posicion, from: idLoggued, to: idPlayer, room: room })} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
 												{c.touched == null ? c.posicion
-													: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
-														: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+												: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+												: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
 											</button>
 										))}
 									</div>
 								</section>
-
-
 							</div>
 						)}
 					</main>
-
 					{!duelMode && (
 						<aside className="game-aside right-aside">
 							<div className="info-card">
+								<div className="avatar-wrapper aside-avatar">
+									<img src={friendPhoto} alt="avatar" className="avatar" />
+								</div>
 								<div className="player-meta">
 									<div className="player-name">{friendName || "Rival"}</div>
-									<div className="player-medals">🎖️ {shipsLost.length}</div>
+									<div className="player-medals">🎖️ {friendMedals}</div>
 								</div>
 							</div>
 						</aside>

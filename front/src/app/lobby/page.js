@@ -74,8 +74,7 @@ export default function Lobby() {
             if (data.rechazar == false && data.answer == false) {
                 setNameInvitation(data.name)
                 setPlayInvitation(true)
-                let fromId = data.from
-                setFromId(fromId)
+                setFromId(data.from)
             } else if (data.rechazar == true) {
                 setNameInvitation(data.name)
                 let fromId = data.from
@@ -241,9 +240,9 @@ export default function Lobby() {
 
     function invitar(idFriend) {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
-        setShowInconveniente(true)
         setInconveniente("Invitacion enviada")
         setBueno(true)
+        setShowInconveniente(true)
     }
 
     async function editProfile() {
@@ -480,7 +479,6 @@ export default function Lobby() {
                         </div>
                     </div>
                 )
-
             )}
 
             {/*---------------------------*/}
@@ -491,7 +489,6 @@ export default function Lobby() {
                     <p className="texto-modal">
                         <strong>{nameInvitation}</strong> te invita a jugar una partida de <b>Batalla Naval</b>.
                     </p>
-
                     <div className="botones-modal">
                         <button
                             className="btn aceptar"
@@ -509,7 +506,6 @@ export default function Lobby() {
                             }}>
                             JUGAR
                         </button>
-
                         <button
                             className="btn rechazar"
                             onClick={() => {
@@ -561,7 +557,6 @@ export default function Lobby() {
             {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
             <div className="lobby">
                 <div className="overlay" />
-
                 <div className="lobby-box">
                     <div className="box-grid">
                         <div className="left-col">
@@ -578,10 +573,8 @@ export default function Lobby() {
                                     </div>
                                 </div>
                             </div>
-
                             <div className="friends">
                                 <h3>👥 Amigos</h3>
-
                                 <div className="header-icons">
                                     <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}> + </div>
                                     <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}> 🕭 </div>
@@ -604,11 +597,8 @@ export default function Lobby() {
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
                             </div>
                         </div>
-
                         <div className="right-col">
                             
-
-
                             <div className="panel-center">
                                 {showFriendProfile ? (
                                     <div className="friend-panel" role="dialog" aria-modal="true">
@@ -632,7 +622,6 @@ export default function Lobby() {
                                                         <p><strong>{name}:</strong> {record.filter(r => r.name === name).length} victorias</p>
                                                         <p><strong>{nameFriend}:</strong> {record.filter(r => r.name === nameFriend).length} victorias</p>
                                                     </div>
-
                                                     <div className="table">
                                                         <table>
                                                             <thead>
@@ -672,7 +661,6 @@ export default function Lobby() {
                                             className="welcome-image"
                                         />
                                         <h2 className="welcome-message">¡Bienvenido {name}!</h2>
-
                                     </div>
                                 )}
                             </div>
