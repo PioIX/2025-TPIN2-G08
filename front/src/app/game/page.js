@@ -432,26 +432,40 @@ export default function Juego() {
 		array.push(shipSelected)
 		setAlreadyPlacedShips(array)
 		setShipSelected(0)
-		console.log(cells)
 	}
 
 	function confirmPositionVertical() {
+		let letras = ["A","B","C","D","E","F","G","H","I","J"];
+		let prevCells = [...cells];
 		let cantidadDeCasillas = 0
-		let prevCells = [...cells]
-		for (let i = 0; i < prevCells.length; i++){
-			if(prevCells[i].posicion == clickedCells[0]){
+		for (let i = 0; i < prevCells.length; i++) {
+    		if (prevCells[i].posicion == clickedCells[0]) {
 				prevCells[i].ship = true
 				prevCells[i].typeOfShip = shipSelected
 				prevCells[i].timesTouched = 0
 				prevCells[i].hundido = false
-				for(let j = 0; j < shipSelected; j++){
-					cantidadDeCasillas += 10
-					prevCells[i + cantidadDeCasillas].ship = true
-					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
-					prevCells[i + cantidadDeCasillas].timesTouched = 0
-					prevCells[i + cantidadDeCasillas].hundido = false
-				}
-			}
+        		let letra1 = clickedCells[0].slice(0, 1);
+        		let letra2 = clickedCells[1].slice(0, 1);
+        		let index1 = letras.indexOf(letra1);
+        		let index2 = letras.indexOf(letra2);
+        		if (index2 > index1) {
+            		for(let k = 0; k < shipSelected; k++){
+						cantidadDeCasillas += 10
+						prevCells[i + cantidadDeCasillas].ship = true
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i + cantidadDeCasillas].timesTouched = 0
+						prevCells[i + cantidadDeCasillas].hundido = false
+					}
+        		} else {
+           			for(let k = 0; k < shipSelected; k++){
+						cantidadDeCasillas += 10
+						prevCells[i - cantidadDeCasillas].ship = true
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i - cantidadDeCasillas].timesTouched = 0
+						prevCells[i - cantidadDeCasillas].hundido = false
+					}
+        		}
+    		}
 		}
 		setCells(prevCells)
 	}
@@ -459,21 +473,40 @@ export default function Juego() {
 	function confirmPositionHorizontal() {
 		let cantidadDeCasillas = 0
 		let prevCells = [...cells]
-		for(let i = 0; i< prevCells.length; i ++){
+		let numeroPrimerCelda
+		let numeroSegundaCelda
+		for(let i = 0; i < prevCells.length; i ++){
 			if(prevCells[i].posicion == clickedCells[0]){
+				numeroPrimerCelda = parseInt(clickedCells[0].slice(1, 2))
+				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
 				prevCells[i].ship = true
 				prevCells[i].typeOfShip = shipSelected
 				prevCells[i].timesTouched = 0
 				prevCells[i].hundido = false
-				for(let j = 0; j< shipSelected; j++){
-					cantidadDeCasillas += 1
-					prevCells[i + cantidadDeCasillas].ship = true
-					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
-					prevCells[i + cantidadDeCasillas].timesTouched = 0
-					prevCells[i + cantidadDeCasillas].hundido = false
+				for(let j = 0; j < 9; j++){
+					if(numeroPrimerCelda == j){
+						if(numeroSegundaCelda < j){
+							for(let j = 0; j < shipSelected; j++){
+								cantidadDeCasillas += 1
+								prevCells[i - cantidadDeCasillas].ship = true
+								prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
+								prevCells[i - cantidadDeCasillas].timesTouched = 0
+								prevCells[i - cantidadDeCasillas].hundido = false
+							}
+						} else {
+							for(let j = 0; j < shipSelected; j++){
+								cantidadDeCasillas += 1
+								prevCells[i + cantidadDeCasillas].ship = true
+								prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+								prevCells[i + cantidadDeCasillas].timesTouched = 0
+								prevCells[i + cantidadDeCasillas].hundido = false
+							}
+						}
+					}
 				}
 			}
 		}
+		console.log(prevCells)
 		setCells(prevCells)
 	}
 
