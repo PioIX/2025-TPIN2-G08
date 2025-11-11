@@ -51,9 +51,9 @@ export default function Juego() {
 	const BARCO_HORIZONTAL = 3; // El barco esta puesto horizontalmente
 
 	// Barcos:
-	//Barco 2x1 = 1
-	//Barco 3x1 = 2
+	//Barco 2x1 = 2
 	//Barco 3x1 = 3
+	//Barco 3x1 = 3.1
 	//Barco 4x1 = 4
 	//Barco 5x1 = 5
 
@@ -272,7 +272,7 @@ export default function Juego() {
 		let respuesta = ERROR;
 		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
-		if(shipSelected == 1){
+		if(shipSelected == 2){
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 1 || numeroSegundaCelda == i - 1) {
@@ -280,7 +280,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 2 || shipSelected == 3){
+		} else if(shipSelected == 3 || shipSelected == 3.1){
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
@@ -330,7 +330,7 @@ export default function Juego() {
 		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
 		if ((numeroPrimerCelda == numeroSegundaCelda) && (letraPrimerCelda != letraSegundaCelda)) {
-			if (shipSelected == 1) {
+			if (shipSelected == 2) {
 				for (let i = 0; i < letras.length; i++) {
 					if (letras[i] == letraPrimerCelda) {
 						if (letraSegundaCelda == letras[i - 1] || letraSegundaCelda == letras[i + 1]) {
@@ -341,7 +341,7 @@ export default function Juego() {
 				if (respuesta != BARCO_VERTICAL) {
 					respuesta = VALIDAR_BARCO_HORIZONTAL;
 				}
-			} else if (shipSelected == 2 || shipSelected == 3) {
+			} else if (shipSelected == 3 || shipSelected == 3.1) {
 				for (let i = 0; i < letras.length; i++) {
 					if (letras[i] == letraPrimerCelda) {
 						if (letraSegundaCelda == letras[i - 2] || letraSegundaCelda == letras[i + 2]) {
@@ -417,11 +417,9 @@ export default function Juego() {
 		} else if (verticalHorizontal == "horizontal") {
 			confirmPositionHorizontal()
 		}
-		if (shipSelected == 1) {
-			setIsDisabled(true)
-		} else if (shipSelected == 2) {
+		if (shipSelected == 2) {
 			setIsDisabled2(true)
-		} else if (shipSelected == 3) {
+		} else if (shipSelected == 3 || shipSelected == 3.1) {
 			setIsDisabled3(true)
 		} else if (shipSelected == 4) {
 			setIsDisabled4(true)
@@ -440,29 +438,25 @@ export default function Juego() {
 		let cantidadDeCasillas = 0
 		for (let i = 0; i < prevCells.length; i++) {
     		if (prevCells[i].posicion == clickedCells[0]) {
-				prevCells[i].ship = true
-				prevCells[i].typeOfShip = shipSelected
-				prevCells[i].timesTouched = 0
-				prevCells[i].hundido = false
         		let letra1 = clickedCells[0].slice(0, 1);
         		let letra2 = clickedCells[1].slice(0, 1);
         		let index1 = letras.indexOf(letra1);
         		let index2 = letras.indexOf(letra2);
         		if (index2 > index1) {
             		for(let k = 0; k < shipSelected; k++){
-						cantidadDeCasillas += 10
 						prevCells[i + cantidadDeCasillas].ship = true
 						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
+						cantidadDeCasillas += 10
 					}
         		} else {
            			for(let k = 0; k < shipSelected; k++){
-						cantidadDeCasillas += 10
 						prevCells[i - cantidadDeCasillas].ship = true
 						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
+						cantidadDeCasillas += 10
 					}
         		}
     		}
@@ -475,40 +469,35 @@ export default function Juego() {
 		let prevCells = [...cells]
 		let numeroPrimerCelda
 		let numeroSegundaCelda
-		for(let i = 0; i < prevCells.length; i ++){
+		for (let i = 0; i < prevCells.length; i++){
 			if(prevCells[i].posicion == clickedCells[0]){
-				numeroPrimerCelda = parseInt(clickedCells[0].slice(1, 2))
+				numeroPrimerCelda = parseInt(prevCells[i].posicion.slice(1, 2))
 				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
-				prevCells[i].ship = true
-				prevCells[i].typeOfShip = shipSelected
-				prevCells[i].timesTouched = 0
-				prevCells[i].hundido = false
-				for(let j = 0; j < 9; j++){
-					if(numeroPrimerCelda == j){
-						if(numeroSegundaCelda < j){
-							for(let j = 0; j < shipSelected; j++){
-								cantidadDeCasillas += 1
-								prevCells[i - cantidadDeCasillas].ship = true
-								prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
-								prevCells[i - cantidadDeCasillas].timesTouched = 0
-								prevCells[i - cantidadDeCasillas].hundido = false
-							}
-						} else {
-							for(let j = 0; j < shipSelected; j++){
-								cantidadDeCasillas += 1
-								prevCells[i + cantidadDeCasillas].ship = true
-								prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
-								prevCells[i + cantidadDeCasillas].timesTouched = 0
-								prevCells[i + cantidadDeCasillas].hundido = false
-							}
-						}
+				console.log("Primer celda: ", numeroPrimerCelda)
+				console.log("Segunda celda: ", numeroSegundaCelda)
+				if(numeroPrimerCelda < numeroSegundaCelda){
+					for(let j = 0; j < shipSelected; j++){
+						prevCells[i + cantidadDeCasillas].ship = true
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i + cantidadDeCasillas].timesTouched = 0
+						prevCells[i + cantidadDeCasillas].hundido = false
+						console.log(prevCells[i])
+						cantidadDeCasillas += 1
+					}
+				} else {
+					for(let j = 0; j < shipSelected; j++){
+						prevCells[i - cantidadDeCasillas].ship = true
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i - cantidadDeCasillas].timesTouched = 0
+						prevCells[i - cantidadDeCasillas].hundido = false
+						cantidadDeCasillas += 1
 					}
 				}
 			}
 		}
-		console.log(prevCells)
 		setCells(prevCells)
 	}
+	
 
 	useEffect(() => {
 		if (alreadyPlacedShips.length == 2) {
@@ -753,9 +742,9 @@ export default function Juego() {
 							</div>
 						</div>
 						<div className="ship-images">
-							<button onClick={() => { setShipSelected(1); setClickedCells([]); setPosible(false) }} disabled={isDisabled}>
+							<button onClick={() => { setShipSelected(2); setClickedCells([]); setPosible(false) }} disabled={isDisabled2}>
 								<img src="/Barco 2x1.png" alt="Barco 2x1"
-									className={`ship-image2x1 ${shipSelected == 1 ? "ship-image-selected" : ""}`} />
+									className={`ship-image2x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`} />
 							</button>
 							<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4}>
 								<img src="/Barco 4x1.png" alt="Barco 4x1"
