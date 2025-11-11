@@ -606,7 +606,7 @@ export default function Lobby() {
                         </div>
 
                         <div className="right-col">
-                            <div className="title-right">BATALLA NAVAL</div>
+                            
 
 
                             <div className="panel-center">
@@ -667,7 +667,7 @@ export default function Lobby() {
                                 ) : (
                                     <div className="friend-panel welcome">
                                         <img
-                                            src="https://image.tmdb.org/t/p/original/4ysbFXKIYWqhvkxH8BCUMrDp3En.jpg"
+                                            src="/LogoBN.svg"
                                             alt="Bienvenido"
                                             className="welcome-image"
                                         />

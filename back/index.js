@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-		io.to(req.session.room).emit('checkRoom', { room: req.session.room});
+		io.to(req.session.room).emit('checkRoom', { room: req.session.room });
 	});
 
 	socket.on('disconnect', () => {
@@ -132,15 +132,15 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on('startMatch', data => {
-		let firstTurn 
+		let firstTurn
 		let random = Math.random()
-		if(random < 0.5){
+		if (random < 0.5) {
 			firstTurn = data.idPlayer1
 		} else {
 			firstTurn = data.idPlayer2
 		}
 		console.log(firstTurn)
-		io.to(data.room).emit('firstTurn', {firstTurn: firstTurn})
+		io.to(data.room).emit('firstTurn', { firstTurn: firstTurn })
 	})
 })
 /*
@@ -187,11 +187,16 @@ app.post('/newUser', async function (req, res) {
 		if (!req.body.photo || esURLValida(req.body.photo) == false) {
 			req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 		}
-		if (!await realizarQuery(`SELECT email FROM Users WHERE email = '${req.body.email}'`)) {
+
+		const result = await realizarQuery(`SELECT email FROM Users WHERE email = '${req.body.email}'`);
+		const rows = Array.isArray(result) ? result : result.rows;
+
+		if (!rows || rows.length === 0) {
 			await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
 			('${req.body.photo}', '${req.body.name}', '${req.body.email}', '${req.body.password}')`)
 			res.send({ msg: 1, error: false })
-		}else{
+		}
+		else {
 			res.send({ msg: -1, error: false })
 		}
 

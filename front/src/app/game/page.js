@@ -49,6 +49,7 @@ export default function Juego() {
 	const VALIDAR_BARCO_HORIZONTAL = 1; // El barco no esta puesto verticalmente por lo que hay que verificar que sea horizontal
 	const BARCO_VERTICAL = 2; // El barco esta puesto verticalmente
 	const BARCO_HORIZONTAL = 3; // El barco esta puesto horizontalmente
+	const duelMode = (!positionsShips && ready && otherReady); // cuando ambos ya pusieron barcos
 
 	// Barcos:
 	//Barco 2x1 = 2
@@ -89,8 +90,12 @@ export default function Juego() {
 			guardoNum = i.toString();
 			posicionNum = guardoNum.slice(guardoNum.length - 1);
 			posicion = posicionLetra + posicionNum;
-			myCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null});
-			enemyCells.push({ posicion: posicion, ship: false, typeOfShip: null, touched: null})
+			myCells.push({
+				posicion: posicion, ship: false, typeOfShip: null, touched: null, shipIndex: null, shipLength: 0, shipOrientation: null
+			});
+			enemyCells.push({
+				posicion: posicion, ship: false, typeOfShip: null, touched: null, shipIndex: null, shipLength: 0, shipOrientation: null
+			})
 		}
 		setCells(myCells);
 		setCellsEnemy(enemyCells)
@@ -121,7 +126,7 @@ export default function Juego() {
 
 		socket.on('firstTurn', data => {
 			console.log(data)
-			if(data.firstTurn == idLoggued){
+			if (data.firstTurn == idLoggued) {
 				console.log("Mi turno")
 				setTurno(true)
 			}
@@ -134,30 +139,30 @@ export default function Juego() {
 		})
 
 		socket.on('atackBack', data => {
-			if(data.to == idLoggued){
+			if (data.to == idLoggued) {
 				atackedCells(data.celda, data.room)
 			}
 		})
 
 		socket.on('answerAtack', async data => {
-			if(data.to == idLoggued){
+			if (data.to == idLoggued) {
 				console.log(data)
 				let prevCells = [...cellsEnemy]
 				let prevShipsSunk = [...shipsSunk]
-				for(let i = 0; i < prevCells.length; i++){
-					if(prevCells[i].posicion == data.cellsAtacked){
-						if(data.touched){
+				for (let i = 0; i < prevCells.length; i++) {
+					if (prevCells[i].posicion == data.cellsAtacked) {
+						if (data.touched) {
 							prevCells[i].touched = true
 							prevCells[i].typeOfShip = data.typeOfShip
 							prevCells[i].ship = true
-							if(data.hundido){
-								for(let j = 0; j < prevCells.length; j++){
-									if(prevCells[j].typeOfShip == data.typeOfShip){
+							if (data.hundido) {
+								for (let j = 0; j < prevCells.length; j++) {
+									if (prevCells[j].typeOfShip == data.typeOfShip) {
 										prevCells[j].hundido = true
 									}
 								}
 								prevShipsSunk.push(data.typeOfShip)
-								if(prevShipsSunk.length == 2){
+								if (prevShipsSunk.length == 2) {
 									setWin(true)
 									await insertGame(idLoggued, idPlayer)
 								}
@@ -187,21 +192,21 @@ export default function Juego() {
 				setRoom("G" + numIdLoggued + numIdPlayer);
 			} else {
 				room = "G" + numIdPlayer + numIdLoggued
-				socket.emit("joinRoom", { room: room});
+				socket.emit("joinRoom", { room: room });
 				setRoom("G" + numIdPlayer + numIdLoggued);
 			}
 		}
 	}, [firstRender]);
 
 	useEffect(() => {
-		if(ready && otherReady){
+		if (ready && otherReady) {
 			console.log("Ambos listos")
-			if(idLoggued < idPlayer){
-				socket.emit('startMatch', {room: room, idPlayer1: idLoggued, idPlayer2: idPlayer})
+			if (idLoggued < idPlayer) {
+				socket.emit('startMatch', { room: room, idPlayer1: idLoggued, idPlayer2: idPlayer })
 			}
 		}
 	}, [ready, otherReady])
-	
+
 	useEffect(() => {
 		let respuestaValidaciones;
 		let letra;
@@ -257,7 +262,7 @@ export default function Juego() {
 			}
 		}
 	}, [clickedCells]);
-	
+
 	function changePosition(celda) {
 		if (shipSelected > 0) {
 			setClickedCells((prev) => [...prev, celda]);
@@ -272,7 +277,7 @@ export default function Juego() {
 		let respuesta = ERROR;
 		letraSegundaCelda = String(letraSegundaCelda).toUpperCase();
 		letraPrimerCelda = String(letraPrimerCelda).toUpperCase();
-		if(shipSelected == 2){
+		if (shipSelected == 2) {
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 1 || numeroSegundaCelda == i - 1) {
@@ -280,7 +285,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 3 || shipSelected == 3.1){
+		} else if (shipSelected == 3 || shipSelected == 3.1) {
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 2 || numeroSegundaCelda == i - 2) {
@@ -288,7 +293,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 4){
+		} else if (shipSelected == 4) {
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 3 || numeroSegundaCelda == i - 3) {
@@ -296,7 +301,7 @@ export default function Juego() {
 					}
 				}
 			}
-		} else if(shipSelected == 5){
+		} else if (shipSelected == 5) {
 			for (let i = 0; i <= 9; i++) {
 				if (i == numeroPrimerCelda) {
 					if (numeroSegundaCelda == i + 4 || numeroSegundaCelda == i - 4) {
@@ -433,33 +438,39 @@ export default function Juego() {
 	}
 
 	function confirmPositionVertical() {
-		let letras = ["A","B","C","D","E","F","G","H","I","J"];
+		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 		let prevCells = [...cells];
 		let cantidadDeCasillas = 0
 		for (let i = 0; i < prevCells.length; i++) {
-    		if (prevCells[i].posicion == clickedCells[0]) {
-        		let letra1 = clickedCells[0].slice(0, 1);
-        		let letra2 = clickedCells[1].slice(0, 1);
-        		let index1 = letras.indexOf(letra1);
-        		let index2 = letras.indexOf(letra2);
-        		if (index2 > index1) {
-            		for(let k = 0; k < shipSelected; k++){
+			if (prevCells[i].posicion == clickedCells[0]) {
+				let letra1 = clickedCells[0].slice(0, 1);
+				let letra2 = clickedCells[1].slice(0, 1);
+				let index1 = letras.indexOf(letra1);
+				let index2 = letras.indexOf(letra2);
+				if (index2 > index1) {
+					for (let k = 0; k < shipSelected; k++) {
 						prevCells[i + cantidadDeCasillas].ship = true
 						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
+						prevCells[i + cantidadDeCasillas].shipIndex = k;
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i + cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
-        		} else {
-           			for(let k = 0; k < shipSelected; k++){
+				} else {
+					for (let k = 0; k < shipSelected; k++) {
 						prevCells[i - cantidadDeCasillas].ship = true
 						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
+						prevCells[i - cantidadDeCasillas].shipIndex = k;
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i - cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
-        		}
-    		}
+				}
+			}
 		}
 		setCells(prevCells)
 	}
@@ -469,27 +480,33 @@ export default function Juego() {
 		let prevCells = [...cells]
 		let numeroPrimerCelda
 		let numeroSegundaCelda
-		for (let i = 0; i < prevCells.length; i++){
-			if(prevCells[i].posicion == clickedCells[0]){
+		for (let i = 0; i < prevCells.length; i++) {
+			if (prevCells[i].posicion == clickedCells[0]) {
 				numeroPrimerCelda = parseInt(prevCells[i].posicion.slice(1, 2))
 				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
 				console.log("Primer celda: ", numeroPrimerCelda)
 				console.log("Segunda celda: ", numeroSegundaCelda)
-				if(numeroPrimerCelda < numeroSegundaCelda){
-					for(let j = 0; j < shipSelected; j++){
+				if (numeroPrimerCelda < numeroSegundaCelda) {
+					for (let j = 0; j < shipSelected; j++) {
 						prevCells[i + cantidadDeCasillas].ship = true
 						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
 						console.log(prevCells[i])
+						prevCells[i + cantidadDeCasillas].shipIndex = j;
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i + cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
 				} else {
-					for(let j = 0; j < shipSelected; j++){
+					for (let j = 0; j < shipSelected; j++) {
 						prevCells[i - cantidadDeCasillas].ship = true
 						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
+						prevCells[i - cantidadDeCasillas].shipIndex = j;
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i - cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
 				}
@@ -497,7 +514,7 @@ export default function Juego() {
 		}
 		setCells(prevCells)
 	}
-	
+
 
 	useEffect(() => {
 		if (alreadyPlacedShips.length == 2) {
@@ -521,30 +538,30 @@ export default function Juego() {
 		return respuesta
 	}
 
-	function atack(posicionAtacar){
+	function atack(posicionAtacar) {
 		console.log("Ataque")
-		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room})
+		socket.emit('atack', { celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room })
 	}
 
-	function atackedCells(atackedCell, room){
+	function atackedCells(atackedCell, room) {
 		let hundido = false
 		let touched = false
 		let typeOfShip = 0
-		let prevCells =[...cells]
+		let prevCells = [...cells]
 		let prevShipsLost = [...shipsLost]
-		for(let i = 0; i < prevCells.length; i++){
-			if(prevCells[i].posicion == atackedCell){
-				if(prevCells[i].ship == true){
+		for (let i = 0; i < prevCells.length; i++) {
+			if (prevCells[i].posicion == atackedCell) {
+				if (prevCells[i].ship == true) {
 					prevCells[i].touched = true
-					for(let j = 0; j < prevCells.length; j++){
-						if(prevCells[i].typeOfShip == prevCells[j].typeOfShip){
+					for (let j = 0; j < prevCells.length; j++) {
+						if (prevCells[i].typeOfShip == prevCells[j].typeOfShip) {
 							prevCells[j].timesTouched += 1
 						}
 					}
 					hundido = checkHundido(prevCells[i])
-					if(hundido){
+					if (hundido) {
 						prevShipsLost.push(prevCells[i].typeOfShip)
-						if(prevShipsLost.length == 2){
+						if (prevShipsLost.length == 2) {
 							setLose(true)
 						}
 					}
@@ -554,33 +571,33 @@ export default function Juego() {
 					prevCells[i].touched = false
 					setTurno(true)
 				}
-			} 
+			}
 		}
 		console.log(prevShipsLost)
 		setShipsLost(prevShipsLost)
 		setCells(prevCells)
-		socket.emit('touched/notTouched', {from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip})
+		socket.emit('touched/notTouched', { from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip })
 	}
 
-	function checkHundido(posicionBarco){
+	function checkHundido(posicionBarco) {
 		let barcoHundido = false
-		if(posicionBarco.typeOfShip == 1){
-			if(posicionBarco.timesTouched == 2){
+		if (posicionBarco.typeOfShip == 1) {
+			if (posicionBarco.timesTouched == 2) {
 				posicionBarco.hundido = true
 				barcoHundido = true
 			}
-		} else if(posicionBarco.typeOfShip == 2 || posicionBarco.typeOfShip == 3){
-			if(posicionBarco.timesTouched == 3){
+		} else if (posicionBarco.typeOfShip == 2 || posicionBarco.typeOfShip == 3) {
+			if (posicionBarco.timesTouched == 3) {
 				posicionBarco.hundido = true
 				barcoHundido = true
 			}
-		} else if(posicionBarco.typeOfShip == 4){
-			if(posicionBarco.timesTouched == 4){
+		} else if (posicionBarco.typeOfShip == 4) {
+			if (posicionBarco.timesTouched == 4) {
 				posicionBarco.hundido = true
 				barcoHundido = true
 			}
-		} else if(posicionBarco.typeOfShip == 5){
-			if(posicionBarco.timesTouched == 5){
+		} else if (posicionBarco.typeOfShip == 5) {
+			if (posicionBarco.timesTouched == 5) {
 				posicionBarco.hundido = true
 				barcoHundido = true
 			}
@@ -723,91 +740,170 @@ export default function Juego() {
 			{/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
 
 			<div className="game-container">
-				{!yaSeRindio && <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button> }
-				
+				{!yaSeRindio && <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>}
+
 				<div className="top-bar">
 					<h1 className="game-title">BATALLA NAVAL</h1>
 				</div>
 
-				{positionsShips == true && ready == false ? (
-					<div className="boards">
-						<div className="board-section">
-							<h2>Tu tablero</h2>
-							<div className="board player-board">
-								{cells.map((u, index) => (
-									<button key={index} onClick={() => changePosition(u.posicion)} id={u.posicion} className={"cell"}>
-										{u.posicion}
-									</button>
-								))}
+				<div className={`game-main ${duelMode ? "duel-mode" : ""}`}>
+					{!duelMode && (
+						<aside className="game-aside left-aside">
+							<div className="info-card">
+								<div className="avatar-wrapper aside-avatar">
+									<img src={photo || "/default-avatar.png"} alt="avatar" className="avatar" />
+								</div>
+								<div className="player-meta">
+									<div className="player-name">{name || "Tú"}</div>
+									<div className="player-medals">🎖️ {medals ?? 0}</div>
+								</div>
 							</div>
-						</div>
-						<div className="ship-images">
-							<button onClick={() => { setShipSelected(2); setClickedCells([]); setPosible(false) }} disabled={isDisabled2}>
-								<img src="/Barco 2x1.png" alt="Barco 2x1"
-									className={`ship-image2x1 ${shipSelected == 2 ? "ship-image-selected" : ""}`} />
-							</button>
-							<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4}>
-								<img src="/Barco 4x1.png" alt="Barco 4x1"
-									className={`ship-image4x1 ${shipSelected == 4 ? "ship-image-selected" : ""}`} />
-							</button>
-						</div>
-						<div className="play-button-container">
-							{posible ?
-								<button onClick={setShips}> Listo </button>
-								: alreadyPlacedShips.length == 1 && clickedCells.length == 2 &&
-								<button onClick={() => {
-									setShips()
-									socket.emit('match', { ready: true, to: room, from: idLoggued })
-									setReady(true)
-								}}> Empezar partida </button>
-							}
-						</div>
-					</div>
-				) : positionsShips == false && ready == true && otherReady == false ? (
-					<div>
-						<h2>Esperando al otro jugador...</h2>
-					</div>
-				) : positionsShips == false && ready == true && otherReady == true && (
-					<div className="boards">
-						<div className="board-section">
-							<h2>Tu tablero</h2>
-							<div className="board player-board">{
-								cells.map((c, index) => (
-									<div key={index} id={c.posicion} className={"cell"}>
-										{c.touched == null ?
-											c.posicion
-										: c.touched == false && c.touched != null ?
-											<img src="https://em-content.zobj.net/source/joypixels/257/water-wave_1f30a.png"></img>
-										: c.touched == true && c.touched != null &&
-											<img src="https://illustoon.com/photo/1975.png"></img>
-										}
+
+							<div className="ships-select">
+								<h4>Colocar barcos</h4>
+								<div className="ship-images-col">
+									<button onClick={() => { setShipSelected(2); setClickedCells([]); setPosible(false) }} disabled={isDisabled2} className={`ship-btn ${shipSelected == 2 ? 'active' : ''}`}>
+										<img src="/Barco 2x1.png" alt="2" />
+									</button>
+									<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4} className={`ship-btn ${shipSelected == 4 ? 'active' : ''}`}>
+										<img src="/Barco 4x1.png" alt="4" />
+									</button>
+								</div>
+
+								<div className="play-button-container aside-play">
+									{posible ? (
+										<button className="btn jugar" onClick={setShips}>Listo</button>
+									) : (alreadyPlacedShips.length == 1 && clickedCells.length == 2) ? (
+										<button className="btn jugar" onClick={() => { setShips(); socket.emit('match', { ready: true, to: room, from: idLoggued }); setReady(true); }}>Empezar</button>
+									) : (
+										<button className="btn" disabled>Selecciona casillas</button>
+									)}
+								</div>
+							</div>
+						</aside>
+					)}
+					<main className="game-panel">
+						{positionsShips == true && ready == false ? (
+							<div className="boards center-boards">
+								<section className="board-section">
+									<div className="board player-board">
+										{cells.map((u, index) => {
+											const isSelected = clickedCells.includes(u.posicion);
+											const hasShip = u.ship === true;
+											return (
+												<button
+													key={index}
+													onClick={() => changePosition(u.posicion)}
+													id={u.posicion}
+													className={`cell ${isSelected ? "cell-selected" : ""} ${hasShip ? "cell-ship" : ""}`}
+													aria-pressed={isSelected}
+												>
+													{u.posicion}
+												</button>
+											)
+										})}
 									</div>
-								))}
+								</section>
 							</div>
-						</div>
-						<div className="board-section">
-							<h2>Tablero enemigo</h2>
-							<div className="board enemy-board">{
-								cellsEnemy.map((c, index) => (
-									<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
-										{c.touched == null ?
-											c.posicion
-										: c.touched == false && c.touched != null ?
-											<img src="https://em-content.zobj.net/source/joypixels/257/water-wave_1f30a.png"></img>
-										: c.touched == true && c.touched != null &&
-											<img src="https://illustoon.com/photo/1975.png"></img>
-										}
-									</button>
-								))}
+						) : positionsShips == false && ready == true && otherReady == false ? (
+							<div className="message-panel">Esperando al otro jugador…</div>
+						) : positionsShips == false && ready == true && otherReady == true && (
+							<div className="boards duel-boards">
+								<section className="board-section">
+
+									{turno ?
+										<h2 className="this-turn"> {name}</h2>
+										: <h2 className="no-turn">{name}</h2>}
+
+									<div className="board player-board">
+										{(() => {
+											const ships = [];
+											cells.forEach((c, i) => {
+												if (c.ship && c.shipIndex === 0) {
+													ships.push({ startIndex: i, length: c.shipLength, orient: c.shipOrientation || "horizontal", type: c.typeOfShip });
+												}
+											});
+											return ships.map((s, si) => {
+												const row = Math.floor(s.startIndex / 10);
+												const col = s.startIndex % 10;
+												const imgName = `/Barco ${s.type}x1.png`;
+												const widthCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
+												const heightCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
+												const left = `calc(var(--board-padding, 12px) + ${col} * var(--cell-size) + ${col} * var(--gap, 6px))`;
+												const top = `calc(var(--board-padding, 12px) + ${row} * var(--cell-size) + ${row} * var(--gap, 6px))`;
+												return (
+													<div
+														key={"ship-" + si}
+														className="ship-overlay"
+														style={{
+															left,
+															top,
+															width: s.orient === "horizontal" ? widthCalc : "calc(var(--cell-size))",
+															height: s.orient === "horizontal" ? "calc(var(--cell-size))" : heightCalc,
+														}}
+														aria-hidden="true"
+													>
+														<img
+															src={imgName}
+															alt="barco"
+															className="ship-overlay-img"
+															style={{
+																transform: s.orient === "horizontal" ? "rotate(90deg)" : "none",
+																transformOrigin: "center center",
+															}}
+														/>
+													</div>
+												);
+											});
+										})()}
+
+										{cells.map((c, index) => {
+											const isSelected = clickedCells.includes(c.posicion);
+											const hasShip = c.ship === true;
+											return (
+												<div key={index} id={c.posicion} className={`cell ${isSelected ? "cell-selected" : ""} ${hasShip ? "cell-ship" : ""}`}>
+													<span className="cell-content">
+														{c.touched == null ? c.posicion
+															: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+																: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+													</span>
+												</div>
+											);
+										})}
+									</div>
+								</section>
+
+								<section className="board-section">
+									{turno ?
+										<h2 className="no-turn"> Rival</h2>
+										: <h2 className="this-turn">Rival</h2>}
+									<div className="board enemy-board">
+										{cellsEnemy.map((c, index) => (
+											<button onClick={() => atack(c.posicion)} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
+												{c.touched == null ? c.posicion
+													: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+														: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+											</button>
+										))}
+									</div>
+								</section>
+
+
 							</div>
-						</div>
-						{turno ?
-							<h3> Es tu turno, puedes atacar </h3>
-						: 
-							<h3>Turno del rival</h3>
-						}
-					</div>
-				)}
+						)}
+					</main>
+
+					{!duelMode && (
+						<aside className="game-aside right-aside">
+							<div className="info-card">
+								<div className="player-meta">
+									<div className="player-name">{friendName || "Rival"}</div>
+									<div className="player-medals">🎖️ {shipsLost.length}</div>
+								</div>
+							</div>
+						</aside>
+					)}
+				</div>
 			</div>
 		</>
 	);
