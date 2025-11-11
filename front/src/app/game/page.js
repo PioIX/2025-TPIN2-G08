@@ -36,6 +36,11 @@ export default function Juego() {
 	const [turno, setTurno] = useState(false)
 	const [cellsEnemy, setCellsEnemy] = useState([])
 	const [yaSeRindio, setYaSeRindio] = useState(false)
+	const [shipsSunk, setShipsSunk] = useState([]);
+	const [shipsLost, setShipsLost] = useState([]);
+	const [win, setWin] = useState(false)
+	const [lose, setLose] = useState(false)
+
 
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
@@ -134,19 +139,38 @@ export default function Juego() {
 			}
 		})
 
-		socket.on('answerAtack', data => {
+		socket.on('answerAtack', async data => {
 			if(data.to == idLoggued){
+				console.log(data)
 				let prevCells = [...cellsEnemy]
+				let prevShipsSunk = [...shipsSunk]
 				for(let i = 0; i < prevCells.length; i++){
 					if(prevCells[i].posicion == data.cellsAtacked){
 						if(data.touched){
 							prevCells[i].touched = true
+							prevCells[i].typeOfShip = data.typeOfShip
+							prevCells[i].ship = true
+							if(data.hundido){
+								for(let j = 0; j < prevCells.length; j++){
+									if(prevCells[j].typeOfShip == data.typeOfShip){
+										prevCells[j].hundido = true
+									}
+								}
+								prevShipsSunk.push(data.typeOfShip)
+								if(prevShipsSunk.length == 2){
+									setWin(true)
+									await insertGame(idLoggued, idPlayer)
+								}
+							}
 						} else {
 							prevCells[i].touched = false
-							setTurno(true)
+							setTurno(false)
 						}
 					}
 				}
+				console.log(prevCells)
+				console.log(prevShipsSunk)
+				setShipsSunk(prevShipsSunk)
 				setCellsEnemy(prevCells)
 			}
 		})
@@ -374,13 +398,13 @@ export default function Juego() {
 		}
 	}
 
-	async function insertGame() {
+	async function insertGame(idWinner, idLoser) {
 		let result = await fetch("http://localhost:4000/insertGame", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ date: new Date(), idWinner: idPlayer, idPlayer: idLoggued }),
+			body: JSON.stringify({ date: new Date(), idWinner: idWinner, idLoser: idLoser }),
 		});
 		await result.json();
 	}
@@ -404,11 +428,11 @@ export default function Juego() {
 		} else {
 			setIsDisabled5(true)
 		}
-		setCells(cells)
 		let array = [...alreadyPlacedShips]
 		array.push(shipSelected)
 		setAlreadyPlacedShips(array)
 		setShipSelected(0)
+		console.log(cells)
 	}
 
 	function confirmPositionVertical() {
@@ -418,10 +442,14 @@ export default function Juego() {
 			if(prevCells[i].posicion == clickedCells[0]){
 				prevCells[i].ship = true
 				prevCells[i].typeOfShip = shipSelected
+				prevCells[i].timesTouched = 0
+				prevCells[i].hundido = false
 				for(let j = 0; j < shipSelected; j++){
 					cantidadDeCasillas += 10
 					prevCells[i + cantidadDeCasillas].ship = true
 					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+					prevCells[i + cantidadDeCasillas].timesTouched = 0
+					prevCells[i + cantidadDeCasillas].hundido = false
 				}
 			}
 		}
@@ -435,10 +463,14 @@ export default function Juego() {
 			if(prevCells[i].posicion == clickedCells[0]){
 				prevCells[i].ship = true
 				prevCells[i].typeOfShip = shipSelected
+				prevCells[i].timesTouched = 0
+				prevCells[i].hundido = false
 				for(let j = 0; j< shipSelected; j++){
 					cantidadDeCasillas += 1
 					prevCells[i + cantidadDeCasillas].ship = true
 					prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+					prevCells[i + cantidadDeCasillas].timesTouched = 0
+					prevCells[i + cantidadDeCasillas].hundido = false
 				}
 			}
 		}
@@ -470,24 +502,68 @@ export default function Juego() {
 	function atack(posicionAtacar){
 		console.log("Ataque")
 		socket.emit('atack', {celda: posicionAtacar, from: idLoggued, to: idPlayer, room: room})
-		setTurno(false)
 	}
 
 	function atackedCells(atackedCell, room){
+		let hundido = false
 		let touched = false
+		let typeOfShip = 0
 		let prevCells =[...cells]
+		let prevShipsLost = [...shipsLost]
 		for(let i = 0; i < prevCells.length; i++){
 			if(prevCells[i].posicion == atackedCell){
 				if(prevCells[i].ship == true){
 					prevCells[i].touched = true
+					for(let j = 0; j < prevCells.length; j++){
+						if(prevCells[i].typeOfShip == prevCells[j].typeOfShip){
+							prevCells[j].timesTouched += 1
+						}
+					}
+					hundido = checkHundido(prevCells[i])
+					if(hundido){
+						prevShipsLost.push(prevCells[i].typeOfShip)
+						if(prevShipsLost.length == 2){
+							setLose(true)
+						}
+					}
 					touched = true
+					typeOfShip = prevCells[i].typeOfShip
 				} else {
 					prevCells[i].touched = false
+					setTurno(true)
 				}
 			} 
 		}
+		console.log(prevShipsLost)
+		setShipsLost(prevShipsLost)
 		setCells(prevCells)
-		socket.emit('touched/notTouched', {from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell})
+		socket.emit('touched/notTouched', {from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip})
+	}
+
+	function checkHundido(posicionBarco){
+		let barcoHundido = false
+		if(posicionBarco.typeOfShip == 1){
+			if(posicionBarco.timesTouched == 2){
+				posicionBarco.hundido = true
+				barcoHundido = true
+			}
+		} else if(posicionBarco.typeOfShip == 2 || posicionBarco.typeOfShip == 3){
+			if(posicionBarco.timesTouched == 3){
+				posicionBarco.hundido = true
+				barcoHundido = true
+			}
+		} else if(posicionBarco.typeOfShip == 4){
+			if(posicionBarco.timesTouched == 4){
+				posicionBarco.hundido = true
+				barcoHundido = true
+			}
+		} else if(posicionBarco.typeOfShip == 5){
+			if(posicionBarco.timesTouched == 5){
+				posicionBarco.hundido = true
+				barcoHundido = true
+			}
+		}
+		return barcoHundido
 	}
 
 	return (
@@ -502,7 +578,7 @@ export default function Juego() {
 					<p>Perderás la partida actual</p>
 					<div className="popup-botones">
 						<button className="btn-si" onClick={async () => {
-							await insertGame();
+							await insertGame(idPlayer, idLoggued);
 							socket.emit("rendirse", { rendirse: true, room: room, name: name, to: idPlayer });
 							router.replace("/lobby");
 						}}>
@@ -517,20 +593,59 @@ export default function Juego() {
 
 			{/*---------------------------*/}
 
+			{win &&
+				<div className="popup-gave-up">
+					<div className="popup-gave-up-container">
+						<h2 className="gaveUp-popup-title">¡Victoria!</h2>
+						<div className="gaveUp-popup-medal-container">
+							<div className="gaveUp-medal">
+								<div className="gaveUp-medal-emoji">🎖️</div>
+							</div>
+							<div className="gaveUp-medal-count">+30 Medallas</div>
+						</div>
+						<div className="gaveUp-popup-buttons">
+							<button className="gaveUp-popup-button" onClick={() => router.replace("/lobby")}>
+								Volver al Lobby
+							</button>
+						</div>
+					</div>
+				</div>
+			}
+
+			{/*---------------------------*/}
+
+			{lose &&
+				<div className="popup-gave-up">
+					<div className="popup-gave-up-container">
+						<h2 className="gaveUp-popup-title">Derrota</h2>
+						<div className="gaveUp-popup-medal-container">
+							<div className="gaveUp-medal">
+								<div className="gaveUp-medal-emoji">🎖️</div>
+							</div>
+							<div className="gaveUp-medal-count">+30 Medallas</div>
+						</div>
+						<div className="gaveUp-popup-buttons">
+							<button className="gaveUp-popup-button" onClick={() => router.replace("/lobby")}>
+								Volver al Lobby
+							</button>
+						</div>
+					</div>
+				</div>
+			}
+
+			{/*---------------------------*/}
+
 			{heGaveUp && (
 				<div className="popup-gave-up">
 					<div className="popup-gave-up-container">
 						<h2 className="gaveUp-popup-title">¡Victoria!</h2>
 						<p className="gaveUp-popup-message">{friendName} se rindió, ¡ganaste la partida!</p>
-
 						<div className="gaveUp-popup-medal-container">
 							<div className="gaveUp-medal">
 								<div className="gaveUp-medal-emoji">🎖️</div>
-								
 							</div>
 							<div className="gaveUp-medal-count">+30 Medallas</div>
 						</div>
-
 						<div className="gaveUp-popup-buttons">
 							<button className="gaveUp-popup-button" onClick={() => router.replace("/lobby")}>
 								Volver al Lobby
