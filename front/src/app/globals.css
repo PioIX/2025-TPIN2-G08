@@ -198,6 +198,9 @@ img { display: block; max-width: 100%; height: auto; }
   padding-right: 40px;
 }
 
+.input-container input::-ms-reveal, .input-container input::-webkit-input-placeholder {
+  display: none;
+}
 .input-container span {
   position: absolute;
   right: 12px;
