@@ -237,7 +237,7 @@ export default function Juego() {
 						setShowInconveniente(true)
 					} else {
 						setVerticalHorizontal("horizontal")
-						if (alreadyPlacedShips.length == 1) {
+						if (alreadyPlacedShips.length == 4) {
 							setPosible(false)
 						} else {
 							setPosible(true)
@@ -245,7 +245,7 @@ export default function Juego() {
 					}
 				} else {
 					setVerticalHorizontal("vertical")
-					if (alreadyPlacedShips.length == 1) {
+					if (alreadyPlacedShips.length == 4) {
 						setPosible(false)
 					} else {
 						setPosible(true)
@@ -535,7 +535,7 @@ export default function Juego() {
 
 
 	useEffect(() => {
-		if (alreadyPlacedShips.length == 2) {
+		if (alreadyPlacedShips.length == 5) {
 			setPositionsShips(false)
 		}
 	}, [alreadyPlacedShips]);
@@ -779,13 +779,23 @@ export default function Juego() {
 									</button>
 									<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4} className={`ship-btn ${shipSelected == 4 ? 'active' : ''}`}>
 										<img src="/Barco 4x1.png" alt="4" />
+										</button>
+									<button onClick={() => { setShipSelected(3); setClickedCells([]); setPosible(false) }} disabled={isDisabled3} className={`ship-btn ${shipSelected == 3 ? 'active' : ''}`}>
+										<img src="/barco 3x1.png" alt="3" />
+									</button>
+									<button onClick={() => { setShipSelected(3.1); setClickedCells([]); setPosible(false) }} disabled={isDisabled32} className={`ship-btn ${shipSelected == 3.1 ? 'active' : ''}`}>
+										<img src="/barco 3x1.png" alt="3.1" />
+									</button>
+
+									<button onClick={() => { setShipSelected(5); setClickedCells([]); setPosible(false) }} disabled={isDisabled5} className={`ship-btn ${shipSelected == 5 ? 'active' : ''}`}>
+										<img src="/barco 5x1.png" alt="5" />
 									</button>
 								</div>
 
 								<div className="play-button-container aside-play">
 									{posible ? (
 										<button className="btn jugar" onClick={setShips}>Listo</button>
-									) : (alreadyPlacedShips.length == 1 && clickedCells.length == 2) ? (
+									) : (alreadyPlacedShips.length == 4 && clickedCells.length == 2) ? (
 										<button className="btn jugar" onClick={() => { setShips(); socket.emit('match', { ready: true, to: room, from: idLoggued }); setReady(true); }}>Empezar</button>
 									) : (
 										<button className="btn" disabled>Selecciona casillas</button>
