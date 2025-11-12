@@ -2958,41 +2958,136 @@ img {
   font-weight: 700;
   text-align: center;
 }
-
 /* ship selector en aside */
 .ship-images-col {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   justify-content: center;
   margin-top: 6px;
+  max-width: 200px;
 }
 
 .ship-btn {
-  background: transparent;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 calc(50% - 5px);
+  border: 2px solid transparent;
   border-radius: 8px;
-  padding: 6px;
-  border: 1px solid transparent;
+  background: transparent;
   cursor: pointer;
-  transition: all .15s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 5px;
 }
 
-.ship-btn img {
-  width: 100px;
-  height: auto;
-  display: block;
+.ship-btn:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.ship-btn:active {
+  transform: scale(0.98);
 }
 
 .ship-btn.active {
-  border-color: var(--accent);
-  box-shadow: 0 8px 24px rgba(63, 143, 255, 0.08);
-  transform: translateY(-4px);
+  border-color: #3182ce;
+  background-color: rgba(49, 130, 206, 0.08);
 }
 
+.ship-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ship-btn:disabled:hover {
+  background-color: transparent;
+}
+
+/* Orden específico */
+.ship-btn:nth-child(1) { order: 1; } /* barco 2 */
+.ship-btn:nth-child(2) { order: 3; } /* barco 4 */  
+.ship-btn:nth-child(3) { order: 2; } /* barco 3 */
+.ship-btn:nth-child(4) { order: 4; } /* barco 3.1 */
+
+/* Último barco (5) - acostado y ocupando toda la fila */
+.ship-btn:nth-child(5) { 
+  order: 5; 
+  flex: 0 0 100%;
+  width: 160px;
+  height: 80px; /* Cambiamos a 80px para que quepa imagen + texto */
+  flex-direction: column; /* COLUMNA igual que los demás */
+}
+
+.ship-btn img {
+  width: 50px;
+  height: auto;
+  display: block;
+  transition: transform 0.2s ease;
+  filter: brightness(0.9);
+}
+
+.ship-btn:hover img {
+  transform: scale(1.03);
+  filter: brightness(1);
+}
+
+.ship-btn.active img {
+  filter: brightness(1);
+  transform: scale(1.05);
+}
+
+/* Estilos para el texto */
+.ship-btn p {
+  margin: 0;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* Imagen especial para el barco acostado - ROTADO pero en columna */
+.ship-btn:nth-child(5) img {
+  width: 70px; /* Tamaño ajustado para que quepa */
+  height: auto;
+  transform: rotate(90deg); /* Rotado pero con texto abajo */
+}
+
+/* Mantener rotación en hover y active */
+.ship-btn:nth-child(5):hover img {
+  transform: rotate(90deg) scale(1.03);
+}
+
+.ship-btn:nth-child(5).active img {
+  transform: rotate(90deg) scale(1.05);
+}
+
+/* Para el último barco, el texto también va abajo (igual que los demás) */
+.ship-btn:nth-child(5) p {
+  margin-top: 4px;
+  margin-left: 0; /* Quitamos cualquier margen lateral */
+  margin-top: -10px;
+}
+
+/* Indicador sutil de selección */
+.ship-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: #3182ce;
+  border-radius: 50%;
+}
 /* play button styled */
 .aside-play .btn.jugar {
   background: linear-gradient(135deg, #1f6feb, #3f8fff);
-  color: #fff;
   padding: 10px;
   border-radius: 10px;
   font-weight: 700;

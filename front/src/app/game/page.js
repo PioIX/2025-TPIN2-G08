@@ -43,7 +43,6 @@ export default function Juego() {
 	const [win, setWin] = useState(false)
 	const [lose, setLose] = useState(false)
 
-
 	const ERROR = -3 // El usuario selecciono la misma casilla 2 veces
 	const ERROR2 = -2; // El usuario intento ubicar el barco diagonalmente
 	const ERROR3 = -1 // Intento poner un barco donde habia ya puesto otro
@@ -102,7 +101,13 @@ export default function Juego() {
 		setCells(myCells);
 		setCellsEnemy(enemyCells)
 	}
-
+function shipSelectedVerification(){
+	if(shipSelected == 3.1){
+		return 3
+	}else if (shipSelected){
+		return shipSelected
+	}
+}
 	useEffect(() => {
 		setId(localStorage.getItem("idLoggued"));
 		setIdPlayer(localStorage.getItem("idPlayer"));
@@ -469,24 +474,24 @@ export default function Juego() {
 				let index1 = letras.indexOf(letra1);
 				let index2 = letras.indexOf(letra2);
 				if (index2 > index1) {
-					for (let k = 0; k < shipSelected; k++) {
+					for (let k = 0; k < shipSelectedVerification(); k++) {
 						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelectedVerification()
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
 						prevCells[i + cantidadDeCasillas].shipIndex = k;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelectedVerification();
 						prevCells[i + cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
 				} else {
-					for (let k = 0; k < shipSelected; k++) {
+					for (let k = 0; k < shipSelectedVerification(); k++) {
 						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelectedVerification()
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
 						prevCells[i - cantidadDeCasillas].shipIndex = k;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelectedVerification();
 						prevCells[i - cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
@@ -506,24 +511,24 @@ export default function Juego() {
 				numeroPrimerCelda = parseInt(prevCells[i].posicion.slice(1, 2))
 				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
 				if (numeroPrimerCelda < numeroSegundaCelda) {
-					for (let j = 0; j < shipSelected; j++) {
+					for (let j = 0; j < shipSelectedVerification(); j++) {
 						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelectedVerification()
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
 						prevCells[i + cantidadDeCasillas].shipIndex = j;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelectedVerification();
 						prevCells[i + cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
 				} else {
-					for (let j = 0; j < shipSelected; j++) {
+					for (let j = 0; j < shipSelectedVerification(); j++) {
 						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelectedVerification()
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
 						prevCells[i - cantidadDeCasillas].shipIndex = j;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelected;
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelectedVerification();
 						prevCells[i - cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
@@ -776,19 +781,24 @@ export default function Juego() {
 								<div className="ship-images-col">
 									<button onClick={() => { setShipSelected(2); setClickedCells([]); setPosible(false) }} disabled={isDisabled2} className={`ship-btn ${shipSelected == 2 ? 'active' : ''}`}>
 										<img src="/Barco 2x1.png" alt="2" />
+										<p>2x1</p>
 									</button>
 									<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4} className={`ship-btn ${shipSelected == 4 ? 'active' : ''}`}>
 										<img src="/Barco 4x1.png" alt="4" />
+										<p>4x1</p>
 										</button>
 									<button onClick={() => { setShipSelected(3); setClickedCells([]); setPosible(false) }} disabled={isDisabled3} className={`ship-btn ${shipSelected == 3 ? 'active' : ''}`}>
 										<img src="/barco 3x1.png" alt="3" />
+										<p>3x1</p>
 									</button>
 									<button onClick={() => { setShipSelected(3.1); setClickedCells([]); setPosible(false) }} disabled={isDisabled32} className={`ship-btn ${shipSelected == 3.1 ? 'active' : ''}`}>
 										<img src="/barco 3x1.png" alt="3.1" />
+										<p>3x1</p>
 									</button>
 
 									<button onClick={() => { setShipSelected(5); setClickedCells([]); setPosible(false) }} disabled={isDisabled5} className={`ship-btn ${shipSelected == 5 ? 'active' : ''}`}>
 										<img src="/barco 5x1.png" alt="5" />
+										<p>5x1</p>
 									</button>
 								</div>
 
