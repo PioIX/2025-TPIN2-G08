@@ -1887,6 +1887,7 @@ img {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 2px;
+  margin-top: -25px;
 }
 
 .enemy-board {
@@ -1894,6 +1895,7 @@ img {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 2px;
+  margin-top: -25px;
 }
 
 .ship-images {
@@ -3184,13 +3186,28 @@ img {
 }
 
 .this-turn {
-  margin: 0 0 6px;
   color: #ff4b4b;
   font-weight: 700;
   font-size: 1500;
   animation: glowRed 0.5s ease-in-out infinite alternate;
+  margin-top: -25px;
+}
+.this-turn2 {
+  color: #2affaa;
+  margin-top: -25px;
+  animation: glowGreen 0.5s ease-in-out infinite alternate;
 }
 
+@keyframes glowGreen {
+  from {
+    color: #2affaa;
+    text-shadow: 0 0 6px #2affaa;
+  }
+  to {
+    color: #7affc8;
+    text-shadow: 0 0 14px #7affc8;
+  }
+}
 @keyframes glowRed {
   from {
     color: #ff4b4b;
@@ -3204,9 +3221,9 @@ img {
 }
 
 .no-turn {
-  margin: 0 0 6px;
   font-size: 1500;
   color: var(--gold);
+  margin-top: -25px;
 }
 
 /* estilo cuando marcás una casilla al colocar barcos */
@@ -3349,4 +3366,19 @@ img {
 
 .game-main.duel-mode .player-board .cell-selected {
   transform: none;
+}
+.ship-image-full {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.enemy-ship-overlay {
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.6; /* Reducimos la opacidad para que se vea más la explosión detrás */
+}
+
+.enemy-ship-overlay .ship-overlay-img {
+  filter: brightness(1.1) contrast(1.1); /* Aumentamos brillo y contraste */
+  mix-blend-mode: multiply; /* Esto ayuda a que se combine mejor con el fondo */
 }
