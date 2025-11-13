@@ -38,8 +38,8 @@ export default function Juego() {
 	const [turno, setTurno] = useState(false)
 	const [cellsEnemy, setCellsEnemy] = useState([])
 	const [yaSeRindio, setYaSeRindio] = useState(false)
-	const [shipsSunk, setShipsSunk] = useState([]);
-	const [shipsLost, setShipsLost] = useState([]);
+	const shipsSunk = []
+	const shipsLost = []
 	const [win, setWin] = useState(false)
 	const [lose, setLose] = useState(false)
 
@@ -151,10 +151,7 @@ function shipSelectedVerification(){
 
 		socket.on('answerAtack', async data => {
 			if (data.to == idLoggued) {
-				console.log("State barcos hundidos: ", shipsSunk)
-				console.log(data)
 				let prevCells = [...cellsEnemy]
-				let prevShipsSunk = [...shipsSunk]
 				for (let i = 0; i < prevCells.length; i++) {
 					if (prevCells[i].posicion == data.cellsAtacked) {
 						if (data.touched) {
@@ -162,16 +159,14 @@ function shipSelectedVerification(){
 							prevCells[i].typeOfShip = data.typeOfShip
 							prevCells[i].ship = true
 							if (data.hundido) {
-								console.log("Se hundio")
 								for (let j = 0; j < prevCells.length; j++) {
 									if (prevCells[j].typeOfShip == data.typeOfShip) {
 										prevCells[j].hundido = true
 									}
 								}
-								prevShipsSunk.push(data.typeOfShip)
-								if (prevShipsSunk.length == 2) {
+								shipsSunk.push(data.typeOfShip)
+								if (shipsSunk.length == 5) {
 									setWin(true)
-									await insertGame(idLoggued, idPlayer)
 								}
 							}
 						} else {
@@ -180,9 +175,6 @@ function shipSelectedVerification(){
 						}
 					}
 				}
-				console.log(prevCells)
-				console.log(prevShipsSunk)
-				setShipsSunk(prevShipsSunk)
 				setCellsEnemy(prevCells)
 			}
 		})
@@ -269,6 +261,12 @@ function shipSelectedVerification(){
 			}
 		}
 	}, [clickedCells]);
+
+	useEffect(() =>{
+		if(win){
+			insertGame(idLoggued, idPlayer)
+		}
+	}, [win])
 
 	function changePosition(celda) {
 		if (shipSelected > 0) {
@@ -435,7 +433,7 @@ function shipSelectedVerification(){
 			},
 			body: JSON.stringify({ date: new Date(), idWinner: idWinner, idLoser: idLoser }),
 		});
-		await result.json();
+		let response = await result.json();
 	}
 
 	function setShips() {
@@ -476,22 +474,22 @@ function shipSelectedVerification(){
 				if (index2 > index1) {
 					for (let k = 0; k < shipSelectedVerification(); k++) {
 						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelectedVerification()
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
 						prevCells[i + cantidadDeCasillas].shipIndex = k;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelectedVerification();
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelected
 						prevCells[i + cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
 				} else {
 					for (let k = 0; k < shipSelectedVerification(); k++) {
 						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelectedVerification()
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
 						prevCells[i - cantidadDeCasillas].shipIndex = k;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelectedVerification();
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelected
 						prevCells[i - cantidadDeCasillas].shipOrientation = "vertical";
 						cantidadDeCasillas += 10
 					}
@@ -513,22 +511,22 @@ function shipSelectedVerification(){
 				if (numeroPrimerCelda < numeroSegundaCelda) {
 					for (let j = 0; j < shipSelectedVerification(); j++) {
 						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelectedVerification()
+						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i + cantidadDeCasillas].timesTouched = 0
 						prevCells[i + cantidadDeCasillas].hundido = false
 						prevCells[i + cantidadDeCasillas].shipIndex = j;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelectedVerification();
+						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
 						prevCells[i + cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
 				} else {
 					for (let j = 0; j < shipSelectedVerification(); j++) {
 						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelectedVerification()
+						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
 						prevCells[i - cantidadDeCasillas].timesTouched = 0
 						prevCells[i - cantidadDeCasillas].hundido = false
 						prevCells[i - cantidadDeCasillas].shipIndex = j;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelectedVerification();
+						prevCells[i - cantidadDeCasillas].shipLength = shipSelected
 						prevCells[i - cantidadDeCasillas].shipOrientation = "horizontal";
 						cantidadDeCasillas += 1
 					}
@@ -566,7 +564,6 @@ function shipSelectedVerification(){
 		let touched = false
 		let typeOfShip = 0
 		let prevCells = [...cells]
-		let prevShipsLost = [...shipsLost]
 		for (let i = 0; i < prevCells.length; i++) {
 			if (prevCells[i].posicion == atackedCell) {
 				if (prevCells[i].ship == true) {
@@ -578,8 +575,8 @@ function shipSelectedVerification(){
 					}
 					hundido = checkHundido(prevCells[i])
 					if (hundido) {
-						prevShipsLost.push(prevCells[i].typeOfShip)
-						if (prevShipsLost.length == 2) {
+						shipsLost.push(prevCells[i].typeOfShip)
+						if (shipsLost.length == 5) {
 							setLose(true)
 						}
 					}
@@ -591,7 +588,6 @@ function shipSelectedVerification(){
 				}
 			}
 		}
-		setShipsLost(prevShipsLost)
 		setCells(prevCells)
 		socket.emit('touched/notTouched', { from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip })
 	}
@@ -678,7 +674,7 @@ function shipSelectedVerification(){
 							<div className="gaveUp-medal">
 								<div className="gaveUp-medal-emoji">🎖️</div>
 							</div>
-							<div className="gaveUp-medal-count">+30 Medallas</div>
+							<div className="gaveUp-medal-count">-30 Medallas</div>
 						</div>
 						<div className="gaveUp-popup-buttons">
 							<button className="gaveUp-popup-button" onClick={() => router.replace("/lobby")}>
