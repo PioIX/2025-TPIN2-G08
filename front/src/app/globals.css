@@ -1396,14 +1396,14 @@ img {
 
 /* Popup de rendición */
 .popup-rendicion {
-  position: absolute;
-  top: 80px;
-  right: 40px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 260px;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(8px);
   border-radius: 20px;
-  border-top-right-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   padding: 20px;
