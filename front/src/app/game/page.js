@@ -101,13 +101,13 @@ export default function Juego() {
 		setCells(myCells);
 		setCellsEnemy(enemyCells)
 	}
-function shipSelectedVerification(){
-	if(shipSelected == 3.1){
-		return 3
-	}else if (shipSelected){
-		return shipSelected
+	function shipSelectedVerification() {
+		if (shipSelected == 3.1) {
+			return 3
+		} else if (shipSelected) {
+			return shipSelected
+		}
 	}
-}
 	useEffect(() => {
 		setId(localStorage.getItem("idLoggued"));
 		setIdPlayer(localStorage.getItem("idPlayer"));
@@ -158,16 +158,31 @@ function shipSelectedVerification(){
 							prevCells[i].touched = true
 							prevCells[i].typeOfShip = data.typeOfShip
 							prevCells[i].ship = true
+							prevCells[i].shipOrientation = data.shipOrientation
+							prevCells[i].shipIndex = data.shipIndex
 							if (data.hundido) {
+								let startIndex = -1
+								for (let j = 0; j < prevCells.length; j++) {
+									if (prevCells[j].typeOfShip == data.typeOfShip && prevCells[j].shipIndex === 0) {
+										startIndex = j
+									}
+								}
 								for (let j = 0; j < prevCells.length; j++) {
 									if (prevCells[j].typeOfShip == data.typeOfShip) {
 										prevCells[j].hundido = true
+										prevCells[j].ship = true
+										if (startIndex !== -1) {
+											prevCells[j].shipStartIndex = startIndex
+											prevCells[j].shipLength = data.shipLength
+											prevCells[j].shipOrientation = data.shipOrientation
+										}
 									}
 								}
 								shipsSunk.push(data.typeOfShip)
 								if (shipsSunk.length == 5) {
 									setWin(true)
 								}
+								console.log(cellsEnemy)
 							}
 						} else {
 							prevCells[i].touched = false
@@ -182,7 +197,7 @@ function shipSelectedVerification(){
 
 
 
-	
+
 	useEffect(() => {
 		if (firstRender) {
 			let room
@@ -265,8 +280,8 @@ function shipSelectedVerification(){
 		}
 	}, [clickedCells]);
 
-	useEffect(() =>{
-		if(win){
+	useEffect(() => {
+		if (win) {
 			insertGame(idLoggued, idPlayer)
 		}
 	}, [win])
@@ -411,7 +426,7 @@ function shipSelectedVerification(){
 		}
 	}
 
-	async function userFriend(){
+	async function userFriend() {
 		const idUserFriend = localStorage.getItem("idPlayer");
 		let result = await fetch("http://localhost:4000/userFriend", {
 			method: "POST",
@@ -449,11 +464,11 @@ function shipSelectedVerification(){
 		}
 		if (shipSelected == 2) {
 			setIsDisabled2(true)
-		} else if (shipSelected == 3){
+		} else if (shipSelected == 3) {
 			setIsDisabled3(true)
 		} else if (shipSelected == 3.1) {
 			setIsDisabled32(true)
-		} else if(shipSelected == 4){
+		} else if (shipSelected == 4) {
 			setIsDisabled4(true)
 		} else {
 			setIsDisabled5(true)
@@ -462,49 +477,50 @@ function shipSelectedVerification(){
 		array.push(shipSelected)
 		setAlreadyPlacedShips(array)
 		setShipSelected(0)
+		console.log(cells)
 	}
 
 	function confirmPositionVertical() {
-    let prevCells = [...cells];
-    const len = shipSelectedVerification();
-    const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
-    const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
-    if (idx0 === -1 || idx1 === -1) return;
-    const start = Math.min(idx0, idx1);
-    for (let k = 0; k < len; k++) {
-        const idx = start + k * 10;
-        if (idx < 0 || idx >= prevCells.length) continue;
-        prevCells[idx].ship = true;
-        prevCells[idx].typeOfShip = shipSelected;
-        prevCells[idx].timesTouched = 0;
-        prevCells[idx].hundido = false;
-        prevCells[idx].shipIndex = k;
-        prevCells[idx].shipLength = shipSelected;
-        prevCells[idx].shipOrientation = "vertical";
-    }
-    setCells(prevCells);
-}
+		let prevCells = [...cells];
+		const len = shipSelectedVerification();
+		const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
+		const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
+		if (idx0 === -1 || idx1 === -1) return;
+		const start = Math.min(idx0, idx1);
+		for (let k = 0; k < len; k++) {
+			const idx = start + k * 10;
+			if (idx < 0 || idx >= prevCells.length) continue;
+			prevCells[idx].ship = true;
+			prevCells[idx].typeOfShip = shipSelected;
+			prevCells[idx].timesTouched = 0;
+			prevCells[idx].hundido = false;
+			prevCells[idx].shipIndex = k;
+			prevCells[idx].shipLength = shipSelected;
+			prevCells[idx].shipOrientation = "vertical";
+		}
+		setCells(prevCells);
+	}
 
-function confirmPositionHorizontal() {
-    let prevCells = [...cells];
-    const len = shipSelectedVerification();
-    const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
-    const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
-    if (idx0 === -1 || idx1 === -1) return;
-    const start = Math.min(idx0, idx1);
-    for (let k = 0; k < len; k++) {
-        const idx = start + k;
-        if (idx < 0 || idx >= prevCells.length) continue;
-        prevCells[idx].ship = true;
-        prevCells[idx].typeOfShip = shipSelected;
-        prevCells[idx].timesTouched = 0;
-        prevCells[idx].hundido = false;
-        prevCells[idx].shipIndex = k;
-        prevCells[idx].shipLength = shipSelected;
-        prevCells[idx].shipOrientation = "horizontal";
-    }
-    setCells(prevCells);
-}
+	function confirmPositionHorizontal() {
+		let prevCells = [...cells];
+		const len = shipSelectedVerification();
+		const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
+		const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
+		if (idx0 === -1 || idx1 === -1) return;
+		const start = Math.min(idx0, idx1);
+		for (let k = 0; k < len; k++) {
+			const idx = start + k;
+			if (idx < 0 || idx >= prevCells.length) continue;
+			prevCells[idx].ship = true;
+			prevCells[idx].typeOfShip = shipSelected;
+			prevCells[idx].timesTouched = 0;
+			prevCells[idx].hundido = false;
+			prevCells[idx].shipIndex = k;
+			prevCells[idx].shipLength = shipSelected;
+			prevCells[idx].shipOrientation = "horizontal";
+		}
+		setCells(prevCells);
+	}
 
 
 	useEffect(() => {
@@ -530,6 +546,9 @@ function confirmPositionHorizontal() {
 	}
 
 	function atackedCells(atackedCell, room) {
+		let shipIndex
+		let shipOrientation
+		let shipLength
 		let hundido = false
 		let touched = false
 		let typeOfShip = 0
@@ -552,6 +571,9 @@ function confirmPositionHorizontal() {
 					}
 					touched = true
 					typeOfShip = prevCells[i].typeOfShip
+					shipOrientation = prevCells[i].shipOrientation
+					shipIndex = prevCells[i].shipIndex
+					shipLength = prevCells[i].shipLength
 				} else {
 					prevCells[i].touched = false
 					setTurno(true)
@@ -559,7 +581,7 @@ function confirmPositionHorizontal() {
 			}
 		}
 		setCells(prevCells)
-		socket.emit('touched/notTouched', { from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip })
+		socket.emit('touched/notTouched', { from: idLoggued, to: idPlayer, room: room, touched: touched, cellsAtacked: atackedCell, hundido: hundido, typeOfShip: typeOfShip, shipOrientation: shipOrientation, shipIndex: shipIndex, shipLength: shipLength })
 	}
 
 	function checkHundido(posicionBarco) {
@@ -752,7 +774,7 @@ function confirmPositionHorizontal() {
 									<button onClick={() => { setShipSelected(4); setClickedCells([]); setPosible(false) }} disabled={isDisabled4} className={`ship-btn ${shipSelected == 4 ? 'active' : ''}`}>
 										<img src="/Barco 4x1.png" alt="4" />
 										<p>4x1</p>
-										</button>
+									</button>
 									<button onClick={() => { setShipSelected(3); setClickedCells([]); setPosible(false) }} disabled={isDisabled3} className={`ship-btn ${shipSelected == 3 ? 'active' : ''}`}>
 										<img src="/barco 3x1.png" alt="3" />
 										<p>3x1</p>
@@ -810,7 +832,7 @@ function confirmPositionHorizontal() {
 								<section className="board-section">
 
 									{turno ?
-										<h2 className="this-turn"> {name}</h2>
+										<h2 className="this-turn2"> {name}</h2>
 										: <h2 className="no-turn">{name}</h2>}
 
 									<div className="board player-board">
@@ -825,7 +847,7 @@ function confirmPositionHorizontal() {
 												const row = Math.floor(s.startIndex / 10);
 												const col = s.startIndex % 10;
 												const normalizedType = s.type === 3.1 ? 3 : s.type;
-                                                const imgName = `/barco ${normalizedType}x1.png`;
+												const imgName = `/barco ${normalizedType}x1.png`;
 												const widthCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
 												const heightCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
 												const left = `calc(var(--board-padding, 12px) + ${col} * var(--cell-size) + ${col} * var(--gap, 6px))`;
@@ -863,8 +885,8 @@ function confirmPositionHorizontal() {
 												<div key={index} id={c.posicion} className={`cell ${isSelected ? "cell-selected" : ""} ${hasShip ? "cell-ship" : ""}`}>
 													<span className="cell-content">
 														{c.touched == null ? c.posicion
-														: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
-														: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+															: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+																: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
 													</span>
 												</div>
 											);
@@ -877,11 +899,68 @@ function confirmPositionHorizontal() {
 										<h2 className="no-turn"> {friendName}</h2>
 										: <h2 className="this-turn">{friendName}</h2>}
 									<div className="board enemy-board">
+										{(() => {
+											const sunkShips = [];
+											cellsEnemy.forEach((c, i) => {
+												if (c.hundido && c.shipIndex === 0) {
+													sunkShips.push({
+														startIndex: c.shipStartIndex || i,
+														length: c.shipLength || c.typeOfShip,
+														orient: c.shipOrientation || "horizontal",
+														type: c.typeOfShip
+													});
+												}
+											});
+											return sunkShips.map((s, si) => {
+												const row = Math.floor(s.startIndex / 10);
+												const col = s.startIndex % 10;
+												const normalizedType = s.type === 3.1 ? 3 : s.type;
+												const imgName = `/barco ${normalizedType}x1.png`;
+												const widthCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
+												const heightCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
+												const left = `calc(var(--board-padding, 12px) + ${col} * var(--cell-size) + ${col} * var(--gap, 6px))`;
+												const top = `calc(var(--board-padding, 12px) + ${row} * var(--cell-size) + ${row} * var(--gap, 6px))`;
+
+												return (
+													<div
+														key={"enemy-sunk-ship-" + si}
+														className="ship-overlay enemy-ship-overlay"
+														style={{
+															left,
+															top,
+															width: s.orient === "horizontal" ? widthCalc : "calc(var(--cell-size))",
+															height: s.orient === "horizontal" ? "calc(var(--cell-size))" : heightCalc,
+														}}
+														aria-hidden="true"
+													>
+														<img
+															src={imgName}
+															alt="barco hundido"
+															className="ship-overlay-img"
+															style={{
+																transform: s.orient === "horizontal" ? "rotate(90deg)" : "none",
+																transformOrigin: "center center",
+															}}
+														/>
+													</div>
+												);
+											});
+										})()}
 										{cellsEnemy.map((c, index) => (
-											<button onClick={() => socket.emit('atack', { celda: c.posicion, from: idLoggued, to: idPlayer, room: room })} key={index} id={c.posicion} className={"cell"} disabled={c.touched != null || turno == false}>
-												{c.touched == null ? c.posicion
-												: c.touched == false ? <img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
-												: <img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />}
+											<button
+												onClick={() => socket.emit('atack', { celda: c.posicion, from: idLoggued, to: idPlayer, room: room })}
+												key={index}
+												id={c.posicion}
+												className={"cell"}
+												disabled={c.touched != null || turno == false}
+											>
+												{c.touched == null ? (
+													c.posicion
+												) : c.touched == false ? (
+													<img src="https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-water-splash-clipart-blue-splashing-graphic-element-now-png-image_13758663.png" alt="agua" />
+												) : (
+													<img src="https://png.pngtree.com/png-clipart/20250127/original/pngtree-realistic-explosion-illustration-png-image_19688709.png" alt="impacto" />
+												)}
 											</button>
 										))}
 									</div>
