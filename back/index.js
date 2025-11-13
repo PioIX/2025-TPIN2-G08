@@ -409,12 +409,12 @@ app.post('/insertGame', async function (req, res) {
 		let userWinner = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idWinner}`)
 		userWinner[0].medals = userWinner[0].medals + 30
 		await realizarQuery(`UPDATE Users SET medals = ${userWinner[0].medals} WHERE id_user = ${req.body.idWinner}`)
-		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idLosser}`)
+		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idLoser}`)
 		userLose[0].medals = userLose[0].medals - 30
 		if (userLose[0].medals < 0) {
 			userLose[0].medals = 0
 		}
-		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idLosser}`)
+		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idLoser}`)
 		let stringDate = req.body.date.toString()
 		let date = stringDate.slice(0, 10)
 		let newGame = await realizarQuery(`INSERT INTO Games (date, result) VALUES
@@ -423,7 +423,7 @@ app.post('/insertGame', async function (req, res) {
 		if (idGame > 0) {
 			await realizarQuery(`INSERT INTO UsersPerGame (id_game, id_user) VALUES
 				(${idGame}, ${req.body.idWinner}),
-				(${idGame}, ${req.body.idLosser})`)
+				(${idGame}, ${req.body.idLoser})`)
 			res.send({ msg: 1, error: false })
 		} else {
 			res.send({ msg: 0, error: false })
