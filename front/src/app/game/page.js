@@ -180,6 +180,9 @@ function shipSelectedVerification(){
 		})
 	}, [socket]);
 
+
+
+	
 	useEffect(() => {
 		if (firstRender) {
 			let room
@@ -462,79 +465,46 @@ function shipSelectedVerification(){
 	}
 
 	function confirmPositionVertical() {
-		let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-		let prevCells = [...cells];
-		let cantidadDeCasillas = 0
-		for (let i = 0; i < prevCells.length; i++) {
-			if (prevCells[i].posicion == clickedCells[0]) {
-				let letra1 = clickedCells[0].slice(0, 1);
-				let letra2 = clickedCells[1].slice(0, 1);
-				let index1 = letras.indexOf(letra1);
-				let index2 = letras.indexOf(letra2);
-				if (index2 > index1) {
-					for (let k = 0; k < shipSelectedVerification(); k++) {
-						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
-						prevCells[i + cantidadDeCasillas].timesTouched = 0
-						prevCells[i + cantidadDeCasillas].hundido = false
-						prevCells[i + cantidadDeCasillas].shipIndex = k;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelected
-						prevCells[i + cantidadDeCasillas].shipOrientation = "vertical";
-						cantidadDeCasillas += 10
-					}
-				} else {
-					for (let k = 0; k < shipSelectedVerification(); k++) {
-						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
-						prevCells[i - cantidadDeCasillas].timesTouched = 0
-						prevCells[i - cantidadDeCasillas].hundido = false
-						prevCells[i - cantidadDeCasillas].shipIndex = k;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelected
-						prevCells[i - cantidadDeCasillas].shipOrientation = "vertical";
-						cantidadDeCasillas += 10
-					}
-				}
-			}
-		}
-		setCells(prevCells)
-	}
+    let prevCells = [...cells];
+    const len = shipSelectedVerification();
+    const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
+    const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
+    if (idx0 === -1 || idx1 === -1) return;
+    const start = Math.min(idx0, idx1);
+    for (let k = 0; k < len; k++) {
+        const idx = start + k * 10;
+        if (idx < 0 || idx >= prevCells.length) continue;
+        prevCells[idx].ship = true;
+        prevCells[idx].typeOfShip = shipSelected;
+        prevCells[idx].timesTouched = 0;
+        prevCells[idx].hundido = false;
+        prevCells[idx].shipIndex = k;
+        prevCells[idx].shipLength = shipSelected;
+        prevCells[idx].shipOrientation = "vertical";
+    }
+    setCells(prevCells);
+}
 
-	function confirmPositionHorizontal() {
-		let cantidadDeCasillas = 0
-		let prevCells = [...cells]
-		let numeroPrimerCelda
-		let numeroSegundaCelda
-		for (let i = 0; i < prevCells.length; i++) {
-			if (prevCells[i].posicion == clickedCells[0]) {
-				numeroPrimerCelda = parseInt(prevCells[i].posicion.slice(1, 2))
-				numeroSegundaCelda = parseInt(clickedCells[1].slice(1, 2))
-				if (numeroPrimerCelda < numeroSegundaCelda) {
-					for (let j = 0; j < shipSelectedVerification(); j++) {
-						prevCells[i + cantidadDeCasillas].ship = true
-						prevCells[i + cantidadDeCasillas].typeOfShip = shipSelected
-						prevCells[i + cantidadDeCasillas].timesTouched = 0
-						prevCells[i + cantidadDeCasillas].hundido = false
-						prevCells[i + cantidadDeCasillas].shipIndex = j;
-						prevCells[i + cantidadDeCasillas].shipLength = shipSelected;
-						prevCells[i + cantidadDeCasillas].shipOrientation = "horizontal";
-						cantidadDeCasillas += 1
-					}
-				} else {
-					for (let j = 0; j < shipSelectedVerification(); j++) {
-						prevCells[i - cantidadDeCasillas].ship = true
-						prevCells[i - cantidadDeCasillas].typeOfShip = shipSelected
-						prevCells[i - cantidadDeCasillas].timesTouched = 0
-						prevCells[i - cantidadDeCasillas].hundido = false
-						prevCells[i - cantidadDeCasillas].shipIndex = j;
-						prevCells[i - cantidadDeCasillas].shipLength = shipSelected
-						prevCells[i - cantidadDeCasillas].shipOrientation = "horizontal";
-						cantidadDeCasillas += 1
-					}
-				}
-			}
-		}
-		setCells(prevCells)
-	}
+function confirmPositionHorizontal() {
+    let prevCells = [...cells];
+    const len = shipSelectedVerification();
+    const idx0 = prevCells.findIndex(c => c.posicion === clickedCells[0]);
+    const idx1 = prevCells.findIndex(c => c.posicion === clickedCells[1]);
+    if (idx0 === -1 || idx1 === -1) return;
+    const start = Math.min(idx0, idx1);
+    for (let k = 0; k < len; k++) {
+        const idx = start + k;
+        if (idx < 0 || idx >= prevCells.length) continue;
+        prevCells[idx].ship = true;
+        prevCells[idx].typeOfShip = shipSelected;
+        prevCells[idx].timesTouched = 0;
+        prevCells[idx].hundido = false;
+        prevCells[idx].shipIndex = k;
+        prevCells[idx].shipLength = shipSelected;
+        prevCells[idx].shipOrientation = "horizontal";
+    }
+    setCells(prevCells);
+}
 
 
 	useEffect(() => {
@@ -854,7 +824,8 @@ function shipSelectedVerification(){
 											return ships.map((s, si) => {
 												const row = Math.floor(s.startIndex / 10);
 												const col = s.startIndex % 10;
-												const imgName = `/Barco ${s.type}x1.png`;
+												const normalizedType = s.type === 3.1 ? 3 : s.type;
+                                                const imgName = `/barco ${normalizedType}x1.png`;
 												const widthCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
 												const heightCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
 												const left = `calc(var(--board-padding, 12px) + ${col} * var(--cell-size) + ${col} * var(--gap, 6px))`;
