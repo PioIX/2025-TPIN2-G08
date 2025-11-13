@@ -184,8 +184,6 @@ export default function Lobby() {
             let rechazar = false
             await deleteInvitations(idNewFriend, rechazar)
             setRequests(false)
-        } else {
-            console.log(response.msg)
         }
     }
 
@@ -228,7 +226,6 @@ export default function Lobby() {
             body: JSON.stringify({ idFriend: idFriend, idLoggued: idLoggued })
         })
         let response = await result.json()
-        console.log(response)
         if (response.msg == 1) {
             setNameFriend(response.friend[0].name)
             setPhotoFriend(response.friend[0].photo)
@@ -260,7 +257,7 @@ export default function Lobby() {
             body: JSON.stringify({ idLoggued: idLoggued, name: newName, photo: newPhoto })
         })
         let response = await result.json()
-        console.log(response)
+        
         if (response.msg == 1) {
             setName(response.name)
             setPhoto(response.photo)
