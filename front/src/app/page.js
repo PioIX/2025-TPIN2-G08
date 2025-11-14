@@ -60,13 +60,11 @@ export default function logIn() {
       setEmail("");
       setPassword("")
     } else if (response.msg == -1) {
-      /*alert("El email ingresado no es valido")*/
       console.log("El email ingresado no es válido");
       setShowInconveniente(true)
       setInconveniente("El email ingresado no es válido")
       setBueno(false)
     } else if (response.msg == -2) {
-      /*alert("La contraseña ingresada no es valida")*/
       console.log("La contraseña ingresada no es válida");
       setShowInconveniente(true)
       setInconveniente("La contraseña ingresada no es válida")
@@ -100,14 +98,14 @@ export default function logIn() {
     if (response.msg == 1) {
       setBueno(true)
       setShowInconveniente(true)
-      setInconveniente("Usuarios eliminados con exito")
+      setInconveniente("Usuarios eliminados con éxito")
       setDeleteId([]);
       setShowAdministracion(false);
     } else {
       console.log(response.msg);
       setBueno(false)
       setShowInconveniente(true)
-      setInconveniente("Algo ocurrio")
+      setInconveniente("Algo ocurrió")
     }
   }
 
@@ -154,7 +152,7 @@ export default function logIn() {
             ↩
           </button>
           <div className="modalAdmin">
-            <h2>Elige el usuario que quiera eliminar</h2>
+            <h2>Elija el usuario que quiera eliminar</h2>
             {allUsers && allUsers.length > 0 ? (
               <div className="user-listDelete">
                 {allUsers.map((user) => {
@@ -162,7 +160,7 @@ export default function logIn() {
                     <label className="user-itemDelete" key={user.id_user}>
                       <input
                         type="checkbox"
-                        checked={deleteId.includes(user.id_user)}  // Marca el checkbox si el id está en deleteId
+                        checked={deleteId.includes(user.id_user)}
                         onChange={(e) => {
                           console.log("onChange input");
                           if (e.target.checked) {
