@@ -746,11 +746,9 @@ export default function Juego() {
 
 			<div className="game-container">
 				{!yaSeRindio && <button className="surrender" onClick={() => setRendirse(true)}>🏳️</button>}
-
 				<div className="top-bar">
 					<h1 className="game-title">BATALLA NAVAL</h1>
 				</div>
-
 				<div className={`game-main ${duelMode ? "duel-mode" : ""}`}>
 					{!duelMode && (
 						<aside className="game-aside left-aside">
@@ -763,7 +761,6 @@ export default function Juego() {
 									<div className="player-medals">🎖️ {medals ?? 0}</div>
 								</div>
 							</div>
-
 							<div className="ships-select">
 								<h4>Colocar barcos</h4>
 								<div className="ship-images-col">
@@ -783,13 +780,11 @@ export default function Juego() {
 										<img src="/barco 3x1.png" alt="3.1" />
 										<p>3x1</p>
 									</button>
-
 									<button onClick={() => { setShipSelected(5); setClickedCells([]); setPosible(false) }} disabled={isDisabled5} className={`ship-btn ${shipSelected == 5 ? 'active' : ''}`}>
 										<img src="/barco 5x1.png" alt="5" />
 										<p>5x1</p>
 									</button>
 								</div>
-
 								<div className="play-button-container aside-play">
 									{posible ? (
 										<button className="btn jugar" onClick={setShips}>Listo</button>
@@ -838,11 +833,9 @@ export default function Juego() {
 						) : positionsShips == false && ready == true && otherReady == true && (
 							<div className="boards duel-boards">
 								<section className="board-section">
-
 									{turno ?
 										<h2 className="this-turn2"> {name}</h2>
 										: <h2 className="no-turn">{name}</h2>}
-
 									<div className="board player-board">
 										{(() => {
 											const ships = [];
@@ -885,7 +878,6 @@ export default function Juego() {
 												);
 											});
 										})()}
-
 										{cells.map((c, index) => {
 											const isSelected = clickedCells.includes(c.posicion);
 											const hasShip = c.ship === true;
@@ -901,7 +893,6 @@ export default function Juego() {
 										})}
 									</div>
 								</section>
-
 								<section className="board-section">
 									{turno ?
 										<h2 className="no-turn"> {friendName}</h2>
@@ -928,7 +919,6 @@ export default function Juego() {
 												const heightCalc = `calc(${s.length} * var(--cell-size) + ${s.length - 1} * var(--gap, 6px))`;
 												const left = `calc(var(--board-padding, 12px) + ${col} * var(--cell-size) + ${col} * var(--gap, 6px))`;
 												const top = `calc(var(--board-padding, 12px) + ${row} * var(--cell-size) + ${row} * var(--gap, 6px))`;
-
 												return (
 													<div
 														key={"enemy-sunk-ship-" + si}
