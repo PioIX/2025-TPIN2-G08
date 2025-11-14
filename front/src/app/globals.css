@@ -1537,8 +1537,14 @@ img {
   gap: 1rem;
   width: 80%;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .user-itemFriends {
@@ -1887,6 +1893,7 @@ img {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 2px;
+  margin-top: -25px;
 }
 
 .enemy-board {
@@ -1894,6 +1901,7 @@ img {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 2px;
+  margin-top: -25px;
 }
 
 .ship-images {
@@ -2841,6 +2849,17 @@ img {
   color: #e6f2ff;
 }
 
+.game-aside-right-aside {
+  background: rgba(9, 44, 58, 0.6);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  color: #e6f2ff;
+}
+
 /* Info card (avatar + datos) */
 .info-card {
   display: flex;
@@ -2958,6 +2977,7 @@ img {
   font-weight: 700;
   text-align: center;
 }
+
 /* ship selector en aside */
 .ship-images-col {
   display: flex;
@@ -3010,18 +3030,36 @@ img {
 }
 
 /* Orden específico */
-.ship-btn:nth-child(1) { order: 1; } /* barco 2 */
-.ship-btn:nth-child(2) { order: 3; } /* barco 4 */  
-.ship-btn:nth-child(3) { order: 2; } /* barco 3 */
-.ship-btn:nth-child(4) { order: 4; } /* barco 3.1 */
+.ship-btn:nth-child(1) {
+  order: 1;
+}
+
+/* barco 2 */
+.ship-btn:nth-child(2) {
+  order: 3;
+}
+
+/* barco 4 */
+.ship-btn:nth-child(3) {
+  order: 2;
+}
+
+/* barco 3 */
+.ship-btn:nth-child(4) {
+  order: 4;
+}
+
+/* barco 3.1 */
 
 /* Último barco (5) - acostado y ocupando toda la fila */
-.ship-btn:nth-child(5) { 
-  order: 5; 
+.ship-btn:nth-child(5) {
+  order: 5;
   flex: 0 0 100%;
   width: 160px;
-  height: 80px; /* Cambiamos a 80px para que quepa imagen + texto */
-  flex-direction: column; /* COLUMNA igual que los demás */
+  height: 80px;
+  /* Cambiamos a 80px para que quepa imagen + texto */
+  flex-direction: column;
+  /* COLUMNA igual que los demás */
 }
 
 .ship-btn img {
@@ -3053,9 +3091,11 @@ img {
 
 /* Imagen especial para el barco acostado - ROTADO pero en columna */
 .ship-btn:nth-child(5) img {
-  width: 70px; /* Tamaño ajustado para que quepa */
+  width: 70px;
+  /* Tamaño ajustado para que quepa */
   height: auto;
-  transform: rotate(90deg); /* Rotado pero con texto abajo */
+  transform: rotate(90deg);
+  /* Rotado pero con texto abajo */
 }
 
 /* Mantener rotación en hover y active */
@@ -3070,7 +3110,8 @@ img {
 /* Para el último barco, el texto también va abajo (igual que los demás) */
 .ship-btn:nth-child(5) p {
   margin-top: 4px;
-  margin-left: 0; /* Quitamos cualquier margen lateral */
+  margin-left: 0;
+  /* Quitamos cualquier margen lateral */
   margin-top: -10px;
 }
 
@@ -3085,6 +3126,7 @@ img {
   background: #3182ce;
   border-radius: 50%;
 }
+
 /* play button styled */
 .aside-play .btn.jugar {
   background: linear-gradient(135deg, #1f6feb, #3f8fff);
@@ -3184,11 +3226,29 @@ img {
 }
 
 .this-turn {
-  margin: 0 0 6px;
   color: #ff4b4b;
   font-weight: 700;
   font-size: 1500;
   animation: glowRed 0.5s ease-in-out infinite alternate;
+  margin-top: -25px;
+}
+
+.this-turn2 {
+  color: #2affaa;
+  margin-top: -25px;
+  animation: glowGreen 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowGreen {
+  from {
+    color: #2affaa;
+    text-shadow: 0 0 6px #2affaa;
+  }
+
+  to {
+    color: #7affc8;
+    text-shadow: 0 0 14px #7affc8;
+  }
 }
 
 @keyframes glowRed {
@@ -3204,9 +3264,9 @@ img {
 }
 
 .no-turn {
-  margin: 0 0 6px;
   font-size: 1500;
   color: var(--gold);
+  margin-top: -25px;
 }
 
 /* estilo cuando marcás una casilla al colocar barcos */
@@ -3349,4 +3409,180 @@ img {
 
 .game-main.duel-mode .player-board .cell-selected {
   transform: none;
+}
+
+.ship-image-full {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.enemy-ship-overlay {
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.6;
+  /* Reducimos la opacidad para que se vea más la explosión detrás */
+}
+
+.waiting-radar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 400px;
+  width: 100%;
+  /* O lo podés reducir también si querés */
+
+  gap: 20px;
+  background-color: #05151c00;
+  /* Podés dejarlo transparente */
+}
+
+/* --- Radar base --- */
+.radar-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle, #0a2a33 40%, #05151c 100%);
+  border: 3px solid #1affff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+/* --- Líneas del radar --- */
+.radar-lines {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(#1affff44 2px, transparent 2px),
+    linear-gradient(90deg, #1affff44 2px, transparent 2px);
+  background-size: 20px 20px;
+  opacity: 0.4;
+}
+
+/* --- Barrido del radar --- */
+.radar-sweep {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(rgba(0, 255, 255, 0.4) 0deg,
+      rgba(0, 255, 255, 0.15) 40deg,
+      rgba(0, 255, 255, 0) 80deg);
+  animation: sweep 2.5s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes sweep {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Texto --- */
+.waiting-text {
+  color: #dffbff;
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #1affff;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.modal-new-friend {
+  width: 400px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  max-height: 80vh;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.user-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+/* Scrollbar para Chrome */
+.user-list::-webkit-scrollbar {
+  width: 6px;
+}
+.user-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
+.user-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-user-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(30, 30, 30, 0.75);
+  color: white;
+  outline: none;
+  transition: 0.2s;
+}
+
+.search-user-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(40, 40, 40, 0.9);
+}
+
+.user-itemFriends {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eee;
+}
+
+.user-itemFriends:last-child {
+  border-bottom: none;
+}
+
+.user-itemFriends img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.cuadro-azul {
+  background: rgba(13, 25, 78, 0.45); /* azul oscuro con transparencia */
+  padding: 20px 30px;
+  border-radius: 16px;
+  border: 2px solid rgba(88, 139, 255, 0.7); /* borde azul brillante */
+  box-shadow: 0 0 20px rgba(88, 139, 255, 0.3); /* glow azul */
+  backdrop-filter: blur(8px); /* efecto glass */
+  -webkit-backdrop-filter: blur(8px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.cuadro-azul p {
+  color: white;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
 }
