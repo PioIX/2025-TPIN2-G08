@@ -16,10 +16,10 @@ export default function Juego() {
 	const [heGaveUp, setHeGaveUp] = useState(false);
 	const [name, setName] = useState();
 	const [medals, setMedals] = useState();
-	const [photo, setPhoto] = useState();
+	const [photo, setPhoto] = useState("https://static.vecteezy.com/system/resources/thumbnails/042/600/457/small_2x/loading-circles-flat-style-modern-preloaders-png.png");
 	const [friendName, setFriendName] = useState();
 	const [friendMedals, setFriendMedals] = useState();
-	const [friendPhoto, setFriendPhoto] = useState()
+	const [friendPhoto, setFriendPhoto] = useState("https://static.vecteezy.com/system/resources/thumbnails/042/600/457/small_2x/loading-circles-flat-style-modern-preloaders-png.png")
 	const [cells, setCells] = useState([]);
 	const [clickedCells, setClickedCells] = useState([]);
 	const [showInconveniente, setShowInconveniente] = useState(false);
@@ -235,7 +235,7 @@ export default function Juego() {
 		respuestaValidaciones = validarCeldasRepetidas()
 		if (respuestaValidaciones == ERROR3) {
 			setClickedCells([])
-			setInconveniente("Ya hay en esa casilla un barco")
+			setInconveniente("Ya hay un barco en esa casilla")
 			setShowInconveniente(true)
 		}
 		if (clickedCells.length == 2) {
@@ -290,7 +290,7 @@ export default function Juego() {
 		if (shipSelected > 0) {
 			setClickedCells((prev) => [...prev, celda]);
 		} else {
-			setInconveniente("Seleccione algun barco")
+			setInconveniente("Seleccione algún barco")
 			setBueno(true)
 			setShowInconveniente(true)
 		}
@@ -796,7 +796,7 @@ export default function Juego() {
 									) : (alreadyPlacedShips.length == 4 && clickedCells.length == 2) ? (
 										<button className="btn jugar" onClick={() => { setShips(); socket.emit('match', { ready: true, to: room, from: idLoggued }); setReady(true); }}>Empezar</button>
 									) : (
-										<button className="btn" disabled>Selecciona casillas</button>
+										<button className="btn" disabled>Seleccione un barco</button>
 									)}
 								</div>
 							</div>
@@ -826,7 +826,15 @@ export default function Juego() {
 								</section>
 							</div>
 						) : positionsShips == false && ready == true && otherReady == false ? (
-							<div className="message-panel">Esperando al otro jugador…</div>
+							<div className="waiting-radar">
+								<div className="radar-circle">
+									<div className="radar-sweep"></div>
+									<div className="radar-lines"></div>
+								</div>
+								<p className="waiting-text">
+									Esperando a que {friendName} ponga los barcos...
+								</p>
+							</div>
 						) : positionsShips == false && ready == true && otherReady == true && (
 							<div className="boards duel-boards">
 								<section className="board-section">
@@ -969,7 +977,7 @@ export default function Juego() {
 						)}
 					</main>
 					{!duelMode && (
-						<aside className="game-aside right-aside">
+						<aside className="game-aside-right-aside">
 							<div className="info-card">
 								<div className="avatar-wrapper aside-avatar">
 									<img src={friendPhoto} alt="avatar" className="avatar" />

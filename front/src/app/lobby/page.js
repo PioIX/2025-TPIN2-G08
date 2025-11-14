@@ -35,6 +35,7 @@ export default function Lobby() {
     const [modalEditProfile, setEditProfile] = useState(false)
     const [newName, setNewName] = useState()
     const [newPhoto, setNewPhoto] = useState()
+    const [filter, setFilter] = useState("");
     const [record, setRecord] = useState([])
 
 
@@ -154,13 +155,15 @@ export default function Lobby() {
         if (response.msg == 1) {
             socket.emit('solicitud', { idLoggued: idLoggued, room: "P" + to, name: name, rechazar: false, answer: false })
             setShowInconveniente(true)
-            setInconveniente("Invitacion enviada")
+            setInconveniente("Invitación enviada")
             setShowModalNewFriend(false);
+            setFilter("")
             setBueno(true)
         } else {
             setShowInconveniente(true)
-            setInconveniente("Ya le has enviado una invitacion a este usuario")
+            setInconveniente("Ya le has enviado una invitación a este usuario")
             setShowModalNewFriend(false)
+            setFilter("")
             setBueno(false)
         }
     }
@@ -237,7 +240,7 @@ export default function Lobby() {
 
     function invitar(idFriend) {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
-        setInconveniente("Invitacion enviada")
+        setInconveniente("Invitación enviada")
         setBueno(true)
         setShowInconveniente(true)
     }
@@ -257,7 +260,7 @@ export default function Lobby() {
             body: JSON.stringify({ idLoggued: idLoggued, name: newName, photo: newPhoto })
         })
         let response = await result.json()
-        
+
         if (response.msg == 1) {
             setName(response.name)
             setPhoto(response.photo)
@@ -306,40 +309,51 @@ export default function Lobby() {
                         {users.length > 0 ? (
                             <>
                                 <h2>Enviar solicitud de amistad</h2>
+
+                                <input
+                                    type="text"
+                                    placeholder="Buscar nombre de usuario..."
+                                    value={filter}
+                                    onChange={(e) => setFilter(e.target.value)}
+                                    className="search-user-input"
+                                />
+
                                 <div className="user-list">
-                                    {users.map((user) => (
-                                        <label key={user.id_user} className="user-itemFriends">
-                                            <input
-                                                type="checkbox"
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setNewFriend(user.id_user);
-                                                    } else {
-                                                        setNewFriend();
-                                                    }
-                                                }}
-                                            />
-                                            <div className="user-info">
-                                                <div className="user-nameFriends">{user.name}</div>
-                                                <div className="user-emailFriends">{user.email}</div>
-                                            </div>
-                                        </label>
-                                    ))}
+                                    {users
+                                        .filter(u => u.name.toLowerCase().includes(filter.toLowerCase()))
+                                        .map((user) => (
+                                            <label key={user.id_user} className="user-itemFriends">
+                                                <input
+                                                    type="checkbox"
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) setNewFriend(user.id_user);
+                                                        else setNewFriend();
+                                                    }}
+                                                />
+
+                                                <div className="user-info">
+                                                    <div className="user-nameFriends">{user.name}</div>
+                                                    <div className="user-emailFriends">{user.email}</div>
+                                                </div>
+                                            </label>
+                                        ))}
                                 </div>
+
                                 <div className="modal-buttons">
                                     <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>
                                         Enviar Solicitud
                                     </button>
-                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                    <button className="btn cancel" onClick={() => {setShowModalNewFriend(false), setFilter("")}}>
                                         Cancelar
                                     </button>
                                 </div>
                             </>
+
                         ) : (
                             <>
                                 <h3>No hay usuarios para agregar</h3>
                                 <div className="modal-buttons">
-                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                    <button className="btn cancel" onClick={() => {setShowModalNewFriend(false), setFilter("")}}>
                                         Cerrar
                                     </button>
                                 </div>
@@ -408,7 +422,7 @@ export default function Lobby() {
                 <div className="modal-logout" onClick={() => setShowSeguro(false)}>
                     <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>
                         <h2>Cerrar Sesión</h2>
-                        <p>¿Estas seguro?</p>
+                        <p>¿Estás seguro?</p>
                         <div className="modal-logout-buttons">
                             <button onClick={() => router.replace("/")}>Sí</button>
                             <button onClick={() => setShowSeguro(false)}>No</button>
@@ -595,7 +609,7 @@ export default function Lobby() {
                             </div>
                         </div>
                         <div className="right-col">
-                            
+
                             <div className="panel-center">
                                 {showFriendProfile ? (
                                     <div className="friend-panel" role="dialog" aria-modal="true">
