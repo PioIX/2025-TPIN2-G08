@@ -309,28 +309,17 @@ export default function Lobby() {
                         {users.length > 0 ? (
                             <>
                                 <h2>Enviar solicitud de amistad</h2>
-
-                                <input
-                                    type="text"
-                                    placeholder="Buscar nombre de usuario..."
-                                    value={filter}
-                                    onChange={(e) => setFilter(e.target.value)}
-                                    className="search-user-input"
-                                />
-
+                                <input type="text" placeholder="Buscar nombre de usuario..." value={filter} onChange={(e) => setFilter(e.target.value)}
+                                    className="search-user-input"/>
                                 <div className="user-list">
-                                    {users
-                                        .filter(u => u.name.toLowerCase().includes(filter.toLowerCase()))
+                                    {users .filter(u => u.name.toLowerCase().includes(filter.toLowerCase()))
                                         .map((user) => (
                                             <label key={user.id_user} className="user-itemFriends">
-                                                <input
-                                                    type="checkbox"
+                                                <input type="checkbox"
                                                     onChange={(e) => {
                                                         if (e.target.checked) setNewFriend(user.id_user);
                                                         else setNewFriend();
-                                                    }}
-                                                />
-
+                                                    }}/>
                                                 <div className="user-info">
                                                     <div className="user-nameFriends">{user.name}</div>
                                                     <div className="user-emailFriends">{user.email}</div>
@@ -369,7 +358,6 @@ export default function Lobby() {
                 <div className="notif-overlay" onClick={() => setRequests(false)}>
                     <div className="notif-modal" onClick={(e) => e.stopPropagation()}>
                         <h2 className="notif-title">Solicitudes de amistad</h2>
-
                         {invitationsUser.length > 0 ? (
                             <div className="notif-list">
                                 {invitationsUser.map(u => (
@@ -400,12 +388,10 @@ export default function Lobby() {
                         ) : (
                             <p className="notif-empty">No hay nuevas invitaciones</p>
                         )}
-
                         <button className="notif-close" onClick={() => setRequests(false)}>Cerrar</button>
                     </div>
                 </div>
             )}
-
 
             {/*---------------------------*/}
 
@@ -444,47 +430,36 @@ export default function Lobby() {
 
             {showInconveniente && (
                 bueno ? (
-                    <div
-                        className="cuadroCompleto"
+                    <div className="cuadroCompleto"
                         onClick={() => {
                             setShowInconveniente(false);
                             setInconveniente("");
-                        }}
-                    >
-                        <div
-                            className="conveniente"
-                        >
+                        }}>
+                        <div className="conveniente">
                             <h2>{inconveniente}</h2>
-                            <button
-                                className="btn cerrarBueno"
+                            <button className="btn cerrarBueno"
                                 onClick={() => {
                                     setShowInconveniente(false);
                                     setInconveniente("");
-                                }}
-                            >
+                                }}>
                                 Cerrar
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div
-                        className="cuadroCompleto"
+                    <div className="cuadroCompleto"
                         onClick={() => {
                             setShowInconveniente(false);
                             setInconveniente("");
-                        }}
-                    >
-                        <div
-                            className="inconveniente"
-                        >
+                        }}>
+                        <div className="inconveniente">
                             <h2>{inconveniente}</h2>
                             <button
                                 className="btn cerrarMalo"
                                 onClick={() => {
                                     setShowInconveniente(false);
                                     setInconveniente("");
-                                }}
-                            >
+                                }}>
                                 Cerrar
                             </button>
                         </div>
@@ -657,8 +632,7 @@ export default function Lobby() {
                                             )}
                                         </div>
                                         <div className="friend-actions">
-                                            <button
-                                                className="btn play-friend-btn"
+                                            <button className="btn play-friend-btn"
                                                 onClick={() => { invitar(idFriend); setShowFriendProfile(false); }}>
                                                 Jugar
                                             </button>
@@ -666,11 +640,7 @@ export default function Lobby() {
                                     </div>
                                 ) : (
                                     <div className="friend-panel welcome">
-                                        <img
-                                            src="/LogoBN.svg"
-                                            alt="Bienvenido"
-                                            className="welcome-image"
-                                        />
+                                        <img src="/LogoBN.svg" alt="Bienvenido" className="welcome-image"/>
                                         <h2 className="welcome-message">¡Bienvenido {name}!</h2>
                                     </div>
                                 )}
