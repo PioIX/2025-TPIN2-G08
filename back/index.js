@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
 			io.to(data.room).emit('solicitudBack', data)
 		} else if (data.rechazar == false && data.answer == false) {
 			io.to(data.room).emit('solicitudBack', data)
-			idFriend = parseInt(data.room.slice(1, 3))
+			idFriend = parseInt(data.room.slice(1, data.room.length))
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
 				(${data.idLoggued}, ${idFriend})`)
 		} else {
