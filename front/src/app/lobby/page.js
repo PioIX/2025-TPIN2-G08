@@ -35,6 +35,7 @@ export default function Lobby() {
     const [modalEditProfile, setEditProfile] = useState(false)
     const [newName, setNewName] = useState()
     const [newPhoto, setNewPhoto] = useState()
+    const [filter, setFilter] = useState("");
     const [record, setRecord] = useState([])
 
 
@@ -74,8 +75,7 @@ export default function Lobby() {
             if (data.rechazar == false && data.answer == false) {
                 setNameInvitation(data.name)
                 setPlayInvitation(true)
-                let fromId = data.from
-                setFromId(fromId)
+                setFromId(data.from)
             } else if (data.rechazar == true) {
                 setNameInvitation(data.name)
                 let fromId = data.from
@@ -155,13 +155,15 @@ export default function Lobby() {
         if (response.msg == 1) {
             socket.emit('solicitud', { idLoggued: idLoggued, room: "P" + to, name: name, rechazar: false, answer: false })
             setShowInconveniente(true)
-            setInconveniente("Invitacion enviada")
+            setInconveniente("Invitación enviada")
             setShowModalNewFriend(false);
+            setFilter("")
             setBueno(true)
         } else {
             setShowInconveniente(true)
-            setInconveniente("Ya le has enviado una invitacion a este usuario")
+            setInconveniente("Ya le has enviado una invitación a este usuario")
             setShowModalNewFriend(false)
+            setFilter("")
             setBueno(false)
         }
     }
@@ -185,8 +187,6 @@ export default function Lobby() {
             let rechazar = false
             await deleteInvitations(idNewFriend, rechazar)
             setRequests(false)
-        } else {
-            console.log(response.msg)
         }
     }
 
@@ -229,7 +229,6 @@ export default function Lobby() {
             body: JSON.stringify({ idFriend: idFriend, idLoggued: idLoggued })
         })
         let response = await result.json()
-        console.log(response)
         if (response.msg == 1) {
             setNameFriend(response.friend[0].name)
             setPhotoFriend(response.friend[0].photo)
@@ -241,9 +240,9 @@ export default function Lobby() {
 
     function invitar(idFriend) {
         socket.emit('invitacionJugar', { room: "P" + idFriend, name: name, rechazar: false, answer: false, from: idLoggued })
-        setShowInconveniente(true)
-        setInconveniente("Invitacion enviada")
+        setInconveniente("Invitación enviada")
         setBueno(true)
+        setShowInconveniente(true)
     }
 
     async function editProfile() {
@@ -261,7 +260,7 @@ export default function Lobby() {
             body: JSON.stringify({ idLoggued: idLoggued, name: newName, photo: newPhoto })
         })
         let response = await result.json()
-        console.log(response)
+
         if (response.msg == 1) {
             setName(response.name)
             setPhoto(response.photo)
@@ -310,40 +309,40 @@ export default function Lobby() {
                         {users.length > 0 ? (
                             <>
                                 <h2>Enviar solicitud de amistad</h2>
+                                <input type="text" placeholder="Buscar nombre de usuario..." value={filter} onChange={(e) => setFilter(e.target.value)}
+                                    className="search-user-input"/>
                                 <div className="user-list">
-                                    {users.map((user) => (
-                                        <label key={user.id_user} className="user-itemFriends">
-                                            <input
-                                                type="checkbox"
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setNewFriend(user.id_user);
-                                                    } else {
-                                                        setNewFriend();
-                                                    }
-                                                }}
-                                            />
-                                            <div className="user-info">
-                                                <div className="user-nameFriends">{user.name}</div>
-                                                <div className="user-emailFriends">{user.email}</div>
-                                            </div>
-                                        </label>
-                                    ))}
+                                    {users .filter(u => u.name.toLowerCase().includes(filter.toLowerCase()))
+                                        .map((user) => (
+                                            <label key={user.id_user} className="user-itemFriends">
+                                                <input type="checkbox"
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) setNewFriend(user.id_user);
+                                                        else setNewFriend();
+                                                    }}/>
+                                                <div className="user-info">
+                                                    <div className="user-nameFriends">{user.name}</div>
+                                                    <div className="user-emailFriends">{user.email}</div>
+                                                </div>
+                                            </label>
+                                        ))}
                                 </div>
+
                                 <div className="modal-buttons">
                                     <button className="btn confirm" onClick={() => checkInvitation(newFriendId)}>
                                         Enviar Solicitud
                                     </button>
-                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                    <button className="btn cancel" onClick={() => {setShowModalNewFriend(false), setFilter("")}}>
                                         Cancelar
                                     </button>
                                 </div>
                             </>
+
                         ) : (
                             <>
                                 <h3>No hay usuarios para agregar</h3>
                                 <div className="modal-buttons">
-                                    <button className="btn cancel" onClick={() => setShowModalNewFriend(false)}>
+                                    <button className="btn cancel" onClick={() => {setShowModalNewFriend(false), setFilter("")}}>
                                         Cerrar
                                     </button>
                                 </div>
@@ -359,7 +358,6 @@ export default function Lobby() {
                 <div className="notif-overlay" onClick={() => setRequests(false)}>
                     <div className="notif-modal" onClick={(e) => e.stopPropagation()}>
                         <h2 className="notif-title">Solicitudes de amistad</h2>
-
                         {invitationsUser.length > 0 ? (
                             <div className="notif-list">
                                 {invitationsUser.map(u => (
@@ -390,12 +388,10 @@ export default function Lobby() {
                         ) : (
                             <p className="notif-empty">No hay nuevas invitaciones</p>
                         )}
-
                         <button className="notif-close" onClick={() => setRequests(false)}>Cerrar</button>
                     </div>
                 </div>
             )}
-
 
             {/*---------------------------*/}
 
@@ -412,7 +408,7 @@ export default function Lobby() {
                 <div className="modal-logout" onClick={() => setShowSeguro(false)}>
                     <div className="modal-logout-content" onClick={(e) => e.stopPropagation()}>
                         <h2>Cerrar Sesión</h2>
-                        <p>¿Estas seguro?</p>
+                        <p>¿Estás seguro?</p>
                         <div className="modal-logout-buttons">
                             <button onClick={() => router.replace("/")}>Sí</button>
                             <button onClick={() => setShowSeguro(false)}>No</button>
@@ -434,53 +430,41 @@ export default function Lobby() {
 
             {showInconveniente && (
                 bueno ? (
-                    <div
-                        className="cuadroCompleto"
+                    <div className="cuadroCompleto"
                         onClick={() => {
                             setShowInconveniente(false);
                             setInconveniente("");
-                        }}
-                    >
-                        <div
-                            className="conveniente"
-                        >
+                        }}>
+                        <div className="conveniente">
                             <h2>{inconveniente}</h2>
-                            <button
-                                className="btn cerrarBueno"
+                            <button className="btn cerrarBueno"
                                 onClick={() => {
                                     setShowInconveniente(false);
                                     setInconveniente("");
-                                }}
-                            >
+                                }}>
                                 Cerrar
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div
-                        className="cuadroCompleto"
+                    <div className="cuadroCompleto"
                         onClick={() => {
                             setShowInconveniente(false);
                             setInconveniente("");
-                        }}
-                    >
-                        <div
-                            className="inconveniente"
-                        >
+                        }}>
+                        <div className="inconveniente">
                             <h2>{inconveniente}</h2>
                             <button
                                 className="btn cerrarMalo"
                                 onClick={() => {
                                     setShowInconveniente(false);
                                     setInconveniente("");
-                                }}
-                            >
+                                }}>
                                 Cerrar
                             </button>
                         </div>
                     </div>
                 )
-
             )}
 
             {/*---------------------------*/}
@@ -491,7 +475,6 @@ export default function Lobby() {
                     <p className="texto-modal">
                         <strong>{nameInvitation}</strong> te invita a jugar una partida de <b>Batalla Naval</b>.
                     </p>
-
                     <div className="botones-modal">
                         <button
                             className="btn aceptar"
@@ -509,7 +492,6 @@ export default function Lobby() {
                             }}>
                             JUGAR
                         </button>
-
                         <button
                             className="btn rechazar"
                             onClick={() => {
@@ -561,7 +543,6 @@ export default function Lobby() {
             {/* ⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇⬇ */}
             <div className="lobby">
                 <div className="overlay" />
-
                 <div className="lobby-box">
                     <div className="box-grid">
                         <div className="left-col">
@@ -578,10 +559,8 @@ export default function Lobby() {
                                     </div>
                                 </div>
                             </div>
-
                             <div className="friends">
                                 <h3>👥 Amigos</h3>
-
                                 <div className="header-icons">
                                     <div className="add-friend-icon" onClick={usersWithOutRelationWithLoggued}> + </div>
                                     <div className="notification-icon" onClick={() => { invitations(); setRequests(true) }}> 🕭 </div>
@@ -604,10 +583,7 @@ export default function Lobby() {
                                     <h2 className="centrate">Agrega amigos para poder jugar con ellos</h2>}
                             </div>
                         </div>
-
                         <div className="right-col">
-                            <div className="title-right">BATALLA NAVAL</div>
-
 
                             <div className="panel-center">
                                 {showFriendProfile ? (
@@ -632,7 +608,6 @@ export default function Lobby() {
                                                         <p><strong>{name}:</strong> {record.filter(r => r.name === name).length} victorias</p>
                                                         <p><strong>{nameFriend}:</strong> {record.filter(r => r.name === nameFriend).length} victorias</p>
                                                     </div>
-
                                                     <div className="table">
                                                         <table>
                                                             <thead>
@@ -657,8 +632,7 @@ export default function Lobby() {
                                             )}
                                         </div>
                                         <div className="friend-actions">
-                                            <button
-                                                className="btn play-friend-btn"
+                                            <button className="btn play-friend-btn"
                                                 onClick={() => { invitar(idFriend); setShowFriendProfile(false); }}>
                                                 Jugar
                                             </button>
@@ -666,13 +640,8 @@ export default function Lobby() {
                                     </div>
                                 ) : (
                                     <div className="friend-panel welcome">
-                                        <img
-                                            src="https://image.tmdb.org/t/p/original/4ysbFXKIYWqhvkxH8BCUMrDp3En.jpg"
-                                            alt="Bienvenido"
-                                            className="welcome-image"
-                                        />
+                                        <img src="/LogoBN.svg" alt="Bienvenido" className="welcome-image"/>
                                         <h2 className="welcome-message">¡Bienvenido {name}!</h2>
-
                                     </div>
                                 )}
                             </div>

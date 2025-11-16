@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
 		}
 		req.session.room = data.room;
 		socket.join(req.session.room);
-		io.to(req.session.room).emit('checkRoom', { room: req.session.room});
+		io.to(req.session.room).emit('checkRoom', { room: req.session.room });
 	});
 
 	socket.on('disconnect', () => {
@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
 			io.to(data.room).emit('solicitudBack', data)
 		} else if (data.rechazar == false && data.answer == false) {
 			io.to(data.room).emit('solicitudBack', data)
-			idFriend = parseInt(data.room.slice(1, 3))
+			idFriend = parseInt(data.room.slice(1, data.room.length))
 			await realizarQuery(`INSERT INTO Requests (fromUser, toUser) VALUES
 				(${data.idLoggued}, ${idFriend})`)
 		} else {
@@ -132,15 +132,15 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on('startMatch', data => {
-		let firstTurn 
+		let firstTurn
 		let random = Math.random()
-		if(random < 0.5){
+		if (random < 0.5) {
 			firstTurn = data.idPlayer1
 		} else {
 			firstTurn = data.idPlayer2
 		}
 		console.log(firstTurn)
-		io.to(data.room).emit('firstTurn', {firstTurn: firstTurn})
+		io.to(data.room).emit('firstTurn', { firstTurn: firstTurn })
 	})
 })
 /*
@@ -187,11 +187,16 @@ app.post('/newUser', async function (req, res) {
 		if (!req.body.photo || esURLValida(req.body.photo) == false) {
 			req.body.photo = "https://preview.redd.it/why-wall-ilumination-thinks-its-a-whatsapp-default-profile-v0-5vsjfcznlwld1.png?width=360&format=png&auto=webp&s=29beb16ce4bce926b91bd2391ef854b9b103f831"
 		}
-		if (!await realizarQuery(`SELECT email FROM Users WHERE email = '${req.body.email}'`)) {
+
+		const result = await realizarQuery(`SELECT email FROM Users WHERE email = '${req.body.email}'`);
+		const rows = Array.isArray(result) ? result : result.rows;
+
+		if (!rows || rows.length === 0) {
 			await realizarQuery(`INSERT INTO Users (photo, name, email, password) VALUES 
 			('${req.body.photo}', '${req.body.name}', '${req.body.email}', '${req.body.password}')`)
 			res.send({ msg: 1, error: false })
-		}else{
+		}
+		else {
 			res.send({ msg: -1, error: false })
 		}
 
@@ -404,12 +409,12 @@ app.post('/insertGame', async function (req, res) {
 		let userWinner = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idWinner}`)
 		userWinner[0].medals = userWinner[0].medals + 30
 		await realizarQuery(`UPDATE Users SET medals = ${userWinner[0].medals} WHERE id_user = ${req.body.idWinner}`)
-		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idPlayer}`)
+		let userLose = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idLoser}`)
 		userLose[0].medals = userLose[0].medals - 30
 		if (userLose[0].medals < 0) {
 			userLose[0].medals = 0
 		}
-		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idPlayer}`)
+		await realizarQuery(`UPDATE Users SET medals = ${userLose[0].medals} WHERE id_user = ${req.body.idLoser}`)
 		let stringDate = req.body.date.toString()
 		let date = stringDate.slice(0, 10)
 		let newGame = await realizarQuery(`INSERT INTO Games (date, result) VALUES
@@ -418,12 +423,23 @@ app.post('/insertGame', async function (req, res) {
 		if (idGame > 0) {
 			await realizarQuery(`INSERT INTO UsersPerGame (id_game, id_user) VALUES
 				(${idGame}, ${req.body.idWinner}),
-				(${idGame}, ${req.body.idPlayer})`)
+				(${idGame}, ${req.body.idLoser})`)
 			res.send({ msg: 1, error: false })
 		} else {
 			res.send({ msg: 0, error: false })
 		}
 	} catch (e) {
 		res.send({ msg: e.message, error: true })
+	}
+})
+
+app.post('/userFriend', async function(req, res){
+	try {
+		let userFriend = await realizarQuery(`SELECT * FROM Users WHERE id_user = ${req.body.idFriend}`)
+		if (userFriend.length > 0){
+			res.send({userFriend: userFriend[0], error: false, msg: 1})
+		}
+	} catch(e) {
+		res.send({msg: e.message, error: true})
 	}
 })
